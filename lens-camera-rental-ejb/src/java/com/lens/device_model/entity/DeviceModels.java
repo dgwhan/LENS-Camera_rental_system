@@ -1,5 +1,6 @@
 package com.lens.device_model.entity;
 
+import com.lens.cart.entity.CartItems;
 import com.lens.device.entity.Devices;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
@@ -44,12 +45,6 @@ import java.util.Date;
     @NamedQuery(name = "DeviceModels.findByUpdatedAt", query = "SELECT d FROM DeviceModels d WHERE d.updatedAt = :updatedAt")})
 public class DeviceModels implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id")
-    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 150)
@@ -95,6 +90,14 @@ public class DeviceModels implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "deviceModelId")
+    private Collection<CartItems> cartItemsCollection;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "deviceModelId")
     private Collection<Devices> devicesCollection;
 
     public DeviceModels() {
@@ -122,6 +125,40 @@ public class DeviceModels implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @XmlTransient
+    public Collection<Devices> getDevicesCollection() {
+        return devicesCollection;
+    }
+
+    public void setDevicesCollection(Collection<Devices> devicesCollection) {
+        this.devicesCollection = devicesCollection;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof DeviceModels)) {
+            return false;
+        }
+        DeviceModels other = (DeviceModels) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "com.lens.device.entity.DeviceModels[ id=" + id + " ]";
     }
 
     public String getName() {
@@ -205,37 +242,12 @@ public class DeviceModels implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Devices> getDevicesCollection() {
-        return devicesCollection;
+    public Collection<CartItems> getCartItemsCollection() {
+        return cartItemsCollection;
     }
 
-    public void setDevicesCollection(Collection<Devices> devicesCollection) {
-        this.devicesCollection = devicesCollection;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof DeviceModels)) {
-            return false;
-        }
-        DeviceModels other = (DeviceModels) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "com.lens.device.entity.DeviceModels[ id=" + id + " ]";
+    public void setCartItemsCollection(Collection<CartItems> cartItemsCollection) {
+        this.cartItemsCollection = cartItemsCollection;
     }
 
 }

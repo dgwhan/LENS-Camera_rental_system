@@ -50,7 +50,6 @@ public class UserIdentityStore implements IdentityStore {
         Users user = usersFacade.findByUsername(username);
 
         //kiểm tra user tồn tại, status ACTIVE, và verify password
-        //1 log chung, không tách riêng sai username hay mật khẩu vì lý do bảo mật (chống user enumeration)
         if (user == null || !"ACTIVE".equals(user.getStatus()) || !passwordService.verify(password, user.getPassword())) {
             LOGGER.warning("Authentication failed: Invalid username or password.");
             return CredentialValidationResult.INVALID_RESULT;

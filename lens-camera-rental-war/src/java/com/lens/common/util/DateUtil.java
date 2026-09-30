@@ -73,7 +73,7 @@ public final class DateUtil {
     }
 
     /**
-     * Parses a date string using 'yyyy-MM-dd' format.
+     * Parses a date string using 'dd/MM/yyyy' or 'yyyy-MM-dd' format.
      *
      * @param dateStr the date string
      * @return Date object
@@ -83,9 +83,15 @@ public final class DateUtil {
         if (dateStr == null || dateStr.trim().isEmpty()) {
             return null;
         }
+        String trimmed = dateStr.trim();
+        if (trimmed.contains("/")) {
+            SimpleDateFormat formatter = new SimpleDateFormat(DEFAULT_DISPLAY_PATTERN);
+            formatter.setLenient(false);
+            return formatter.parse(trimmed);
+        }
         SimpleDateFormat formatter = new SimpleDateFormat(DEFAULT_INPUT_PATTERN);
         formatter.setLenient(false);
-        return formatter.parse(dateStr.trim());
+        return formatter.parse(trimmed);
     }
 
     /**

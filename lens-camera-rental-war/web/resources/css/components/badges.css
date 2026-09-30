@@ -1,0 +1,81 @@
+/* ==========================================================================
+   Badges, Tags & Status Indicators — Minimalist, Uniform & Smooth
+   ========================================================================== */
+
+/* Base Badge: Tối giản, cùng cỡ (24px), bo góc mượt (pill) */
+.badge-role,
+.badge-status,
+.model-type-badge,
+.detail-badge,
+.badge-custom {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    padding: 0 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1;
+    border-radius: 9999px;
+    box-sizing: border-box;
+    white-space: nowrap;
+    text-align: center;
+    vertical-align: middle;
+    letter-spacing: 0.01em;
+    border: 1px solid transparent;
+    transition: all 0.15s ease;
+}
+
+/* User Roles */
+.badge-admin {
+    background-color: #eef2ff;
+    color: #4f46e5;
+    border-color: #e0e7ff;
+}
+
+.badge-customer {
+    background-color: #f1f5f9;
+    color: #475569;
+    border-color: #e2e8f0;
+}
+
+/* Statuses: Active / Available */
+.badge-active,
+.badge-available {
+    background-color: #ecfdf5;
+    color: #047857;
+    border-color: #d1fae5;
+}
+
+/* Statuses: Inactive */
+.badge-inactive {
+    background-color: #f8fafc;
+    color: #64748b;
+    border-color: #e2e8f0;
+}
+
+/* Statuses: Renting */
+.badge-renting {
+    background-color: #eff6ff;
+    color: #2563eb;
+    border-color: #dbeafe;
+}
+
+/* Device Model Types */
+.model-type-camera {
+    background-color: #f5f3ff;
+    color: #6d28d9;
+    border-color: #ede9fe;
+}
+
+.model-type-lens {
+    background-color: #ecfdf5;
+    color: #047857;
+    border-color: #d1fae5;
+}
+
+.model-type-accessory {
+    background-color: #fffbeb;
+    color: #b45309;
+    border-color: #fef3c7;
+}

@@ -2,22 +2,24 @@ package com.lens.device_model;
 
 import com.lens.availability.dto.AvailabilityResult;
 import com.lens.availability.service.AvailabilityServiceLocal;
+import com.lens.cart.model.CartService;
 import com.lens.common.util.DateUtil;
+import com.lens.common.util.FacesUtil;
 import com.lens.common.util.FormatUtil;
-import com.lens.device.facade.DevicesFacadeLocal;
 import com.lens.device_model.entity.DeviceModels;
 import com.lens.device_model.facade.DeviceModelsFacadeLocal;
 import jakarta.ejb.EJB;
-import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import java.io.IOException;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Date;
 
 /**
+ * Manages the device detail page and rental availability operations.
  *
  * @author Duong Ngoc Han
  */
@@ -33,6 +35,12 @@ public class DeviceDetailController implements Serializable {
     @EJB
     private AvailabilityServiceLocal availabilityService;
 
+    @Inject
+    private CartService cartService;
+
+    @Inject
+    private HttpServletRequest request;
+
     private DeviceModels deviceModel;
     private Integer id;
     private String startDate;
@@ -42,69 +50,49 @@ public class DeviceDetailController implements Serializable {
     public DeviceDetailController() {
     }
 
+    /**
+     * Loads the selected device model.
+     */
     public void loadDeviceDetail() {
         if (id == null || id <= 0) {
-            FacesContext context = FacesContext.getCurrentInstance();
-            if (context != null) {
-                String idParam = context.getExternalContext().getRequestParameterMap().get("id");
-                if (idParam == null || idParam.isEmpty()) {
-                    idParam = context.getExternalContext().getRequestParameterMap().get("deviceModelIdHidden");
-                }
-                if (idParam != null && !idParam.isEmpty()) {
-                    try {
-                        id = Integer.parseInt(idParam);
-                    } catch (NumberFormatException ignored) {
-                    }
-                }
-            }
-        }
-
-        if (id == null || id <= 0) {
-            redirectTo404();
+            FacesUtil.redirectTo404("Device not found");
             return;
         }
 
         deviceModel = deviceModelsFacade.find(id);
 
         if (deviceModel == null) {
-            redirectTo404();
+            FacesUtil.redirectTo404("Device not found");
         }
     }
 
-    //kiểm tra ngày thuê đang chọn có khả dụng không
+    /**
+     * Checks whether the selected rental period is available.
+     */
     public void checkAvailability() {
         if (id == null || id <= 0) {
-            FacesContext context = FacesContext.getCurrentInstance();
-            if (context != null) {
-                String idParam = context.getExternalContext().getRequestParameterMap().get("id");
-                if (idParam == null || idParam.isEmpty()) {
-                    idParam = context.getExternalContext().getRequestParameterMap().get("deviceModelIdHidden");
-                }
-                if (idParam != null && !idParam.isEmpty()) {
-                    try {
-                        id = Integer.parseInt(idParam);
-                    } catch (NumberFormatException ignored) {
-                    }
-                }
-            }
+            return;
         }
 
-        if (deviceModel == null && id != null && id > 0) {
+        if (deviceModel == null) {
             deviceModel = deviceModelsFacade.find(id);
         }
 
-        //kiểm tra ngày trước khi parse
         if (startDate == null || startDate.trim().isEmpty() || endDate == null || endDate.trim().isEmpty()) {
             FacesContext context = FacesContext.getCurrentInstance();
+
             if (context != null) {
                 if (startDate == null || startDate.trim().isEmpty()) {
                     startDate = context.getExternalContext().getRequestParameterMap().get("startDate");
+
                     if (startDate == null || startDate.trim().isEmpty()) {
                         startDate = context.getExternalContext().getRequestParameterMap().get("rentalStartDate");
                     }
                 }
+
                 if (endDate == null || endDate.trim().isEmpty()) {
                     endDate = context.getExternalContext().getRequestParameterMap().get("endDate");
+
                     if (endDate == null || endDate.trim().isEmpty()) {
                         endDate = context.getExternalContext().getRequestParameterMap().get("rentalEndDate");
                     }
@@ -118,33 +106,63 @@ public class DeviceDetailController implements Serializable {
         }
 
         try {
-            //convert String từ form thành Date thông qua DateUtil
+            // convert string from form to date
             Date requestedStartDate = DateUtil.parseDate(startDate);
             Date requestedEndDate = DateUtil.parseDate(endDate);
-            //gọi business service
+
+            // check rental period availability
             availabilityResult = availabilityService.checkAvailability(id, requestedStartDate, requestedEndDate);
         } catch (ParseException ex) {
-            //ngày không đúng format
+            // handle invalid date format
             availabilityResult = new AvailabilityResult(false, 0, 0, 0, "Please select a valid rental period.");
         }
     }
 
-    private void redirectTo404() {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-
-        if (facesContext != null) {
-            ExternalContext ec = facesContext.getExternalContext();
-
-            try {
-                ec.responseSendError(404, "Device not found");
-                facesContext.responseComplete();
-            } catch (IOException ex) {
-                // Ignore fallback
-            }
+    /**
+     * Adds the selected rental item to the customer's cart.
+     *
+     * @return login page if the user is not authenticated; otherwise stays on
+     * the current page
+     */
+    public String addToCart() {
+        if (request.getUserPrincipal() == null) {
+            return "/client/pages/login?faces-redirect=true";
         }
+
+        if (deviceModel == null) {
+            FacesUtil.addErrorMessage("Device not found.");
+            return null;
+        }
+
+        if (startDate == null || startDate.trim().isEmpty() || endDate == null || endDate.trim().isEmpty()) {
+            FacesUtil.addErrorMessage("Please select both start date and end date.");
+            return null;
+        }
+
+        try {
+            Date requestedStartDate = DateUtil.parseDate(startDate);
+            Date requestedEndDate = DateUtil.parseDate(endDate);
+
+            boolean added = cartService.addToCart(deviceModel, requestedStartDate, requestedEndDate);
+
+            if (!added) {
+                FacesUtil.addErrorMessage("This device is already in your cart for the selected rental period.");
+                return null;
+            }
+
+            FacesUtil.addSuccessMessage("Added to cart successfully!");
+        } catch (ParseException ex) {
+            FacesUtil.addErrorMessage("Please select a valid rental period.");
+        }
+
+        return null;
     }
 
-    //thiết bị còn hàng
+    /**
+     * Checks whether the device model currently has available physical devices.
+     *
+     * @return true if the device model is available
+     */
     public boolean isProductAvailable() {
         if (id == null || availabilityService == null) {
             return false;
@@ -152,7 +170,11 @@ public class DeviceDetailController implements Serializable {
         return availabilityService.isProductAvailable(id);
     }
 
-    //thiết bị hết hàng
+    /**
+     * Returns the current availability status of the device model.
+     *
+     * @return availability status
+     */
     public String getProductAvailabilityStatus() {
         if (id == null || availabilityService == null) {
             return "OUT OF STOCK";
@@ -160,29 +182,140 @@ public class DeviceDetailController implements Serializable {
         return availabilityService.getProductAvailabilityStatus(id);
     }
 
+    /**
+     * Returns whether the device model is available.
+     *
+     * @return true if the device model is available
+     */
     public boolean isAvailable() {
         return isProductAvailable();
     }
 
+    /**
+     * Returns the availability status for display.
+     *
+     * @return availability status
+     */
     public String getAvailabilityStatus() {
         return getProductAvailabilityStatus();
     }
 
+    /**
+     * Returns the store contact phone number.
+     *
+     * @return store phone number
+     */
     public String getStorePhone() {
         return "+84 xxx xxx xxx";
     }
 
-
+    /**
+     * Formats a price value for display.
+     *
+     * @param price price value
+     * @return formatted price
+     */
     public String formatPrice(long price) {
         return FormatUtil.formatPrice(price);
     }
 
+    /**
+     * Formats a number for display.
+     *
+     * @param number number value
+     * @return formatted number
+     */
     public String formatNumber(long number) {
         return FormatUtil.formatNumber(number);
     }
 
+    /**
+     * Returns the device image URL.
+     *
+     * @param imageName image file name
+     * @return device image URL
+     */
     public String getImageUrl(String imageName) {
         return com.lens.common.util.ImageUtil.getDeviceImageUrl(imageName);
+    }
+
+    /**
+     * Calculates the rental duration between the selected dates.
+     *
+     * @return rental duration in days
+     */
+    public long getRentalDays() {
+        return DateUtil.calculateDaysBetween(startDate, endDate);
+    }
+
+    /**
+     * Calculates the rental fee based on the selected rental period.
+     *
+     * @return calculated rental fee
+     */
+    public long getCalculatedRentalFee() {
+        if (deviceModel == null) {
+            return 0;
+        }
+        return getRentalDays() * deviceModel.getRentalPrice();
+    }
+
+    /**
+     * Returns the formatted rental fee for display.
+     *
+     * @return formatted rental fee
+     */
+    public String getFormattedRentalFee() {
+        return formatPrice(getCalculatedRentalFee());
+    }
+
+    /**
+     * Calculates the estimated total amount including the deposit.
+     *
+     * @return estimated total amount
+     */
+    public long getEstimatedTotalAmount() {
+        if (deviceModel == null) {
+            return 0;
+        }
+        return getCalculatedRentalFee() + deviceModel.getDepositAmount();
+    }
+
+    /**
+     * Returns the formatted estimated total amount for display.
+     *
+     * @return formatted estimated total amount
+     */
+    public String getFormattedEstimatedTotal() {
+        return formatPrice(getEstimatedTotalAmount());
+    }
+
+    /**
+     * Returns the formatted rental start date for display.
+     *
+     * @return formatted start date
+     */
+    public String getDisplayStartDate() {
+        return DateUtil.formatDisplayDate(startDate);
+    }
+
+    /**
+     * Returns the formatted rental end date for display.
+     *
+     * @return formatted end date
+     */
+    public String getDisplayEndDate() {
+        return DateUtil.formatDisplayDate(endDate);
+    }
+
+    /**
+     * Formats a date string for display.
+     *
+     * @param dateStr date string to format
+     * @return formatted date
+     */
+    public String formatDisplayDate(String dateStr) {
+        return DateUtil.formatDisplayDate(dateStr);
     }
 
     public DeviceModels getDeviceModel() {
@@ -221,41 +354,4 @@ public class DeviceDetailController implements Serializable {
         return availabilityResult;
     }
 
-    public long getRentalDays() {
-        return DateUtil.calculateDaysBetween(startDate, endDate);
-    }
-
-    public long getCalculatedRentalFee() {
-        if (deviceModel == null) {
-            return 0;
-        }
-        return getRentalDays() * deviceModel.getRentalPrice();
-    }
-
-    public String getFormattedRentalFee() {
-        return formatPrice(getCalculatedRentalFee());
-    }
-
-    public long getEstimatedTotalAmount() {
-        if (deviceModel == null) {
-            return 0;
-        }
-        return getCalculatedRentalFee() + deviceModel.getDepositAmount();
-    }
-
-    public String getFormattedEstimatedTotal() {
-        return formatPrice(getEstimatedTotalAmount());
-    }
-
-    public String getDisplayStartDate() {
-        return DateUtil.formatDisplayDate(startDate);
-    }
-
-    public String getDisplayEndDate() {
-        return DateUtil.formatDisplayDate(endDate);
-    }
-
-    public String formatDisplayDate(String dateStr) {
-        return DateUtil.formatDisplayDate(dateStr);
-    }
 }

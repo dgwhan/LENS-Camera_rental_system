@@ -1,0 +1,534 @@
+/* Modular Component Styles */
+@import url('search.css');
+@import url('nav.css');
+
+:root {
+    /* Primary Monochrome Palette mapped to root tokens */
+    --hdr-white: var(--color-white, #ffffff);
+    --hdr-black: var(--color-black, #000000);
+
+    /* Supporting Grayscale Palette */
+    --hdr-gray-50: var(--color-surface, #f8f8f8);
+    --hdr-gray-100: var(--color-surface-subtle, #f1f5f9);
+    --hdr-gray-200: #eeeeee;
+    --hdr-gray-300: #d9d9d9;
+    --hdr-gray-400: #b0b0b0;
+    --hdr-gray-500: var(--color-text-muted, #888888);
+    --hdr-gray-600: var(--color-text-secondary, #666666);
+    --hdr-gray-700: #333333;
+    --hdr-gray-800: #222222;
+    --hdr-gray-900: var(--color-text, #111111);
+
+    /* Semantic Tokens */
+    --hdr-border: var(--color-border, #e5e5e5);
+    --hdr-border-subtle: var(--color-border-subtle, #f0f0f0);
+    --hdr-bg: var(--color-background, #ffffff);
+    --hdr-font: var(--font-family-base, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+    --hdr-transition: var(--transition-fast, 0.15s ease);
+}
+
+/* Full-width site header bar */
+.site-header {
+    width: 100%;
+    background-color: var(--hdr-bg);
+    border-bottom: 1px solid var(--hdr-border);
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: var(--hdr-font);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.site-header *,
+.site-header *::before,
+.site-header *::after {
+    box-sizing: border-box;
+}
+
+/* Header Top Section (full width container) */
+.site-header .header-top {
+    width: 100%;
+    margin: 0;
+    background-color: var(--hdr-bg);
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.header-log,
+.header-top-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+    min-height: 72px;
+    max-width: 100%;
+    margin: 0;
+    width: 100%;
+    padding: 0 24px;
+    border-bottom: 1px solid var(--hdr-border-subtle);
+    gap: 24px;
+    position: relative;
+    background-color: var(--hdr-bg);
+    box-sizing: border-box;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.header-brand,
+.brand-link {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    text-decoration: none !important;
+    flex-shrink: 0;
+    cursor: pointer;
+    user-select: none;
+}
+
+.header-brand .title,
+.header-brand .brand-title,
+.brand-link .title,
+.brand-link .brand-title {
+    font-family: var(--hdr-font);
+    font-size: 1.375rem; /* ~22px */
+    font-weight: 900;
+    letter-spacing: -0.025em;
+    color: var(--hdr-black);
+    text-transform: uppercase;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+}
+
+.header-brand .sub-title,
+.header-brand .brand-subtitle,
+.brand-link .sub-title,
+.brand-link .brand-subtitle {
+    font-family: var(--hdr-font);
+    font-size: 0.58rem; /* ~9.3px */
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--hdr-gray-600);
+    text-transform: uppercase;
+    margin: 3px 0 0 0;
+    padding: 0;
+    line-height: 1;
+}
+
+.header-brand:hover .title,
+.header-brand:hover .brand-title,
+.brand-link:hover .title,
+.brand-link:hover .brand-title {
+    color: var(--hdr-gray-900);
+}
+
+.header-brand:hover .sub-title,
+.header-brand:hover .brand-subtitle,
+.brand-link:hover .sub-title,
+.brand-link:hover .brand-subtitle {
+    color: var(--hdr-black);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+}
+
+.header-action {
+    display: flex;
+    align-items: center;
+}
+
+/* Pure CSS Cart Icon (Shopping Bag Body + Arched Top Handle) */
+.cart-icon {
+    display: inline-block;
+    width: 16px;
+    height: 15px;
+    border: 1.8px solid var(--hdr-black);
+    border-radius: 2px 2px 3px 3px;
+    position: relative;
+    box-sizing: border-box;
+    margin-top: 3px;
+    flex-shrink: 0;
+}
+
+.cart-icon::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 2.5px;
+    width: 7px;
+    height: 5px;
+    border: 1.8px solid var(--hdr-black);
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    box-sizing: border-box;
+}
+
+/* User Icon disabled per requirement */
+.auth-icon {
+    display: none !important;
+}
+
+/* Cart Action */
+.cart-link,
+.header-cart-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    text-decoration: none !important;
+    font-family: var(--hdr-font);
+    color: var(--hdr-black);
+    padding: 0;
+    transition: background-color var(--hdr-transition), opacity var(--hdr-transition);
+    border-radius: 6px;
+}
+
+.cart-link:hover,
+.header-cart-link:hover {
+    background-color: var(--hdr-gray-100);
+    opacity: 1;
+}
+
+.cart-text {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--hdr-black);
+    letter-spacing: -0.01em;
+}
+
+/* Circular Monochrome Count Badge (Overlapping Top-Right Corner) */
+.cart-badge {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 9999px;
+    background-color: var(--hdr-black);
+    color: var(--hdr-white);
+    font-family: var(--hdr-font);
+    font-size: 0.625rem; /* 10px */
+    font-weight: 700;
+    line-height: 1;
+    border: 2px solid var(--hdr-white);
+    box-sizing: border-box;
+    margin: 0;
+    pointer-events: none;
+}
+
+.cart-badge:empty {
+    display: none !important;
+}
+
+/* Subtle Vertical Divider between Cart and Auth */
+.action-divider {
+    display: block;
+    width: 1px;
+    height: 20px;
+    background-color: var(--hdr-border);
+    margin: 0 4px;
+    flex-shrink: 0;
+}
+
+/* Authentication Links */
+.header-auth {
+    display: flex;
+    align-items: center;
+}
+
+.auth-guest-links,
+.auth-user-logged {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.auth-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none !important;
+    font-family: var(--hdr-font);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--hdr-black);
+    padding: 6px 4px;
+    transition: opacity var(--hdr-transition);
+    border-radius: 4px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.auth-link:hover {
+    opacity: 0.75;
+}
+
+.auth-text {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--hdr-black);
+    letter-spacing: -0.01em;
+}
+
+/* Register secondary utility link */
+.auth-register .auth-text {
+    font-weight: 500;
+    color: var(--hdr-gray-600);
+}
+
+.auth-register:hover .auth-text {
+    color: var(--hdr-black);
+}
+
+.auth-admin-link {
+    font-weight: 700;
+    color: var(--hdr-black);
+}
+
+/* User Dropdown */
+.user-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.user-dropdown-toggle {
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.user-dropdown-caret {
+    font-size: 0.6875rem;
+    margin-left: 2px;
+    color: var(--hdr-gray-600);
+}
+
+.user-dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    background-color: var(--hdr-white);
+    border: 1px solid var(--hdr-border);
+    border-radius: 6px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    padding: 4px 0;
+    min-width: 140px;
+    z-index: 1000;
+}
+
+.user-dropdown-form {
+    margin: 0;
+    padding: 0;
+}
+
+.user-dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 8px 16px;
+    font-family: var(--hdr-font);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none !important;
+    box-sizing: border-box;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.dropdown-item-danger {
+    color: #dc2626;
+}
+
+.dropdown-item-danger:hover {
+    background-color: #fef2f2;
+    color: #b91c1c;
+}
+
+.header-brand:focus-visible,
+.brand-link:focus-visible,
+.cart-link:focus-visible,
+.header-cart-link:focus-visible,
+.auth-link:focus-visible,
+.mobile-menu-btn:focus-visible {
+    outline: 2px solid var(--hdr-black);
+    outline-offset: 3px;
+}
+
+/* Pure CSS Menu Icon (3 horizontal bars) */
+.menu-icon {
+    display: inline-block;
+    width: 18px;
+    height: 2px;
+    background-color: var(--hdr-black);
+    position: relative;
+    vertical-align: middle;
+    pointer-events: none;
+    transition: background-color 0.2s ease;
+}
+
+.menu-icon::before,
+.menu-icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 18px;
+    height: 2px;
+    background-color: var(--hdr-black);
+    pointer-events: none;
+    transition: transform 0.2s ease, top 0.2s ease, bottom 0.2s ease;
+}
+
+.menu-icon::before {
+    top: -5px;
+}
+
+.menu-icon::after {
+    bottom: -5px;
+}
+
+/* Nav open state: hamburger morphs to X */
+.site-header.nav-open .menu-icon {
+    background-color: transparent;
+}
+
+.site-header.nav-open .menu-icon::before {
+    top: 0;
+    transform: rotate(45deg);
+}
+
+.site-header.nav-open .menu-icon::after {
+    bottom: 0;
+    transform: rotate(-45deg);
+}
+
+/* Mobile Menu Button (hidden by default on desktop and tablet) */
+.mobile-menu-btn {
+    display: none;
+}
+
+/* Tablet Breakpoint (~768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .header-log,
+    .header-top-container {
+        padding: 0 20px;
+        gap: 16px;
+        height: 68px;
+        min-height: 68px;
+    }
+
+    .header-actions {
+        gap: 12px;
+    }
+}
+
+/* Mobile Breakpoint (<= 767px) - Target Viewport: ~390px */
+@media (max-width: 767px) {
+    /* Container: 2-row layout using flex-wrap */
+    .header-log,
+    .header-top-container {
+        flex-wrap: wrap;
+        height: auto;
+        min-height: unset;
+        padding: 12px 16px 14px;
+        gap: 0;
+        border-bottom: none;
+    }
+
+    .mobile-menu-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        order: 1;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        margin: 0;
+        background: transparent;
+        border: none;
+        color: var(--hdr-black);
+        cursor: pointer;
+        flex-shrink: 0;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+        user-select: none;
+    }
+
+    .header-logo {
+        order: 2;
+        margin-left: 10px;
+        margin-right: auto;
+        flex-shrink: 0;
+    }
+
+    .header-brand .title,
+    .header-brand .brand-title,
+    .brand-link .title,
+    .brand-link .brand-title {
+        font-size: 1.125rem;
+    }
+
+    .header-brand .sub-title,
+    .header-brand .brand-subtitle,
+    .brand-link .sub-title,
+    .brand-link .brand-subtitle {
+        font-size: 0.5rem;
+    }
+
+    .header-actions {
+        order: 3;
+        gap: 16px;
+    }
+
+    /* Hide text labels, secondary register link, and vertical divider */
+    .cart-text,
+    .auth-text,
+    .auth-register,
+    .action-divider,
+    .user-dropdown-caret {
+        display: none;
+    }
+
+    /* Cart Action: shopping bag with overlapping badge */
+    .cart-link,
+    .header-cart-link {
+        position: relative;
+        width: 36px;
+        height: 36px;
+        padding: 0;
+    }
+
+    .cart-badge {
+        position: absolute;
+        top: 1px;
+        right: 1px;
+    }
+
+    .auth-link {
+        padding: 4px 2px;
+    }
+}

@@ -1,10 +1,6 @@
 /**
  * LENS Camera Rental - Rental Period & Date Picker Script
- * Day-based rental scope (24-hour rolling increment):
- * - Renting today and returning tomorrow is 1 day (24h) and is FULLY ALLOWED.
- * - Return date must be after start date (same-day / past dates disabled for return).
- * - Dynamic duration calculation: DURATION: 1 DAY, DURATION: 2 DAYS, etc.
- * - Automatic locking once dates are selected (with Change/Reset button to unlock).
+ * Streamlined, lightweight date range selection (24h increments).
  */
 document.addEventListener('DOMContentLoaded', function () {
     const wrapper = document.querySelector('.rental-period-section');
@@ -15,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const startText = wrapper.querySelector('[data-role="start-text"]');
     const endText = wrapper.querySelector('[data-role="end-text"]');
     const durationDisplay = wrapper.querySelector('[data-role="duration-display"]');
-    const unlockBtn = wrapper.querySelector('[data-role="unlock-btn"]');
     const popup = wrapper.querySelector('.rental-calendar-popup');
     const monthTitle = wrapper.querySelector('[data-role="month-title"]');
     const stepHint = wrapper.querySelector('[data-role="step-hint"]');
@@ -26,290 +21,206 @@ document.addEventListener('DOMContentLoaded', function () {
     const hiddenStart = wrapper.querySelector('[data-role="start-hidden"]');
     const hiddenEnd = wrapper.querySelector('[data-role="end-hidden"]');
 
-    let startDate = null;
-    let endDate = null;
-    let activeTarget = 'start'; // 'start' or 'end'
-    let isLocked = false;
-
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    let viewYear = today.getFullYear();
-    let viewMonth = today.getMonth();
-
-    const monthNames = [
+    const MONTHS = [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
     ];
 
-    function formatDisplayDate(date) {
-        if (!date) return 'dd / mm / yyyy';
-        const d = String(date.getDate()).padStart(2, '0');
-        const m = String(date.getMonth() + 1).padStart(2, '0');
-        const y = date.getFullYear();
-        return `${d} / ${m} / ${y}`;
+    function parseDate(str) {
+        if (!str || typeof str !== 'string') return null;
+        const p = str.trim().split(/[\/\-\.]/);
+        if (p.length === 3) {
+            // Check yyyy-mm-dd vs dd/mm/yyyy
+            const d = p[0].length === 4 ? parseInt(p[2], 10) : parseInt(p[0], 10);
+            const m = parseInt(p[1], 10) - 1;
+            const y = p[0].length === 4 ? parseInt(p[0], 10) : parseInt(p[2], 10);
+            const dt = new Date(y, m, d);
+            if (!isNaN(dt.getTime())) {
+                dt.setHours(0, 0, 0, 0);
+                return dt;
+            }
+        }
+        return null;
     }
 
-    function formatIsoDate(date) {
-        if (!date) return '';
-        const d = String(date.getDate()).padStart(2, '0');
-        const m = String(date.getMonth() + 1).padStart(2, '0');
-        const y = date.getFullYear();
-        return `${y}-${m}-${d}`;
+    let startDate = parseDate(hiddenStart ? hiddenStart.value : null);
+    let endDate = parseDate(hiddenEnd ? hiddenEnd.value : null);
+    let picking = 'start'; // 'start' | 'end'
+
+    let viewYear = (startDate || today).getFullYear();
+    let viewMonth = (startDate || today).getMonth();
+
+    function pad(n) {
+        return n < 10 ? '0' + n : '' + n;
     }
 
-    function calculateDurationDays(start, end) {
-        if (!start || !end) return null;
-        const diffTime = end.getTime() - start.getTime();
-        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-        return diffDays >= 1 ? diffDays : null;
+    function formatDisplay(d) {
+        return d ? `${pad(d.getDate())} / ${pad(d.getMonth() + 1)} / ${d.getFullYear()}` : 'dd / mm / yyyy';
     }
 
-    function updateDuration() {
-        if (!startDate || !endDate) {
-            if (durationDisplay) {
+    function formatIso(d) {
+        return d ? `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}` : '';
+    }
+
+    function updateUI() {
+        if (startText) {
+            startText.textContent = formatDisplay(startDate);
+            startText.classList.toggle('has-value', !!startDate);
+        }
+        if (endText) {
+            endText.textContent = formatDisplay(endDate);
+            endText.classList.toggle('has-value', !!endDate);
+        }
+
+        const isoStart = formatIso(startDate);
+        const isoEnd = formatIso(endDate);
+        if (hiddenStart) hiddenStart.value = isoStart;
+        if (hiddenEnd) hiddenEnd.value = isoEnd;
+
+        // Sync to global hidden inputs if present (used by detail.xhtml AJAX check)
+        const gStart = document.getElementById('startDateHidden');
+        const gEnd = document.getElementById('endDateHidden');
+        if (gStart) gStart.value = isoStart;
+        if (gEnd) gEnd.value = isoEnd;
+
+        // Duration calculation
+        if (durationDisplay) {
+            if (startDate && endDate) {
+                const days = Math.round((endDate.getTime() - startDate.getTime()) / 86400000);
+                if (days >= 1) {
+                    durationDisplay.textContent = 'DURATION: ' + (days === 1 ? '1 DAY' : days + ' DAYS');
+                    durationDisplay.classList.add('is-valid');
+                } else {
+                    durationDisplay.textContent = 'DURATION: --';
+                    durationDisplay.classList.remove('is-valid');
+                }
+            } else {
                 durationDisplay.textContent = 'DURATION: --';
                 durationDisplay.classList.remove('is-valid');
             }
-            return;
         }
-        const days = calculateDurationDays(startDate, endDate);
-        if (days !== null && days >= 1) {
-            if (durationDisplay) {
-                const label = days === 1 ? '1 DAY' : `${days} DAYS`;
-                durationDisplay.textContent = `DURATION: ${label}`;
-                durationDisplay.classList.add('is-valid');
-            }
-        } else {
-            if (durationDisplay) {
-                durationDisplay.textContent = 'DURATION: --';
-                durationDisplay.classList.remove('is-valid');
-            }
-        }
+
+        // Active border
+        const isOpen = popup && popup.classList.contains('is-open');
+        if (startBox) startBox.classList.toggle('is-active', isOpen && picking === 'start');
+        if (endBox) endBox.classList.toggle('is-active', isOpen && picking === 'end');
     }
 
     function renderCalendar() {
         if (!monthTitle || !calendarDays) return;
-        monthTitle.textContent = `${monthNames[viewMonth]} ${viewYear}`;
+        monthTitle.textContent = `${MONTHS[viewMonth]} ${viewYear}`;
+
+        if (stepHint) {
+            stepHint.textContent = (picking === 'end' && startDate)
+                ? 'Select return date (pickup date + 1 or more days)'
+                : 'Select start date (pickup date)';
+        }
 
         if (prevBtn) {
             const isCurrentMonth = (viewYear === today.getFullYear() && viewMonth === today.getMonth());
             prevBtn.disabled = isCurrentMonth;
             prevBtn.style.opacity = isCurrentMonth ? '0.35' : '1';
-            prevBtn.style.cursor = isCurrentMonth ? 'not-allowed' : 'pointer';
         }
 
-        if (stepHint) {
-            if (activeTarget === 'start') {
-                stepHint.textContent = 'Select start date (pickup date)';
+        const firstDay = new Date(viewYear, viewMonth, 1).getDay(); // 0 is Sunday
+        const totalDays = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+        let html = '<tr>';
+        for (let i = 0; i < firstDay; i++) {
+            html += '<td><span class="calendar-day-btn is-empty"></span></td>';
+        }
+
+        let col = firstDay;
+        for (let d = 1; d <= totalDays; d++) {
+            if (col === 7) {
+                html += '</tr><tr>';
+                col = 0;
+            }
+
+            const cellDate = new Date(viewYear, viewMonth, d);
+            cellDate.setHours(0, 0, 0, 0);
+
+            const isPast = cellDate < today;
+            const isInvalidEnd = picking === 'end' && startDate && cellDate <= startDate;
+
+            let cls = 'calendar-day-btn';
+            let disabledAttr = '';
+
+            if (isPast || isInvalidEnd) {
+                cls += ' is-disabled';
+                disabledAttr = ' disabled';
             } else {
-                stepHint.textContent = 'Select return date (>= 1 day / 24h count)';
-            }
-        }
+                const isStart = startDate && cellDate.getTime() === startDate.getTime();
+                const isEnd = endDate && cellDate.getTime() === endDate.getTime();
+                const inRange = startDate && endDate && cellDate > startDate && cellDate < endDate;
 
-        const firstDayIndex = new Date(viewYear, viewMonth, 1).getDay();
-        const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
-
-        calendarDays.innerHTML = '';
-
-        let row = document.createElement('tr');
-
-        // Blank cells before the 1st
-        for (let i = 0; i < firstDayIndex; i++) {
-            const cell = document.createElement('td');
-            cell.innerHTML = '<span class="calendar-day-btn is-empty"></span>';
-            row.appendChild(cell);
-        }
-
-        for (let day = 1; day <= daysInMonth; day++) {
-            if (row.children.length === 7) {
-                calendarDays.appendChild(row);
-                row = document.createElement('tr');
+                if (isStart) cls += ' is-start-date';
+                if (isEnd) cls += ' is-end-date';
+                if (inRange) cls += ' is-in-range';
             }
 
-            const currentCellDate = new Date(viewYear, viewMonth, day);
-            currentCellDate.setHours(0, 0, 0, 0);
-
-            const cell = document.createElement('td');
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'calendar-day-btn';
-            btn.textContent = day;
-
-            //Past dates are never allowed
-            const isPast = currentCellDate < today;
-
-            //When choosing End Date, rental is 24h rolling count.
-            let violatesMinDuration = false;
-            if (activeTarget === 'end' && startDate) {
-                const diffTime = currentCellDate.getTime() - startDate.getTime();
-                const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-                if (diffDays < 1) {
-                    violatesMinDuration = true;
-                }
-            }
-
-            if (isPast || violatesMinDuration) {
-                btn.disabled = true;
-                btn.classList.add('is-disabled');
-                if (violatesMinDuration && !isPast) {
-                    btn.title = 'Return date must be after pickup date (minimum 1 day / 24h)';
-                }
-            } else {
-                // Check if start or end date
-                const isStart = startDate && currentCellDate.getTime() === startDate.getTime();
-                const isEnd = endDate && currentCellDate.getTime() === endDate.getTime();
-                const inRange = startDate && endDate && currentCellDate > startDate && currentCellDate < endDate;
-
-                if (isStart) btn.classList.add('is-start-date');
-                if (isEnd) btn.classList.add('is-end-date');
-                if (inRange) btn.classList.add('is-in-range');
-
-                btn.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    handleDateClick(currentCellDate);
-                });
-            }
-
-            cell.appendChild(btn);
-            row.appendChild(cell);
+            html += `<td><button type="button" class="${cls}" data-day="${d}"${disabledAttr}>${d}</button></td>`;
+            col++;
         }
 
-        // Fill remaining row cells
-        while (row.children.length < 7 && row.children.length > 0) {
-            const cell = document.createElement('td');
-            cell.innerHTML = '<span class="calendar-day-btn is-empty"></span>';
-            row.appendChild(cell);
+        while (col > 0 && col < 7) {
+            html += '<td><span class="calendar-day-btn is-empty"></span></td>';
+            col++;
         }
-        if (row.children.length > 0) {
-            calendarDays.appendChild(row);
-        }
-    }
+        html += '</tr>';
 
-    function handleDateClick(selectedDate) {
-        if (activeTarget === 'start') {
-            startDate = new Date(selectedDate);
-            endDate = null;
-            activeTarget = 'end';
-            updateInputs();
-            renderCalendar();
-        } else {
-            // Target is end: check that return date is at least next day (24h count, diffDays >= 1)
-            const diffTime = selectedDate.getTime() - startDate.getTime();
-            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-
-            if (diffDays >= 1) {
-                endDate = new Date(selectedDate);
-                isLocked = true;
-                closePopup();
-                updateInputs();
-            }
-        }
-    }
-
-    function updateInputs() {
-        if (startText) {
-            if (startDate) {
-                startText.textContent = formatDisplayDate(startDate);
-                startText.classList.add('has-value');
-            } else {
-                startText.textContent = 'dd / mm / yyyy';
-                startText.classList.remove('has-value');
-            }
-        }
-        if (endText) {
-            if (endDate) {
-                endText.textContent = formatDisplayDate(endDate);
-                endText.classList.add('has-value');
-            } else {
-                endText.textContent = 'dd / mm / yyyy';
-                endText.classList.remove('has-value');
-            }
-        }
-        if (hiddenStart) hiddenStart.value = formatIsoDate(startDate);
-        if (hiddenEnd) hiddenEnd.value = formatIsoDate(endDate);
-
-        if (startBox && endBox) {
-            startBox.classList.toggle('is-active', !isLocked && activeTarget === 'start' && popup.classList.contains('is-open'));
-            endBox.classList.toggle('is-active', !isLocked && activeTarget === 'end' && popup.classList.contains('is-open'));
-            startBox.classList.toggle('is-locked', isLocked);
-            endBox.classList.toggle('is-locked', isLocked);
-        }
-
-        if (unlockBtn) {
-            unlockBtn.style.display = isLocked ? 'inline-block' : 'none';
-        }
-
-        updateDuration();
+        calendarDays.innerHTML = html;
     }
 
     function openPopup(target) {
-        if (isLocked) return;
-        activeTarget = target;
-        popup.classList.add('is-open');
-        if (target === 'start' && startDate) {
-            viewYear = startDate.getFullYear();
-            viewMonth = startDate.getMonth();
-        } else if (target === 'end') {
-            if (endDate) {
-                viewYear = endDate.getFullYear();
-                viewMonth = endDate.getMonth();
-            } else if (startDate) {
-                viewYear = startDate.getFullYear();
-                viewMonth = startDate.getMonth();
-            }
-        }
-        updateInputs();
+        picking = target || 'start';
+        if (popup) popup.classList.add('is-open');
+        updateUI();
         renderCalendar();
     }
 
     function closePopup() {
-        popup.classList.remove('is-open');
-        if (startBox) startBox.classList.remove('is-active');
-        if (endBox) endBox.classList.remove('is-active');
+        if (popup) popup.classList.remove('is-open');
+        updateUI();
     }
 
-    function unlockAndReset(targetMode) {
-        isLocked = false;
-        startDate = null;
-        endDate = null;
-        activeTarget = targetMode || 'start';
-        updateInputs();
-        openPopup(activeTarget);
+    // Event delegation on calendarDays
+    if (calendarDays) {
+        calendarDays.addEventListener('click', function (e) {
+            const btn = e.target.closest('button[data-day]');
+            if (!btn || btn.disabled) return;
+            const day = parseInt(btn.getAttribute('data-day'), 10);
+            const clicked = new Date(viewYear, viewMonth, day);
+            clicked.setHours(0, 0, 0, 0);
+
+            if (picking === 'start' || !startDate || clicked <= startDate) {
+                startDate = clicked;
+                endDate = null;
+                picking = 'end';
+                updateUI();
+                renderCalendar();
+            } else {
+                endDate = clicked;
+                picking = 'start';
+                closePopup();
+            }
+        });
     }
 
     if (startBox) {
         startBox.addEventListener('click', function (e) {
             e.stopPropagation();
-            if (isLocked) return;
-            if (popup.classList.contains('is-open') && activeTarget === 'start') {
-                closePopup();
-            } else {
-                openPopup('start');
-            }
+            openPopup('start');
         });
     }
 
     if (endBox) {
         endBox.addEventListener('click', function (e) {
             e.stopPropagation();
-            if (isLocked) return;
-            if (popup.classList.contains('is-open') && activeTarget === 'end') {
-                closePopup();
-            } else {
-                if (!startDate) {
-                    openPopup('start');
-                } else {
-                    openPopup('end');
-                }
-            }
-        });
-    }
-
-    if (unlockBtn) {
-        unlockBtn.addEventListener('click', function (e) {
-            e.stopPropagation();
-            unlockAndReset('start');
+            openPopup(startDate ? 'end' : 'start');
         });
     }
 
@@ -340,17 +251,21 @@ document.addEventListener('DOMContentLoaded', function () {
     if (resetBtn) {
         resetBtn.addEventListener('click', function (e) {
             e.stopPropagation();
-            unlockAndReset('start');
+            startDate = null;
+            endDate = null;
+            picking = 'start';
+            updateUI();
+            renderCalendar();
         });
     }
 
-    // Close on click outside
+    // Dismiss calendar on click outside
     document.addEventListener('click', function (e) {
-        if (!wrapper.contains(e.target)) {
+        if (popup && !wrapper.contains(e.target)) {
             closePopup();
         }
     });
 
+    updateUI();
     renderCalendar();
-    updateInputs();
 });

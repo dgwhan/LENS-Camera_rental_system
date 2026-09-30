@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets">
+
+    <ui:param name="btnLabel"
+        value="#{not empty text ? text : (not empty value ? value : (not empty label ? label : ''))}" />
+
+    <ui:param name="btnVariant"
+        value="#{empty variant ? 'btn-primary' : (variant == 'outline' ? 'btn-outline-primary' : (variant.contains('btn-') ? variant : 'btn-'.concat(variant)))}" />
+
+    <ui:param name="btnSize"
+        value="#{empty size ? '' : (size == 'sm' ? 'btn-sm' : (size == 'lg' ? 'btn-lg' : (size == 'xs' ? 'btn-xs' : (size == 'xl' ? 'btn-xl' : (size.contains('btn-') ? size : 'btn-'.concat(size))))))}" />
+
+    <ui:param name="btnClasses"
+        value="btn #{btnVariant} #{btnSize} #{pill or shape == 'pill' ? 'btn-pill' : ''} #{block or fullWidth ? 'btn-block' : ''} #{not empty styleClass ? styleClass : (not empty extraClass ? extraClass : '')}" />
+
+    <ui:param name="btnId" value="#{not empty id ? id : ''}" />
+
+    <!-- direct link when href is provided -->
+    <ui:fragment rendered="#{not empty href}">
+        <a id="#{not empty id ? id : null}" href="#{href}" target="#{not empty target ? target : '_self'}"
+            rel="#{target == '_blank' ? 'noopener noreferrer' : null}" data-role="#{dataRole}"
+            class="#{btnClasses} #{disabled ? 'is-disabled' : ''}" style="#{style}" title="#{title}"
+            aria-label="#{not empty ariaLabel ? ariaLabel : (not empty title ? title : btnLabel)}"
+            tabindex="#{disabled ? '-1' : null}" onclick="#{onclick}">
+            <ui:fragment rendered="#{not empty btnLabel}">
+                #{btnLabel}
+            </ui:fragment>
+            <ui:insert />
+        </a>
+    </ui:fragment>
+
+
+
+    <!-- standard button WITH explicit id -->
+    <ui:fragment rendered="#{empty href and empty outcome and not empty btnId}">
+        <button id="#{btnId}" type="#{not empty type ? type : 'button'}" name="#{not empty name ? name : null}"
+            value="#{not empty btnValue ? btnValue : null}" data-role="#{dataRole}"
+            disabled="#{disabled ? 'disabled' : null}" class="#{btnClasses} #{disabled ? 'is-disabled' : ''}"
+            style="#{style}" title="#{title}"
+            aria-label="#{not empty ariaLabel ? ariaLabel : (not empty title ? title : btnLabel)}" onclick="#{onclick}">
+            <ui:fragment rendered="#{not empty btnLabel}">
+                #{btnLabel}
+            </ui:fragment>
+            <ui:insert />
+        </button>
+    </ui:fragment>
+
+    <!-- standard button WITHOUT id -->
+    <ui:fragment rendered="#{empty href and empty outcome and empty btnId}">
+        <button type="#{not empty type ? type : 'button'}" name="#{not empty name ? name : null}"
+            value="#{not empty btnValue ? btnValue : null}" data-role="#{dataRole}"
+            disabled="#{disabled ? 'disabled' : null}" class="#{btnClasses} #{disabled ? 'is-disabled' : ''}"
+            style="#{style}" title="#{title}"
+            aria-label="#{not empty ariaLabel ? ariaLabel : (not empty title ? title : btnLabel)}" onclick="#{onclick}">
+            <ui:fragment rendered="#{not empty btnLabel}">
+                #{btnLabel}
+            </ui:fragment>
+            <ui:insert />
+        </button>
+    </ui:fragment>
+
+
+</ui:composition>

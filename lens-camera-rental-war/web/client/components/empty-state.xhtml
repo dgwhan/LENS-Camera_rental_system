@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="client-empty-state #{not empty extraClass ? extraClass : ''}">
+        <ui:fragment rendered="#{not empty icon}">
+            <div class="empty-state-icon-wrap">
+                <i class="#{icon}"></i>
+            </div>
+        </ui:fragment>
+        <h3 class="empty-state-title">#{title}</h3>
+        <ui:fragment rendered="#{not empty subtitle}">
+            <p class="empty-state-subtitle">#{subtitle}</p>
+        </ui:fragment>
+        <ui:fragment rendered="#{not empty actionUrl and not empty actionText}">
+            <ui:include src="/client/components/button.xhtml">
+                <ui:param name="href" value="#{actionUrl}" />
+                <ui:param name="text" value="#{actionText}" />
+                <ui:param name="variant" value="#{not empty actionVariant ? actionVariant : 'outline-dark'}" />
+                <ui:param name="size" value="#{not empty actionSize ? actionSize : 'lg'}" />
+            </ui:include>
+        </ui:fragment>
+        <ui:insert />
+    </div>
+
+</ui:composition>

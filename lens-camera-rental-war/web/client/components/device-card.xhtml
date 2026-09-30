@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="device-card">
+        <!-- Card Media Container -->
+        <div class="device-card-media">
+            <img src="#{not empty controller ? controller.getImageUrl(dm.imageUrl) : (not empty homeController ? homeController.getImageUrl(dm.imageUrl) : deviceCatalogController.getImageUrl(dm.imageUrl))}"
+                 alt="#{dm.name}" class="device-card-img"
+                 onerror="this.onerror=null;this.src='#{not empty controller ? controller.defaultImageUrl : (not empty homeController ? homeController.defaultImageUrl : deviceCatalogController.defaultImageUrl)}';" />
+
+            <!-- Availability Badge -->
+            <ui:include src="/client/components/status-badge.xhtml">
+                <ui:param name="available" value="#{not empty controller ? controller.isProductAvailable(dm.id) : (not empty homeController ? homeController.isProductAvailable(dm.id) : deviceCatalogController.isProductAvailable(dm.id))}" />
+            </ui:include>
+        </div>
+
+        <!-- Card Body -->
+        <div class="device-card-body">
+            <!-- Category & Brand Row -->
+            <div class="device-card-meta">
+                <span class="device-card-category">#{dm.type}</span>
+                <span class="device-card-brand-model">#{dm.brand}</span>
+            </div>
+
+            <!-- Title -->
+            <h3 class="device-card-title">
+                <a href="#{request.contextPath}/faces/client/pages/detail.xhtml?id=#{dm.id}"
+                   class="device-card-title-link">
+                    #{dm.name}
+                </a>
+            </h3>
+
+            <!-- Rate Row -->
+            <div class="device-card-rate-row">
+                <span class="device-card-rate-label">Rate</span>
+                <div class="device-card-rate-value">
+                    <span class="device-card-price">#{not empty controller ?
+                        controller.formatPrice(dm.rentalPrice) : (not empty homeController ?
+                        homeController.formatPrice(dm.rentalPrice) :
+                        deviceCatalogController.formatPrice(dm.rentalPrice))}</span>
+                    <span class="device-card-period">/ day</span>
+                </div>
+            </div>
+
+            <!-- View Details Action Button -->
+            <a href="#{request.contextPath}/faces/client/pages/detail.xhtml?id=#{dm.id}" class="device-card-btn">
+                View Details
+            </a>
+        </div>
+    </div>
+
+</ui:composition>

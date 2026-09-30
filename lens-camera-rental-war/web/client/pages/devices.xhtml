@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/templates/client-template.xhtml">
+
+    <f:metadata>
+        <f:viewParam name="search" value="#{deviceCatalogController.search}" />
+        <f:viewParam name="type" value="#{deviceCatalogController.type}" />
+        <f:viewParam name="brand" value="#{deviceCatalogController.brand}" />
+        <f:viewParam name="rate" value="#{deviceCatalogController.rate}" />
+        <f:viewParam name="page" value="#{deviceCatalogController.page}" />
+        <f:viewParam name="pageSize" value="#{deviceCatalogController.pageSize}" />
+        <f:viewAction action="#{deviceCatalogController.applyFilter()}" />
+    </f:metadata>
+
+    <ui:define name="title">Devices - Lens Camera Rental</ui:define>
+
+    <ui:define name="head">
+        <h:outputStylesheet library="css" name="pages/customer.css" />
+        <h:outputStylesheet library="css" name="components/device-filter.css" />
+        <h:outputStylesheet library="css" name="components/device-card.css" />
+        <script type="text/javascript" src="#{request.contextPath}/resources/js/device-catalog.js?v=1.0"></script>
+    </ui:define>
+
+    <ui:define name="content">
+        <!-- Main Content Area -->
+        <main class="customer-catalog-main" role="main">
+
+            <!-- Page Title: Devices -->
+            <ui:include src="/client/components/page-title.xhtml">
+                <ui:param name="title" value="Devices" />
+                <ui:param name="subtitle" value="Explore our camera and lens equipment." />
+                <ui:param name="asH1" value="true" />
+            </ui:include>
+
+            <!-- Device Filter Bar -->
+            <ui:include src="/client/components/device-filter.xhtml">
+                <ui:param name="id" value="deviceCatalogFilter" />
+                <ui:param name="types" value="#{deviceCatalogController.types}" />
+                <ui:param name="brands" value="#{deviceCatalogController.brands}" />
+                <ui:param name="search" value="#{deviceCatalogController.search}" />
+                <ui:param name="selectedType" value="#{deviceCatalogController.type}" />
+                <ui:param name="selectedBrand" value="#{deviceCatalogController.brand}" />
+                <ui:param name="selectedPriceRange" value="#{deviceCatalogController.rate}" />
+                <ui:param name="filteredCount" value="#{deviceCatalogController.filteredCount}" />
+                <ui:param name="totalCount" value="#{deviceCatalogController.totalCount}" />
+            </ui:include>
+
+            <!-- Device Catalog Card Grid -->
+            <ui:include src="/client/components/device-grid.xhtml">
+                <ui:param name="id" value="catalogGrid" />
+                <ui:param name="devices" value="#{deviceCatalogController.pagedDevices}" />
+                <ui:param name="controller" value="#{deviceCatalogController}" />
+            </ui:include>
+
+            <!-- Pagination Landmark -->
+            <ui:include src="/client/components/pagination.xhtml">
+                <ui:param name="id" value="catalogPagination" />
+                <ui:param name="currentPage" value="#{deviceCatalogController.page}" />
+                <ui:param name="pageSize" value="#{deviceCatalogController.pageSize}" />
+                <ui:param name="totalItems" value="#{deviceCatalogController.filteredCount}" />
+                <ui:param name="itemLabel" value="devices" />
+            </ui:include>
+
+        </main>
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <!-- Auto-include DatePicker Stylesheet and Script Resources -->
+    <h:outputStylesheet library="css" name="components/datepicker.css" />
+    <h:outputScript library="js" name="datepicker.js" />
+
+    <!-- Date Range Picker Component Container -->
+    <div id="#{not empty id ? id : 'dateRangePicker'}"
+         class="custom-datepicker-wrapper"
+         data-initial-start="#{startValue}"
+         data-initial-end="#{endValue}">
+
+        <!-- Top Dual-Input Boxes: START DATE & END DATE -->
+        <div class="datepicker-inputs-row">
+            <!-- Start Date Column -->
+            <div class="datepicker-field-col">
+                <label class="datepicker-field-label">
+                    #{not empty startLabel ? startLabel : 'START DATE'}
+                </label>
+                <div class="datepicker-input-box is-active" data-role="start-box">
+                    <span class="datepicker-display-value #{empty startValue ? 'is-empty' : ''}" data-role="start-display">
+                        #{not empty startValue ? startValue : 'dd / mm / yyyy'}
+                    </span>
+                </div>
+            </div>
+
+            <!-- End Date Column -->
+            <div class="datepicker-field-col">
+                <label class="datepicker-field-label">
+                    #{not empty endLabel ? endLabel : 'END DATE'}
+                </label>
+                <div class="datepicker-input-box" data-role="end-box">
+                    <span class="datepicker-display-value #{empty endValue ? 'is-empty' : ''}" data-role="end-display">
+                        #{not empty endValue ? endValue : 'dd / mm / yyyy'}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden inputs for JSF Form binding -->
+        <input type="hidden"
+               id="#{not empty startDateId ? startDateId : 'startDateHidden'}"
+               name="#{not empty startDateName ? startDateName : 'startDate'}"
+               value="#{startValue}"
+               data-role="start-hidden" />
+
+        <input type="hidden"
+               id="#{not empty endDateId ? endDateId : 'endDateHidden'}"
+               name="#{not empty endDateName ? endDateName : 'endDate'}"
+               value="#{endValue}"
+               data-role="end-hidden" />
+
+        <!-- Calendar Card -->
+        <div class="datepicker-calendar-card">
+            <!-- Header: Month/Year Title & Prev/Next Arrows -->
+            <div class="datepicker-header">
+                <button type="button" class="datepicker-nav-btn" data-role="prev-month" aria-label="Previous month">&#8249;</button>
+                <h4 class="datepicker-title" data-role="calendar-title">October 2026</h4>
+                <button type="button" class="datepicker-nav-btn" data-role="next-month" aria-label="Next month">&#8250;</button>
+            </div>
+
+            <!-- Weekdays Row (Su, Mo, Tu, We, Th, Fr, Sa) Matching Detail Style -->
+            <div class="datepicker-weekdays">
+                <span class="datepicker-weekday">Su</span>
+                <span class="datepicker-weekday">Mo</span>
+                <span class="datepicker-weekday">Tu</span>
+                <span class="datepicker-weekday">We</span>
+                <span class="datepicker-weekday">Th</span>
+                <span class="datepicker-weekday">Fr</span>
+                <span class="datepicker-weekday">Sa</span>
+            </div>
+
+            <!-- Calendar Days Grid (Dynamically rendered by datepicker.js) -->
+            <div class="datepicker-days-grid" data-role="days-grid">
+                <!-- Days are generated dynamically via JavaScript -->
+            </div>
+
+            <!-- Footer: 24h Hint & Reset link & Apply button -->
+            <div class="datepicker-footer">
+                <span class="datepicker-footer-hint">Rental calculated in 24h rolling increments</span>
+                <div class="datepicker-footer-actions">
+                    <ui:include src="/client/components/button.xhtml">
+                        <ui:param name="id" value="#{id}_resetBtn" />
+                        <ui:param name="text" value="#{not empty resetLabel ? resetLabel : 'RESET'}" />
+                        <ui:param name="variant" value="ghost" />
+                        <ui:param name="size" value="sm" />
+                        <ui:param name="dataRole" value="reset-btn" />
+                    </ui:include>
+                    <ui:include src="/client/components/button.xhtml">
+                        <ui:param name="id" value="#{id}_applyBtn" />
+                        <ui:param name="text" value="#{not empty applyLabel ? applyLabel : 'APPLY DATES'}" />
+                        <ui:param name="variant" value="dark" />
+                        <ui:param name="size" value="sm" />
+                        <ui:param name="dataRole" value="apply-btn" />
+                    </ui:include>
+                </div>
+            </div>
+        </div>
+    </div>
+</ui:composition>

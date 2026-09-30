@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="jakarta.faces.html"
                 xmlns:f="jakarta.faces.core"
                 xmlns:ui="jakarta.faces.facelets"
                 xmlns:pt="jakarta.faces.passthrough"
-                template="/templates/layout.xhtml">
+                template="/WEB-INF/templates/admin-template.xhtml">
 
     <ui:param name="activeMenu" value="devices" />
 
@@ -18,7 +18,7 @@
     </ui:define>
 
     <ui:define name="content">
-        <!-- Thông báo lỗi khi thao tác thất bại -->
+        <!-- ThÃ´ng bÃ¡o lá»—i khi thao tÃ¡c tháº¥t báº¡i -->
         <h:panelGroup
             rendered="#{not empty facesContext.messageList and (facesContext.messageList[0].summary eq 'Failed to create device.' or facesContext.messageList[0].summary eq 'Failed to update device.')}">
             <script type="text/javascript">
@@ -29,7 +29,7 @@
         <div class="main-wrapper">
             <div class="form-container">
                 <h:form id="deviceForm">
-                    <!-- Tiêu đề trang -->
+                    <!-- TiÃªu Ä‘á» trang -->
                     <div class="page-header">
                         <div class="page-header-row">
                             <div>
@@ -43,7 +43,7 @@
                         </div>
                     </div>
 
-                    <!-- Thẻ Form thông tin thiết bị -->
+                    <!-- Tháº» Form thÃ´ng tin thiáº¿t bá»‹ -->
                     <div class="card">
                         <div class="card-header">
                             <div>
@@ -53,7 +53,7 @@
 
                         <div class="card-body">
                             <div class="form-grid">
-                                <!-- Model thiết bị -->
+                                <!-- Model thiáº¿t bá»‹ -->
                                 <div class="form-group" style="grid-column: 1 / -1;">
                                     <h:outputLabel for="deviceModel" styleClass="form-label">
                                         Device Model <span class="form-required">*</span>
@@ -73,13 +73,13 @@
                                                 itemDescription="#{dm.brand}" />
                                         </h:selectOneMenu>
 
-                                        <!-- Dữ liệu brand ẩn để JavaScript tìm kiếm nhanh -->
+                                        <!-- Dá»¯ liá»‡u brand áº©n Ä‘á»ƒ JavaScript tÃ¬m kiáº¿m nhanh -->
                                         <ui:repeat value="#{deviceController.allDeviceModels}" var="dm">
                                             <span class="model-meta-data" data-id="#{dm.id}" data-brand="#{dm.brand}"
                                                 style="display:none;"></span>
                                         </ui:repeat>
 
-                                        <!-- Nhập tìm kiếm trực tiếp + Nút mũi tên mở danh sách -->
+                                        <!-- Nháº­p tÃ¬m kiáº¿m trá»±c tiáº¿p + NÃºt mÅ©i tÃªn má»Ÿ danh sÃ¡ch -->
                                         <div class="model-combobox">
                                             <input type="text" class="model-combobox-input"
                                                 placeholder="Select or search device model" autocomplete="off" />
@@ -87,7 +87,7 @@
                                                 aria-label="Toggle dropdown"></button>
                                         </div>
 
-                                        <!-- Menu dropdown: Hiển thị toàn bộ danh sách, lọc tức thì khi gõ -->
+                                        <!-- Menu dropdown: Hiá»ƒn thá»‹ toÃ n bá»™ danh sÃ¡ch, lá»c tá»©c thÃ¬ khi gÃµ -->
                                         <div class="model-selector-dropdown">
                                             <div class="model-selector-results" role="listbox">
                                             </div>
@@ -97,7 +97,7 @@
                                     <h:message for="deviceModel" styleClass="field-error" />
                                 </div>
 
-                                <!-- Mã số Serial thiết bị -->
+                                <!-- MÃ£ sá»‘ Serial thiáº¿t bá»‹ -->
                                 <div class="form-group" style="grid-column: 1 / -1;">
                                     <h:outputLabel for="serialNumber" styleClass="form-label">
                                         Serial Number <span class="form-required">*</span>
@@ -110,7 +110,7 @@
                             </div>
                         </div>
 
-                        <!-- Nút thao tác dưới chân thẻ -->
+                        <!-- NÃºt thao tÃ¡c dÆ°á»›i chÃ¢n tháº» -->
                         <div class="card-footer">
                             <h:commandButton value="Cancel" action="list" immediate="true"
                                 styleClass="btn btn-outline-secondary" />

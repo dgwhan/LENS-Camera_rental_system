@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="jakarta.faces.html"
                 xmlns:f="jakarta.faces.core"
                 xmlns:ui="jakarta.faces.facelets"
                 xmlns:pt="jakarta.faces.passthrough"
-                template="/templates/layout.xhtml">
+                template="/WEB-INF/templates/admin-template.xhtml">
 
     <ui:param name="activeMenu" value="models" />
 
@@ -14,8 +14,7 @@
     </ui:define>
 
     <ui:define name="head">
-        <h:outputStylesheet library="css" name="device-model.css" />
-        <h:outputStylesheet library="css" name="image-upload.css" />
+        <h:outputStylesheet library="css" name="components/image-upload.css" />
     </ui:define>
 
     <ui:define name="scripts">
@@ -169,7 +168,7 @@
                                             <span id="currentImageFilename" class="current-image-filename">
                                                 #{deviceModelsController.editMode and deviceModelsController.hasCustomImage ? deviceModelsController.deviceModels.imageUrl : ''}
                                             </span>
-                                            <span class="current-image-dims">120 × 120</span>
+                                            <span class="current-image-dims">120 Ã— 120</span>
                                             <div class="current-image-divider"></div>
                                             <button type="button" class="btn btn-outline-danger btn-sm btn-remove-image"
                                                 onclick="removeCurrentImage(); var fn=document.getElementById('uploadFileName'); if(fn){ fn.textContent='No file chosen'; }">
@@ -208,7 +207,7 @@
                                                 onchange="var f=this.files&amp;&amp;this.files[0]; var fn=document.getElementById('uploadFileName'); if(fn){ fn.textContent=f?f.name:'No file chosen'; } var cfn=document.getElementById('currentImageFilename'); if(cfn&amp;&amp;f){ cfn.textContent=f.name; }" />
                                         </div>
                                         <small class="form-hint upload-hint">
-                                            JPG, PNG, WEBP · Max 5MB
+                                            JPG, PNG, WEBP Â· Max 5MB
                                         </small>
                                     </div>
 

@@ -1,0 +1,79 @@
+/* ==========================================================================
+   LENS Camera Rental - Root Color System (color.css)
+   Single Source of Truth for Color Tokens across the entire Client UI
+   ========================================================================== */
+
+:root {
+    /* ----------------------------------------------------------------------
+       1. Base Neutral Colors (Minimal Monochrome Palette)
+       ---------------------------------------------------------------------- */
+    --color-white: #FFFFFF;
+    --color-black: #000000;
+
+    --color-background: #FFFFFF;
+    --color-surface: #F8F8F8;
+    --color-surface-subtle: #F1F5F9;
+
+    --color-text: #111111;
+    --color-text-secondary: #666666;
+    --color-text-muted: #888888;
+
+    --color-border: #E5E5E5;
+    --color-border-subtle: #F0F0F0;
+
+    /* ----------------------------------------------------------------------
+       2. Primary Accent Color (CTAs & Active States)
+       ---------------------------------------------------------------------- */
+    --color-primary: #514FFF;
+    --color-primary-hover: #433FE0;
+    --color-primary-active: #3732D6;
+    --color-primary-subtle: rgba(81, 79, 255, 0.08);
+
+    /* ----------------------------------------------------------------------
+       3. Limited Semantic State Colors
+       ---------------------------------------------------------------------- */
+    /* Success: Available state, confirmation messages */
+    --color-success: #16A34A;
+    --color-success-bg: #F0FDF4;
+    --color-success-border: #BBF7D0;
+    --color-success-text: #166534;
+
+    /* Warning: Cautions, pending alerts */
+    --color-warning: #D97706;
+    --color-warning-bg: #FFFBEB;
+    --color-warning-border: #FDE68A;
+    --color-warning-text: #92400E;
+
+    /* Danger: Validation error, expired dates, destructive actions */
+    --color-danger: #EF4444;
+    --color-danger-subtle: #FFF1F2;
+    --color-danger-border: #FECDD3;
+    --color-danger-text: #9F1239;
+    --color-danger-hover: #B82E2E;
+
+    /* ----------------------------------------------------------------------
+       4. Shared Spacing Scale
+       ---------------------------------------------------------------------- */
+    --spacing-xs: 0.25rem;  /* 4px */
+    --spacing-sm: 0.5rem;   /* 8px */
+    --spacing-md: 1rem;     /* 16px */
+    --spacing-lg: 1.5rem;   /* 24px */
+    --spacing-xl: 2rem;     /* 32px */
+    --spacing-2xl: 3rem;    /* 48px */
+
+    /* ----------------------------------------------------------------------
+       5. Border Radii
+       ---------------------------------------------------------------------- */
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-full: 9999px;
+
+    /* ----------------------------------------------------------------------
+       6. Transition & Shadow Tokens
+       ---------------------------------------------------------------------- */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.2s ease;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+}

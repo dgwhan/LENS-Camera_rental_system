@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets">
+    <h:head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title><ui:insert name="title">Lens Camera Rental - Admin</ui:insert></title>
+        <h:outputStylesheet library="css" name="color.css" />
+        <h:outputStylesheet library="css" name="font.css" />
+        <h:outputStylesheet library="css" name="app.css" />
+        <h:outputStylesheet library="css" name="components/buttons.css" />
+        <h:outputStylesheet library="css" name="components/table.css" />
+        <h:outputStylesheet library="css" name="components/badges.css" />
+        <h:outputStylesheet library="css" name="components/selector.css" />
+        <h:outputStylesheet library="css" name="components/sidebar.css" />
+        <ui:insert name="head" />
+    </h:head>
+    <h:body>
+        <div class="app-container">
+            <ui:include src="/admin/sidebar.xhtml">
+                <ui:param name="activeMenu" value="#{activeMenu}" />
+            </ui:include>
+
+            <main class="app-content">
+                <ui:insert name="content" />
+            </main>
+        </div>
+
+        <ui:insert name="scripts" />
+    </h:body>
+</html>

@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core"
-    xmlns:ui="jakarta.faces.facelets" xmlns:pt="jakarta.faces.passthrough" template="/templates/layout.xhtml">
+    xmlns:ui="jakarta.faces.facelets" xmlns:pt="jakarta.faces.passthrough" template="/WEB-INF/templates/admin-template.xhtml">
 
     <ui:param name="activeMenu" value="devices" />
 
@@ -10,7 +10,7 @@
     </ui:define>
 
     <ui:define name="content">
-        <!-- Flash Alert Message (Thông báo thao tác thành công) -->
+        <!-- Flash Alert Message (ThÃ´ng bÃ¡o thao tÃ¡c thÃ nh cÃ´ng) -->
         <h:panelGroup rendered="#{not empty flash.actionAlert}">
             <script type="text/javascript">
                 alert('#{flash.actionAlert}');
@@ -19,7 +19,7 @@
 
         <div class="main-wrapper">
             <h:form id="devicesForm">
-                <!-- Tiêu đề trang -->
+                <!-- TiÃªu Ä‘á» trang -->
                 <div class="page-header">
                     <div class="page-header-row">
                         <div>
@@ -54,7 +54,7 @@
                     </div>
                 </h:panelGroup>
 
-                <!-- Thanh tìm kiếm và bộ lọc trạng thái -->
+                <!-- Thanh tÃ¬m kiáº¿m vÃ  bá»™ lá»c tráº¡ng thÃ¡i -->
                 <h:panelGroup id="searchBar" layout="block" styleClass="users-search">
                     <h:inputText id="keyword" value="#{deviceController.keyword}"
                         pt:placeholder="Search serial number, brand, model..." styleClass="form-control search-input">
@@ -112,7 +112,7 @@
                                 </span>
                             </h:column>
 
-                            <!-- Thao tác (Action) -->
+                            <!-- Thao tÃ¡c (Action) -->
                             <h:column>
                                 <f:facet name="header">Action</f:facet>
                                 <div class="table-row-actions">

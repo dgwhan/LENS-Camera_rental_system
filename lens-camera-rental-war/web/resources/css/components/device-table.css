@@ -1,0 +1,317 @@
+/* ==========================================================================
+   LENS Camera Rental - Reusable Device Table Stylesheet
+   Design Standard: Strict Minimalist Monochrome
+   Visual Reference: Professional Rental Price Sheet Table
+   ========================================================================== */
+
+:root {
+    --tbl-font: var(--font-family-base, 'Inter', sans-serif);
+    --tbl-bg: var(--color-background, #ffffff);
+    --tbl-text-primary: var(--color-text, #111111);
+    --tbl-text-secondary: var(--color-text-secondary, #666666);
+    --tbl-text-muted: var(--color-text-muted, #888888);
+    --tbl-border: var(--color-border, #e5e5e5);
+    --tbl-border-subtle: var(--color-border-subtle, #f0f0f0);
+    --tbl-hover: var(--color-surface, #f8f8f8);
+    --tbl-black: var(--color-black, #000000);
+}
+
+/* Outer Table Container */
+.device-table-container {
+    width: 100%;
+    margin-bottom: 2rem;
+    box-sizing: border-box;
+    font-family: var(--tbl-font);
+}
+
+/* ==========================================================================
+   1. DESKTOP / TABLET DATA TABLE
+   ========================================================================== */
+.device-table-desktop-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border-top: 1px solid var(--tbl-border);
+    border-bottom: 1px solid var(--tbl-border);
+    background-color: var(--tbl-bg);
+}
+
+.device-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+    text-align: left;
+}
+
+/* Table Header */
+.device-table thead th {
+    font-family: var(--tbl-font);
+    font-size: 0.6875rem; /* ~11px */
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--tbl-text-secondary);
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--tbl-border);
+    white-space: nowrap;
+    background-color: var(--tbl-bg);
+    user-select: none;
+}
+
+/* Table Body Rows */
+.device-table tbody tr {
+    border-bottom: 1px solid var(--tbl-border-subtle);
+    transition: background-color 0.12s ease;
+    background-color: var(--tbl-bg);
+}
+
+.device-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.device-table tbody tr:hover {
+    background-color: var(--tbl-hover);
+}
+
+.device-table tbody td {
+    padding: 14px 16px;
+    vertical-align: middle;
+    font-size: 0.875rem;
+    color: var(--tbl-text-primary);
+}
+
+/* Column 1: Device */
+.device-table .col-device {
+    min-width: 240px;
+    width: 32%;
+}
+
+.device-name-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.device-primary-name {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--tbl-text-primary);
+    text-decoration: none !important;
+    line-height: 1.3;
+    transition: color 0.15s ease;
+}
+
+.device-primary-name:hover {
+    color: var(--tbl-black);
+    text-decoration: underline !important;
+    text-underline-offset: 3px;
+}
+
+.device-secondary-meta {
+    font-size: 0.75rem;
+    color: var(--tbl-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1.2;
+}
+
+.meta-separator {
+    color: var(--tbl-text-muted);
+}
+
+/* Column 2: Type */
+.device-table .col-type {
+    min-width: 120px;
+    width: 16%;
+}
+
+.device-type-label {
+    font-size: 0.875rem;
+    color: #334155;
+}
+
+/* Column 3: Brand */
+.device-table .col-brand {
+    min-width: 100px;
+    width: 14%;
+}
+
+.device-brand-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--tbl-text-secondary);
+}
+
+/* Column 4: Rental Rate */
+.device-table .col-rate {
+    min-width: 140px;
+    width: 16%;
+}
+
+.rate-price-cell {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.rate-amount {
+    font-weight: 700;
+    font-size: 0.9375rem;
+    color: var(--tbl-black);
+}
+
+.rate-period {
+    font-size: 0.75rem;
+    color: var(--tbl-text-secondary);
+}
+
+/* Column 5: Deposit */
+.device-table .col-deposit {
+    min-width: 130px;
+    width: 14%;
+}
+
+.deposit-amount {
+    font-size: 0.875rem;
+    color: var(--tbl-text-primary);
+    white-space: nowrap;
+}
+
+/* Column 6: Action */
+.device-table .col-action {
+    min-width: 120px;
+    width: 8%;
+    text-align: right;
+}
+
+.device-table .col-action .btn {
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    padding: 0.35rem 0.85rem;
+    white-space: nowrap;
+}
+
+/* ==========================================================================
+   2. MOBILE COMPACT STACKED LIST (~640px)
+   ========================================================================== */
+.device-table-mobile-list {
+    display: none;
+    width: 100%;
+}
+
+@media (max-width: 640px) {
+    .device-table-desktop-wrap {
+        display: none;
+    }
+
+    .device-table-mobile-list {
+        display: flex;
+        flex-direction: column;
+        border-top: 1px solid var(--tbl-border);
+    }
+
+    .device-mobile-card {
+        padding: 16px 0;
+        border-bottom: 1px solid var(--tbl-border);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background-color: var(--tbl-bg);
+    }
+
+    .device-mobile-header {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .device-mobile-name {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--tbl-black);
+        text-decoration: none !important;
+        line-height: 1.3;
+    }
+
+    .device-mobile-meta {
+        font-size: 0.75rem;
+        color: var(--tbl-text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .device-mobile-pricing {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        background-color: var(--tbl-hover);
+        border: 1px solid var(--tbl-border-subtle);
+        border-radius: 6px;
+        padding: 10px 14px;
+    }
+
+    .device-mobile-price-item {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .device-mobile-price-label {
+        font-size: 0.6875rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--tbl-text-secondary);
+    }
+
+    .device-mobile-price-val {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: var(--tbl-black);
+    }
+
+    .device-mobile-price-period {
+        font-size: 0.75rem;
+        font-weight: 400;
+        color: var(--tbl-text-secondary);
+    }
+
+    .device-mobile-action {
+        width: 100%;
+    }
+
+    .device-mobile-action .btn {
+        width: 100%;
+        min-height: 40px;
+        letter-spacing: 0.04em;
+        font-weight: 600;
+    }
+}
+
+/* ==========================================================================
+   3. EMPTY STATE (No devices found)
+   ========================================================================== */
+.device-table-empty {
+    padding: 48px 24px;
+    text-align: center;
+    border-top: 1px solid var(--tbl-border);
+    border-bottom: 1px solid var(--tbl-border);
+    background-color: var(--tbl-bg);
+}
+
+.empty-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--tbl-text-primary);
+    margin: 0 0 6px 0;
+}
+
+.empty-subtitle {
+    font-size: 0.875rem;
+    color: var(--tbl-text-secondary);
+    margin: 0;
+}

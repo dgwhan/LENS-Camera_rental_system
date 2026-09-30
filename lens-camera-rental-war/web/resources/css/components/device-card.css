@@ -1,0 +1,253 @@
+/* ==========================================================================
+   Lens Camera Rental - Device Card & Home Featured Section (device-card.css)
+   Consumes Root CSS Design Tokens (color.css, font.css, app.css)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Featured Devices Section
+   -------------------------------------------------------------------------- */
+.featured-devices-section {
+    padding: 56px 0 72px;
+    background-color: var(--color-white, #ffffff);
+}
+
+.featured-devices-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 28px;
+}
+
+/* --------------------------------------------------------------------------
+   Device Cards Grid (4 columns on Desktop)
+   -------------------------------------------------------------------------- */
+.device-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+/* --------------------------------------------------------------------------
+   Device Card Component
+   -------------------------------------------------------------------------- */
+.device-card {
+    background-color: var(--color-white, #ffffff);
+    border: 1px solid var(--color-border, #e5e5e5);
+    border-radius: var(--radius-lg, 8px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    transition: transform var(--transition-fast, 0.18s ease), box-shadow var(--transition-fast, 0.18s ease), border-color var(--transition-fast, 0.18s ease);
+}
+
+.device-card:hover {
+    border-color: var(--color-text-muted, #b0b0b0);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
+}
+
+/* Media / Image Container */
+.device-card-media {
+    width: 100%;
+    height: 220px;
+    background-color: var(--color-surface, #f8f8f8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    position: relative;
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--color-border-subtle, #f0f0f0);
+}
+
+.device-card-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.22s ease;
+}
+
+.device-card:hover .device-card-img {
+    transform: scale(1.03);
+}
+
+/* Card Body */
+.device-card-body {
+    padding: 18px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    box-sizing: border-box;
+}
+
+/* Top Meta Row (Category & Brand - Model) */
+.device-card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.device-card-category {
+    font-family: var(--font-family-base, 'Inter', sans-serif);
+    font-size: var(--font-size-sm, 0.8125rem);
+    font-weight: var(--font-weight-medium, 500);
+    color: var(--color-text-secondary, #666666);
+    text-transform: capitalize;
+}
+
+.device-card-brand-model {
+    font-family: var(--font-family-base, 'Inter', sans-serif);
+    font-size: var(--font-size-sm, 0.8125rem);
+    font-weight: var(--font-weight-medium, 500);
+    color: var(--color-text-secondary, #666666);
+}
+
+/* Card Title */
+.device-card-title {
+    font-family: var(--font-family-base, 'Inter', sans-serif);
+    font-size: var(--font-size-xl, 1.125rem);
+    font-weight: var(--font-weight-bold, 700);
+    color: var(--color-text, #111111);
+    line-height: var(--line-height-snug, 1.35);
+    margin: 0 0 16px 0;
+    min-height: 2.7rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.device-card-title-link {
+    color: var(--color-text, #111111);
+    text-decoration: none !important;
+}
+
+.device-card-title-link:hover {
+    color: var(--color-primary, #514fff);
+}
+
+/* Rate Row */
+.device-card-rate-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 18px;
+    margin-top: auto;
+}
+
+.device-card-rate-label {
+    font-family: var(--font-family-base, 'Inter', sans-serif);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-semibold, 600);
+    color: var(--color-text-secondary, #666666);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1;
+}
+
+.device-card-rate-value {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+
+.device-card-price {
+    font-family: var(--font-family-base, 'Inter', sans-serif);
+    font-size: var(--font-size-xl, 1.125rem);
+    font-weight: var(--font-weight-bold, 700);
+    color: var(--color-text, #111111);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+}
+
+.device-card-period {
+    font-family: var(--font-family-base, 'Inter', sans-serif);
+    font-size: var(--font-size-sm, 0.8125rem);
+    font-weight: var(--font-weight-medium, 500);
+    color: var(--color-text-secondary, #666666);
+    white-space: nowrap;
+}
+
+/* customer availability badge: overlay on image at top-right, no dot, no border stroke, rounded pill with background */
+.device-card-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    border-radius: var(--radius-full, 9999px);
+    border: none;
+    font-family: var(--font-family-base, 'Inter', sans-serif);
+    font-size: 0.6875rem;
+    font-weight: var(--font-weight-bold, 700);
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.device-card-badge.status-badge-available {
+    background-color: var(--color-success-bg, #E8F5E9);
+    color: var(--color-success-text, #2E7D32);
+}
+
+/* out of stock handling */
+.device-card-badge.status-badge-out-of-stock {
+    background-color: var(--color-danger-subtle, #FEF2F2);
+    color: var(--color-danger-text, #dc2626);
+}
+
+/* Action Button: View Details */
+.device-card-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 42px;
+    background-color: var(--color-white, #ffffff);
+    border: 1px solid var(--color-border, #e5e5e5);
+    border-radius: var(--radius-md, 6px);
+    font-family: var(--font-family-base, 'Inter', sans-serif);
+    font-size: var(--font-size-md, 0.875rem);
+    font-weight: var(--font-weight-semibold, 600);
+    color: var(--color-text, #111111);
+    text-decoration: none !important;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: all var(--transition-fast, 0.18s ease);
+}
+
+.device-card-btn:hover {
+    background-color: var(--color-black, #000000);
+    color: var(--color-white, #ffffff);
+    border-color: var(--color-black, #000000);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+    .device-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (max-width: 640px) {
+    .device-cards-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .featured-devices-section {
+        padding: 36px 0 52px;
+    }
+}

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <!-- Reusable Rental Summary Sidebar Component -->
+    <div class="cart-summary-column">
+        <div class="cart-summary-sticky">
+
+            <h3 class="cart-summary-heading">
+                Rental Summary
+            </h3>
+
+            <!-- Row 1: Rental Subtotal -->
+            <div class="cart-summary-line">
+                <span>Rental Subtotal</span>
+                <span class="cart-summary-line-val">
+                    <h:outputText value="#{cartController.rentalSubtotal}">
+                        <f:convertNumber pattern="#,##0" />
+                    </h:outputText> VND
+                </span>
+            </div>
+
+            <!-- Row 2: Total Deposit -->
+            <div class="cart-summary-line">
+                <span>Total Deposit</span>
+                <span class="cart-summary-line-val">
+                    <h:outputText value="#{cartController.depositTotal}">
+                        <f:convertNumber pattern="#,##0" />
+                    </h:outputText> VND
+                </span>
+            </div>
+
+            <!-- Divider -->
+            <div class="cart-total-row">
+                <span class="cart-total-label">Total Payable</span>
+                <div>
+                    <span class="cart-total-amount">
+                        <h:outputText value="#{cartController.totalPayable}">
+                            <f:convertNumber pattern="#,##0" />
+                        </h:outputText>
+                    </span>
+                    <span class="cart-total-curr">VND</span>
+                </div>
+            </div>
+
+            <!-- Security Deposit Explanatory Notice -->
+            <div class="client-alert client-alert-info">
+                <div>
+                    <strong>Deposit Notice:</strong> The deposit is a refundable security guarantee returned in full when equipment is checked back in undamaged.
+                </div>
+            </div>
+
+            <!-- Expired Dates Alert Notice -->
+            <ui:fragment rendered="#{cartController.hasExpiredItems}">
+                <div class="client-alert client-alert-danger">
+                    <strong>Action Required:</strong> One or more items in your cart have expired rental dates. Please update dates before proceeding.
+                </div>
+            </ui:fragment>
+
+            <!-- Checkout CTA: Proceed to Checkout Page -->
+            <ui:fragment rendered="#{not cartController.hasExpiredItems}">
+                <ui:include src="/client/components/button.xhtml">
+                    <ui:param name="id" value="btnProceedCheckout" />
+                    <ui:param name="href" value="#" />
+                    <ui:param name="text" value="PROCEED TO CHECKOUT" />
+                    <ui:param name="variant" value="dark" />
+                    <ui:param name="size" value="lg" />
+                    <ui:param name="block" value="true" />
+                </ui:include>
+            </ui:fragment>
+            <ui:fragment rendered="#{cartController.hasExpiredItems}">
+                <ui:include src="/client/components/button.xhtml">
+                    <ui:param name="id" value="btnProceedCheckoutDisabled" />
+                    <ui:param name="text" value="PROCEED TO CHECKOUT" />
+                    <ui:param name="variant" value="dark" />
+                    <ui:param name="size" value="lg" />
+                    <ui:param name="block" value="true" />
+                    <ui:param name="disabled" value="true" />
+                    <ui:param name="title" value="Please update expired rental dates before proceeding" />
+                </ui:include>
+            </ui:fragment>
+
+        </div>
+    </div>
+
+</ui:composition>

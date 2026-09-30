@@ -1,0 +1,628 @@
+/* ==========================================================================
+   LENS Camera Rental - Reusable DeviceFilter Stylesheet
+   Design Standard: Strict Minimalist Monochrome
+   Visual Reference Specifications:
+   - Desktop Standard: Single horizontal bar with active chips & match count
+   - Default State: Zero visual clutter, subdued reset
+   - Tablet Stack (~768px): 2-row responsive wrapping
+   - Mobile Compact (~390px): Search paired with [Filters (count)] trigger & modal sheet
+   ========================================================================== */
+
+:root {
+    --dflt-bg: var(--color-background, #ffffff);
+    --dflt-surface: var(--color-surface, #f8f8f8);
+    --dflt-border: var(--color-border, #e5e5e5);
+    --dflt-border-subtle: var(--color-border-subtle, #f0f0f0);
+    --dflt-text: var(--color-text, #111111);
+    --dflt-gray: var(--color-text-secondary, #666666);
+    --dflt-gray-light: var(--color-text-muted, #888888);
+    --dflt-disabled: #cbd5e1;
+    --dflt-black: var(--color-black, #000000);
+    --dflt-font: var(--font-family-base, 'Inter', sans-serif);
+}
+
+/* Root Component Card */
+.device-filter-wrapper {
+    width: 100%;
+    margin: 1.5rem 0;
+    font-family: var(--dflt-font);
+    box-sizing: border-box;
+}
+
+.device-filter-wrapper *,
+.device-filter-wrapper *::before,
+.device-filter-wrapper *::after {
+    box-sizing: border-box;
+}
+
+.device-filter-container {
+    background-color: var(--dflt-bg);
+    border: none;
+    border-radius: 0;
+    padding: 16px 0;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* ==========================================================================
+   1. DESKTOP BAR (Single Horizontal Row)
+   ========================================================================== */
+.device-filter-bar {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    width: 100%;
+}
+
+.device-filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.device-filter-label {
+    font-size: 0.6875rem; /* ~11px */
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--dflt-gray);
+    margin: 0;
+    line-height: 1;
+    user-select: none;
+}
+
+/* Field Sizing Proportions */
+.field-search {
+    flex: 2.2;
+    min-width: 220px;
+}
+
+.field-type,
+.field-brand,
+.field-rate {
+    flex: 1.1;
+    min-width: 135px;
+}
+
+.field-reset {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 2px;
+}
+
+/* Search Input Box */
+.device-filter-search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+/* Pure CSS Search Icon (Circle + Stem, Zero SVG) */
+.device-filter-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    border: 1.75px solid var(--dflt-gray-light);
+    border-radius: 50%;
+    box-sizing: border-box;
+    pointer-events: none;
+    display: inline-block;
+}
+
+.device-filter-search-icon::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    right: -3px;
+    width: 1.75px;
+    height: 4.5px;
+    background-color: var(--dflt-gray-light);
+    transform: rotate(-45deg);
+    border-radius: 1px;
+}
+
+.device-filter-input {
+    width: 100%;
+    height: 40px;
+    padding: 0 32px 0 34px;
+    background-color: var(--dflt-bg);
+    border: 1px solid var(--dflt-border);
+    border-radius: 6px;
+    font-family: var(--dflt-font);
+    font-size: 0.875rem;
+    color: var(--dflt-text);
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.device-filter-input:focus {
+    border-color: var(--dflt-text);
+    box-shadow: 0 0 0 1px var(--dflt-text);
+}
+
+.device-filter-input::placeholder {
+    color: var(--dflt-gray-light);
+}
+
+/* Search Clear Button (x) */
+.device-filter-search-clear {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0;
+    width: 18px;
+    height: 18px;
+    font-size: 15px;
+    line-height: 1;
+    color: var(--dflt-gray-light);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: color 0.15s ease;
+}
+
+.device-filter-search-clear:hover {
+    color: var(--dflt-text);
+}
+
+.device-filter-search-wrap.has-value .device-filter-search-clear {
+    display: inline-flex;
+}
+
+/* Dropdown Select Controls */
+.device-filter-select-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.device-filter-select {
+    width: 100%;
+    height: 40px;
+    padding: 0 28px 0 12px;
+    background-color: var(--dflt-bg);
+    border: 1px solid var(--dflt-border);
+    border-radius: 6px;
+    font-family: var(--dflt-font);
+    font-size: 0.875rem;
+    color: var(--dflt-text);
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.device-filter-select:focus {
+    border-color: var(--dflt-text);
+    box-shadow: 0 0 0 1px var(--dflt-text);
+}
+
+/* Pure CSS Chevron Arrow (Zero SVG) */
+.device-filter-select-arrow {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-65%) rotate(45deg);
+    width: 5px;
+    height: 5px;
+    border-bottom: 1.75px solid var(--dflt-gray);
+    border-right: 1.75px solid var(--dflt-gray);
+    pointer-events: none;
+}
+
+/* Reset Action Button */
+.device-filter-reset-btn {
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    background: none;
+    border: none;
+    font-family: var(--dflt-font);
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0 4px;
+    user-select: none;
+    transition: color 0.15s ease;
+
+    /* 2. DEFAULT STATE (SUBDUED / DISABLED) */
+    color: var(--dflt-disabled);
+    cursor: default;
+    pointer-events: none;
+}
+
+.device-filter-reset-btn.is-active {
+    color: var(--dflt-text);
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.device-filter-reset-btn.is-active:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* ==========================================================================
+   ACTIVE FILTERS TRAY (Chips + Match Count)
+   Rendered null (display: none) when pristine
+   ========================================================================== */
+.device-filter-active-tray {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--dflt-border-subtle);
+    gap: 12px;
+}
+
+.device-filter-active-tray.is-active {
+    display: flex;
+}
+
+.device-filter-active-left {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.device-filter-active-label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--dflt-gray);
+    margin-right: 2px;
+    user-select: none;
+}
+
+.device-filter-chips {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* Removable Filter Chip */
+.device-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: var(--dflt-surface);
+    border: 1px solid var(--dflt-border);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 0.75rem; /* ~12px */
+    font-weight: 500;
+    color: var(--dflt-text);
+    line-height: 1.2;
+    user-select: none;
+    transition: border-color 0.15s ease;
+}
+
+.device-filter-chip:hover {
+    border-color: var(--dflt-gray-light);
+}
+
+.chip-remove-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 14px;
+    line-height: 1;
+    color: var(--dflt-gray-light);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s ease;
+}
+
+.chip-remove-btn:hover {
+    color: var(--dflt-black);
+}
+
+/* Clear All Action */
+.device-filter-clear-all {
+    background: none;
+    border: none;
+    font-family: var(--dflt-font);
+    font-size: 0.75rem;
+    color: var(--dflt-gray);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    padding: 2px 4px;
+    margin-left: 2px;
+    transition: color 0.15s ease;
+}
+
+.device-filter-clear-all:hover {
+    color: var(--dflt-text);
+}
+
+/* Right Side: Match Count */
+.device-filter-matches {
+    font-size: 0.8125rem;
+    color: var(--dflt-gray);
+    white-space: nowrap;
+    user-select: none;
+}
+
+.match-count-strong {
+    font-weight: 700;
+    color: var(--dflt-text);
+}
+
+/* Mobile Search & Trigger Row (Hidden on Desktop/Tablet) */
+.device-filter-mobile-row {
+    display: none;
+}
+
+/* ==========================================================================
+   3. TABLET STACK (~768px Viewport · 2-Row Wrapping)
+   Row 1: Search + Reset
+   Row 2: Type, Brand, Rental Rate (3-column cluster)
+   ========================================================================== */
+@media (min-width: 641px) and (max-width: 860px) {
+    .device-filter-bar {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .field-search {
+        flex: 1 1 calc(100% - 70px);
+        min-width: 200px;
+        order: 1;
+    }
+
+    .field-reset {
+        flex: 0 0 auto;
+        order: 2;
+        padding-bottom: 0;
+    }
+
+    .field-type {
+        flex: 1 1 30%;
+        order: 3;
+    }
+
+    .field-brand {
+        flex: 1 1 30%;
+        order: 4;
+    }
+
+    .field-rate {
+        flex: 1 1 30%;
+        order: 5;
+    }
+
+    .device-filter-active-tray {
+        flex-wrap: wrap;
+    }
+}
+
+/* ==========================================================================
+   4. MOBILE COMPACT (~390px Viewport · Drawer Architecture)
+   Search paired with [Filters (count)] trigger; modal sheet for dropdowns
+   ========================================================================== */
+@media (max-width: 640px) {
+    .device-filter-container {
+        padding: 12px 14px;
+    }
+
+    /* Hide standard inline bar */
+    .device-filter-bar {
+        display: none;
+    }
+
+    /* Show Mobile Compact Row */
+    .device-filter-mobile-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .device-filter-mobile-search {
+        flex: 1;
+    }
+
+    .device-filter-mobile-trigger {
+        height: 40px;
+        background-color: var(--dflt-black);
+        color: #ffffff;
+        border: 1px solid var(--dflt-black);
+        border-radius: 6px;
+        padding: 0 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: var(--dflt-font);
+        font-size: 0.8125rem;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        user-select: none;
+        transition: background-color 0.15s ease;
+    }
+
+    .device-filter-mobile-trigger:hover {
+        background-color: #222222;
+    }
+
+    .mobile-filter-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #ffffff;
+        color: var(--dflt-black);
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        font-size: 0.6875rem;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    /* Active Tray on Mobile */
+    .device-filter-active-tray {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        margin-top: 10px;
+        padding-top: 10px;
+    }
+
+    .device-filter-matches {
+        font-size: 0.75rem;
+        align-self: flex-start;
+    }
+}
+
+/* ==========================================================================
+   MOBILE FILTER DRAWER / MODAL SHEET
+   ========================================================================== */
+.device-filter-drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.45);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.device-filter-drawer-overlay.is-open {
+    display: flex;
+}
+
+.device-filter-drawer {
+    background-color: var(--dflt-bg);
+    border: 1px solid var(--dflt-border);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    box-sizing: border-box;
+    overflow: hidden;
+    animation: drawerFadeIn 0.2s ease-out;
+}
+
+@keyframes drawerFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--dflt-border-subtle);
+}
+
+.drawer-title {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--dflt-text);
+    margin: 0;
+}
+
+.drawer-close-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--dflt-gray);
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.drawer-close-btn:hover {
+    color: var(--dflt-black);
+}
+
+.drawer-body {
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.drawer-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    border-top: 1px solid var(--dflt-border-subtle);
+    background-color: #fafafa;
+}
+
+.drawer-reset-btn {
+    background: none;
+    border: none;
+    font-family: var(--dflt-font);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--dflt-gray);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    padding: 4px 0;
+    transition: color 0.15s ease;
+}
+
+.drawer-reset-btn:hover {
+    color: var(--dflt-text);
+}
+
+.drawer-apply-btn {
+    height: 38px;
+    background-color: var(--dflt-black);
+    color: #ffffff;
+    border: 1px solid var(--dflt-black);
+    border-radius: 6px;
+    padding: 0 16px;
+    font-family: var(--dflt-font);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.drawer-apply-btn:hover {
+    background-color: #222222;
+}
+
+.mobile-filter-badge {
+    display: none;
+}

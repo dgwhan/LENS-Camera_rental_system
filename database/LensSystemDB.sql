@@ -177,6 +177,49 @@ ADD CONSTRAINT CK_RentalOrders_PaymentStatus
 GO
 
 
+-- cart items
+CREATE TABLE CartItems (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+
+    user_id INT NOT NULL,
+    device_model_id INT NOT NULL,
+
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    duration INT NOT NULL,
+
+    rental_price DECIMAL(12,0) NOT NULL,
+    deposit_amount DECIMAL(12,0) NOT NULL,
+
+    created_at DATETIME2 NOT NULL DEFAULT GETDATE(),
+    updated_at DATETIME2 NOT NULL DEFAULT GETDATE(),
+
+    CONSTRAINT FK_CartItems_Users
+        FOREIGN KEY (user_id)
+        REFERENCES Users(id),
+
+    CONSTRAINT FK_CartItems_DeviceModels
+        FOREIGN KEY (device_model_id)
+        REFERENCES DeviceModels(id),
+
+    CONSTRAINT CK_CartItems_Date
+        CHECK (end_date > start_date),
+
+    CONSTRAINT CK_CartItems_Duration
+        CHECK (duration > 0),
+
+    CONSTRAINT CK_CartItems_RentalPrice
+        CHECK (rental_price >= 0),
+
+    CONSTRAINT CK_CartItems_DepositAmount
+        CHECK (deposit_amount >= 0)
+);
+GO
+
+CREATE INDEX IX_CartItems_UserId ON CartItems(user_id);
+GO
+
+
 INSERT INTO Users (username, password, full_name, email, phone, role)
 VALUES ('admin', 'admin', N'Administrator', 'admin@lens.com', '0900000000', 'ADMIN');
 GO

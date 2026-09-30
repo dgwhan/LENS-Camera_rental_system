@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/templates/client-template.xhtml">
+
+    <f:metadata>
+        <f:viewAction action="#{cartController.checkAuthentication()}" />
+    </f:metadata>
+
+    <ui:define name="title">Rental Cart - Lens Camera Rental</ui:define>
+
+    <ui:define name="head">
+        <h:outputStylesheet library="css" name="components/buttons.css" />
+        <h:outputStylesheet library="css" name="pages/customer.css" />
+        <h:outputStylesheet library="css" name="pages/cart.css" />
+        <h:outputScript library="js" name="cart.js" />
+    </ui:define>
+
+    <ui:define name="content">
+        <!-- Main Cart Page Content -->
+        <main class="cart-page-main" role="main">
+
+            <!-- Breadcrumb Navigation: HOME / CART -->
+            <div class="cart-breadcrumb-wrap">
+                <ui:include src="/client/components/breadcrumb.xhtml">
+                    <ui:param name="link1Text" value="HOME" />
+                    <ui:param name="link1Url" value="#{request.contextPath}/faces/client/pages/index.xhtml" />
+                    <ui:param name="currentPage" value="CART" />
+                </ui:include>
+            </div>
+
+            <!-- Page Title Section Header -->
+            <div class="cart-title-wrap">
+                <ui:include src="/client/components/page-title.xhtml">
+                    <ui:param name="title" value="RENTAL CART" />
+                    <ui:param name="asH1" value="true" />
+                    <ui:param name="subtitle" value="Review your selected equipment, rental duration, and cost breakdown" />
+                </ui:include>
+            </div>
+
+            <!-- Cart Main Form Wrapper for AJAX Updates -->
+            <h:form id="cartForm" prependId="false">
+
+                <!-- Global Feedback Messages -->
+                <h:panelGroup id="cartMessagesWrapper" layout="block" styleClass="cart-messages-wrap">
+                    <h:messages globalOnly="true"
+                                styleClass="client-messages"
+                                infoClass="client-alert client-alert-success"
+                                errorClass="client-alert client-alert-danger" />
+                </h:panelGroup>
+
+                <!-- Container rendered dynamically based on cart state -->
+                <h:panelGroup id="cartMainWrapper" layout="block">
+
+                    <!-- ========================================================
+                         EMPTY STATE (when cart has no items)
+                         ======================================================== -->
+                    <ui:fragment rendered="#{cartController.authenticated and (empty cartController.cartService.cartItems or cartController.itemCount == 0)}">
+                        <ui:include src="/client/components/empty-state.xhtml">
+                            <ui:param name="icon" value="ti ti-shopping-cart-off" />
+                            <ui:param name="title" value="Your cart is empty." />
+                            <ui:param name="subtitle" value="You haven't added any camera equipment or lenses to your rental cart yet. Browse our catalog to find gear for your next shoot." />
+                            <ui:param name="actionUrl" value="#{request.contextPath}/faces/client/pages/devices.xhtml" />
+                            <ui:param name="actionText" value="CONTINUE SHOPPING" />
+                            <ui:param name="actionVariant" value="outline-dark" />
+                            <ui:param name="actionSize" value="lg" />
+                        </ui:include>
+                    </ui:fragment>
+
+                    <!-- ========================================================
+                         ACTIVE STATE (when cart has 1 or more items)
+                         ======================================================== -->
+                    <ui:fragment rendered="#{cartController.authenticated and not empty cartController.cartService.cartItems and cartController.itemCount > 0}">
+                        <div class="cart-grid-layout">
+
+                            <!-- Left Column: Items List -->
+                            <div class="cart-items-column">
+
+                                <!-- Items Header Controls Bar -->
+                                <div class="cart-items-header">
+                                    <span class="cart-count-label">
+                                        #{cartController.itemCount} #{cartController.itemCount == 1 ? 'item' : 'items'} in your cart
+                                    </span>
+                                    <h:commandLink action="#{cartController.clearCart}"
+                                                   styleClass="cart-clear-link"
+                                                   onclick="return confirm('Are you sure you want to remove all items from your cart?');">
+                                        <span>Clear All</span>
+                                        <f:ajax execute="@this" render="cartMainWrapper :headerCartWrapper" />
+                                    </h:commandLink>
+                                </div>
+
+                                <!-- Hidden fields for AJAX date update -->
+                                <h:inputHidden id="updateCartItemId" value="#{cartController.editCartItemId}" />
+                                <h:inputHidden id="updateStartDate" value="#{cartController.editStartDate}" />
+                                <h:inputHidden id="updateEndDate" value="#{cartController.editEndDate}" />
+                                <h:commandButton id="btnSubmitUpdateDates" action="#{cartController.saveRentalPeriodUpdate}" styleClass="cart-hidden-submit">
+                                    <f:ajax execute="@form" render="cartMainWrapper :headerCartWrapper" />
+                                </h:commandButton>
+
+                                <!-- Cart Items List -->
+                                <ui:repeat value="#{cartController.cartService.cartItems}" var="item">
+                                    <div class="cart-item-card #{item.expired ? 'is-expired' : ''}">
+
+                                        <!-- 1. Thumbnail Image Container -->
+                                        <div class="cart-item-thumb">
+                                            <img src="#{deviceDetailController.getImageUrl(item.deviceModels.imageUrl)}"
+                                                 alt="#{item.deviceModels.name}"
+                                                 class="cart-item-img"
+                                                 onerror="this.onerror=null; this.src='#{deviceDetailController.getImageUrl(null)}';" />
+                                        </div>
+
+                                        <!-- 2. Device Information & Rental Duration -->
+                                        <div class="cart-item-details">
+                                            <!-- Type & Brand Badge -->
+                                            <div class="cart-item-category">
+                                                #{item.deviceModels.type} – #{item.deviceModels.brand}
+                                            </div>
+
+                                            <!-- Device Title Link -->
+                                            <h3 class="cart-item-title">
+                                                <a href="#{request.contextPath}/faces/client/pages/detail.xhtml?id=#{item.deviceModels.id}">
+                                                    #{item.deviceModels.name}
+                                                </a>
+                                            </h3>
+
+                                            <!-- Rental Period & Duration Badge with Change Action (No Icons) -->
+                                            <div class="cart-item-period-badge #{item.expired ? 'is-expired' : ''}">
+                                                <span class="cart-item-dates #{item.expired ? 'is-expired' : ''}">
+                                                    <h:outputText value="#{item.startDate}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                    </h:outputText>
+                                                    &#8211;
+                                                    <h:outputText value="#{item.endDate}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                    </h:outputText>
+                                                </span>
+                                                <ui:fragment rendered="#{item.expired}">
+                                                    <span class="cart-badge-expired">
+                                                        EXPIRED
+                                                    </span>
+                                                </ui:fragment>
+                                                <ui:fragment rendered="#{not item.expired}">
+                                                    <span class="cart-period-sep">|</span>
+                                                    <span class="cart-period-duration">
+                                                        #{item.duration} #{item.duration == 1 ? 'day' : 'days'}
+                                                    </span>
+                                                </ui:fragment>
+                                                <button type="button"
+                                                        onclick="toggleDateEdit('#{item.cartItemId}')"
+                                                        class="cart-date-action-btn #{item.expired ? 'is-expired' : ''}"
+                                                        title="#{item.expired ? 'Select new rental dates' : 'Change rental dates'}">
+                                                    <span>#{item.expired ? 'Update Dates' : 'Change'}</span>
+                                                </button>
+                                            </div>
+
+                                            <!-- Clean notice when dates are expired -->
+                                            <ui:fragment rendered="#{item.expired}">
+                                                <div class="cart-expired-hint">
+                                                    Rental start date has passed. Please select new dates.
+                                                </div>
+                                            </ui:fragment>
+
+                                            <!-- Collapsible Custom DatePicker Editor -->
+                                            <div id="dateEdit_#{item.cartItemId}"
+                                                 class="cart-date-editor"
+                                                 style="#{item.expired ? 'display: block;' : 'display: none;'}">
+                                                <div class="cart-editor-header">
+                                                    <span class="cart-editor-title">
+                                                        Update Rental Period
+                                                    </span>
+                                                    <button type="button"
+                                                            onclick="toggleDateEdit('#{item.cartItemId}')"
+                                                            class="cart-editor-close"
+                                                            title="Close datepicker">
+                                                        Cancel
+                                                    </button>
+                                                </div>
+
+                                                <ui:include src="/client/components/datepicker.xhtml">
+                                                    <ui:param name="id" value="picker_#{item.cartItemId}" />
+                                                    <ui:param name="startDateId" value="start_#{item.cartItemId}" />
+                                                    <ui:param name="endDateId" value="end_#{item.cartItemId}" />
+                                                    <ui:param name="startValue" value="#{cartController.formatDisplayDate(item.startDate)}" />
+                                                    <ui:param name="endValue" value="#{cartController.formatDisplayDate(item.endDate)}" />
+                                                    <ui:param name="applyLabel" value="APPLY DATES" />
+                                                    <ui:param name="resetLabel" value="RESET" />
+                                                </ui:include>
+                                            </div>
+
+                                            <!-- Snapshot Rates Sub-info -->
+                                            <div class="cart-item-rates">
+                                                <span>Rate: <strong><h:outputText value="#{item.rentalPriceSnapshot}"><f:convertNumber pattern="#,##0" /></h:outputText> VND</strong>/day</span>
+                                                <span class="cart-period-sep">•</span>
+                                                <span>Deposit: <strong><h:outputText value="#{item.depositAmountSnapshot}"><f:convertNumber pattern="#,##0" /></h:outputText> VND</strong></span>
+                                            </div>
+                                        </div>
+
+                                        <!-- 3. Pricing Subtotal & Remove Action Column -->
+                                        <div class="cart-item-pricing-col">
+                                            <div>
+                                                <span class="cart-fee-label">
+                                                    Rental Fee
+                                                </span>
+                                                <span class="cart-fee-amount">
+                                                    <h:outputText value="#{item.subtotal}">
+                                                        <f:convertNumber pattern="#,##0" />
+                                                    </h:outputText>
+                                                    <span class="cart-fee-currency">VND</span>
+                                                </span>
+                                            </div>
+
+                                            <!-- Remove Action Button -->
+                                            <div class="cart-remove-wrap">
+                                                <h:commandLink action="#{cartController.removeItem(item.cartItemId)}"
+                                                               styleClass="cart-remove-link">
+                                                    <span>Remove</span>
+                                                    <f:ajax execute="@this" render="cartMainWrapper :headerCartWrapper" />
+                                                </h:commandLink>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </ui:repeat>
+
+                                <div class="cart-bottom-nav">
+                                    <ui:include src="/client/components/button.xhtml">
+                                        <ui:param name="href" value="#{request.contextPath}/faces/client/pages/devices.xhtml" />
+                                        <ui:param name="text" value="CONTINUE SHOPPING" />
+                                        <ui:param name="variant" value="outline-dark" />
+                                        <ui:param name="size" value="lg" />
+                                    </ui:include>
+                                </div>
+
+                            </div>
+
+                            <!-- Right Column: Order Summary Sidebar (Reusing rental-summary component) -->
+                            <ui:include src="/client/components/rental-summary.xhtml" />
+
+                        </div>
+                    </ui:fragment>
+
+                </h:panelGroup>
+
+            </h:form>
+
+        </main>
+    </ui:define>
+
+</ui:composition>

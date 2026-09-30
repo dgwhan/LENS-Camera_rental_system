@@ -4,7 +4,7 @@ Thư mục này dùng để chứa các thư viện `.jar` cần thiết của d
 
 ---
 
-### 📦 Các file `.jar` cần đặt vào thư mục này:
+### Các file `.jar` cần đặt vào thư mục này:
 
 1. **EJB & Persistence:**
    * `jakarta.ejb-api.jar` (chứa `@Stateless`, `@EJB`, `@Local`,...)
@@ -31,7 +31,7 @@ Thư mục này dùng để chứa các thư viện `.jar` cần thiết của d
 
 ---
 
-### 💡 Nguồn lấy nhanh các file `.jar`:
+### Nguồn lấy nhanh các file `.jar`:
 Các file trên có sẵn trong thư mục GlassFish của bạn tại:
 `<GlassFish_Installation_Directory>/glassfish/modules/`
 (Ví dụ: `C:\Users\<User>\GlassFish_Server_800\glassfish\modules\`)

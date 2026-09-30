@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="jakarta.faces.html"
                 xmlns:f="jakarta.faces.core"
                 xmlns:ui="jakarta.faces.facelets"
-                template="/templates/layout.xhtml">
+                template="/WEB-INF/templates/admin-template.xhtml">
 
     <ui:param name="activeMenu" value="devices" />
 
@@ -13,14 +13,14 @@
     </ui:define>
 
     <ui:define name="head">
-        <h:outputStylesheet library="css" name="detail.css" />
+        <h:outputStylesheet library="css" name="pages/detail.css" />
     </ui:define>
 
     <ui:define name="content">
         <div class="main-wrapper">
             <div class="detail-page-container">
                 <h:form id="detailForm">
-                    <!-- Tiêu đề trang chi tiết -->
+                    <!-- TiÃªu Ä‘á» trang chi tiáº¿t -->
                     <div class="detail-header">
                         <div class="detail-header-row">
                             <div>
@@ -37,11 +37,11 @@
                         </div>
                     </div>
 
-                    <!-- Bố cục 2 cột tiêu chuẩn -->
+                    <!-- Bá»‘ cá»¥c 2 cá»™t tiÃªu chuáº©n -->
                     <div class="detail-layout">
-                        <!-- Cột chính (bên trái) -->
+                        <!-- Cá»™t chÃ­nh (bÃªn trÃ¡i) -->
                         <div class="detail-main">
-                            <!-- Thẻ thông tin định danh thiết bị -->
+                            <!-- Tháº» thÃ´ng tin Ä‘á»‹nh danh thiáº¿t bá»‹ -->
                             <div class="detail-card">
                                 <div class="detail-card-header">
                                     <h2 class="detail-card-title">Device Information</h2>
@@ -87,7 +87,7 @@
                             </div>
                         </div>
 
-                        <!-- Thẻ thông số chi tiết của Model -->
+                        <!-- Tháº» thÃ´ng sá»‘ chi tiáº¿t cá»§a Model -->
                         <div class="detail-card">
                             <div class="detail-card-header">
                                 <h2 class="detail-card-title">Model Specifications</h2>
@@ -129,9 +129,9 @@
                         </div>
                     </div>
 
-                    <!-- Cột phụ (bên phải) -->
+                    <!-- Cá»™t phá»¥ (bÃªn pháº£i) -->
                     <div class="detail-sidebar">
-                        <!-- Thẻ trạng thái -->
+                        <!-- Tháº» tráº¡ng thÃ¡i -->
                         <div class="detail-card">
                             <div class="detail-card-header detail-status-card-header">
                                 <h2 class="detail-card-title">Status</h2>
@@ -141,7 +141,7 @@
                             </div>
                         </div>
 
-                        <!-- Thẻ bảng giá Model -->
+                        <!-- Tháº» báº£ng giÃ¡ Model -->
                         <div class="detail-card">
                             <div class="detail-card-header">
                                 <h2 class="detail-card-title">Pricing</h2>
@@ -173,7 +173,7 @@
                             </div>
                         </div>
 
-                        <!-- Thẻ thông tin hệ thống -->
+                        <!-- Tháº» thÃ´ng tin há»‡ thá»‘ng -->
                         <div class="detail-card">
                             <div class="detail-card-header">
                                 <h2 class="detail-card-title">System Information</h2>
@@ -184,7 +184,7 @@
                                         <span class="detail-meta-label">Created At</span>
                                         <span class="detail-meta-value">
                                             <h:outputText value="#{deviceController.devices.createdAt}">
-                                                <f:convertDateTime pattern="MMM dd, yyyy · HH:mm" />
+                                                <f:convertDateTime pattern="MMM dd, yyyy Â· HH:mm" />
                                             </h:outputText>
                                         </span>
                                     </div>
@@ -192,7 +192,7 @@
                                         <span class="detail-meta-label">Updated At</span>
                                         <span class="detail-meta-value">
                                             <h:outputText value="#{deviceController.devices.updatedAt}">
-                                                <f:convertDateTime pattern="MMM dd, yyyy · HH:mm" />
+                                                <f:convertDateTime pattern="MMM dd, yyyy Â· HH:mm" />
                                             </h:outputText>
                                         </span>
                                     </div>

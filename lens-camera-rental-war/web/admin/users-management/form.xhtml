@@ -1,20 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="jakarta.faces.html"
                 xmlns:f="jakarta.faces.core"
                 xmlns:ui="jakarta.faces.facelets"
                 xmlns:pt="jakarta.faces.passthrough"
-                template="/templates/layout.xhtml">
+                template="/WEB-INF/templates/admin-template.xhtml">
 
     <ui:param name="activeMenu" value="users" />
 
     <ui:define name="title">
         #{userController.editMode ? 'Edit User' : 'Create User'} - Lens Camera Rental
-    </ui:define>
-
-    <ui:define name="head">
-        <h:outputStylesheet library="css" name="users.css" />
     </ui:define>
 
     <ui:define name="content">

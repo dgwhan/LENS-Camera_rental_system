@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <!-- Auto-include Device Card Stylesheet -->
+    <h:outputStylesheet library="css" name="components/device-card.css" />
+
+    <div id="#{not empty id ? id : 'deviceGrid'}" class="device-grid-container">
+
+        <!-- Empty State (When no devices match active filter) -->
+        <ui:fragment rendered="#{empty devices}">
+            <ui:include src="/client/components/empty-state.xhtml">
+                <ui:param name="title" value="No devices found" />
+                <ui:param name="subtitle" value="Try adjusting your search or filters." />
+            </ui:include>
+        </ui:fragment>
+
+        <!-- Dynamic Device Cards Grid -->
+        <ui:fragment rendered="#{not empty devices}">
+            <div class="device-cards-grid">
+                <ui:repeat value="#{devices}" var="dm">
+                    <ui:include src="/client/components/device-card.xhtml">
+                        <ui:param name="dm" value="#{dm}" />
+                        <ui:param name="controller" value="#{controller}" />
+                    </ui:include>
+                </ui:repeat>
+            </div>
+        </ui:fragment>
+
+    </div>
+
+</ui:composition>

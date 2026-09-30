@@ -13,8 +13,8 @@ import jakarta.security.enterprise.authentication.mechanism.http.LoginToContinue
 //bảo vệ trường hợp user đang muốn truy cập một trang được bảo vệ trước khi login
 @CustomFormAuthenticationMechanismDefinition(
     loginToContinue = @LoginToContinue(
-        loginPage = "/faces/login.xhtml",
-        errorPage = "/faces/login.xhtml"
+        loginPage = "/faces/client/pages/login.xhtml",
+        errorPage = "/faces/client/pages/login.xhtml"
     )
 )
 public class SecurityConfiguration {

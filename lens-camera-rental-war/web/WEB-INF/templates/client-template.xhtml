@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets">
+    <h:head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title><ui:insert name="title">Lens Camera Rental - Premium Camera &amp; Lens Equipment</ui:insert></title>
+        <h:outputStylesheet library="css" name="color.css" />
+        <h:outputStylesheet library="css" name="font.css" />
+        <h:outputStylesheet library="css" name="app.css" />
+        <ui:insert name="head" />
+    </h:head>
+    <h:body styleClass="#{not empty bodyClass ? bodyClass : ''}">
+        <!-- Flash Alert Message if any -->
+        <h:panelGroup rendered="#{not empty flash.actionAlert}">
+            <script type="text/javascript">
+                alert('#{flash.actionAlert}');
+            </script>
+        </h:panelGroup>
+
+        <!-- Common Client Header -->
+        <ui:insert name="header">
+            <ui:include src="/client/components/header.xhtml" />
+        </ui:insert>
+
+        <!-- Main Content Area -->
+        <ui:insert name="content" />
+
+        <!-- Common Client Footer -->
+        <ui:insert name="footer">
+            <ui:include src="/client/components/footer.xhtml" />
+        </ui:insert>
+
+        <!-- Scripts placeholder -->
+        <ui:insert name="scripts" />
+    </h:body>
+</html>

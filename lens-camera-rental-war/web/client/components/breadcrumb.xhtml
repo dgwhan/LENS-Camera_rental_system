@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets">
+
+    <h:outputStylesheet library="css" name="components/breadcrumb.css" />
+
+    <nav class="customer-breadcrumb" aria-label="Breadcrumb">
+        <ol class="breadcrumb-list">
+            <li class="breadcrumb-item">
+                <a href="#{not empty link1Url ? link1Url : (not empty parent1Url ? parent1Url : request.contextPath.concat('/faces/client/pages/index.xhtml'))}"
+                    class="breadcrumb-link">
+                    #{not empty link1Text ? link1Text : (not empty parent1Text ? parent1Text : 'HOME')}
+                </a>
+            </li>
+
+            <ui:fragment rendered="#{not empty link2Text or not empty parent2Text or not empty currentPage}">
+                <li class="breadcrumb-separator" aria-hidden="true">/</li>
+            </ui:fragment>
+
+            <ui:fragment rendered="#{not empty link2Text or not empty parent2Text}">
+                <li class="breadcrumb-item">
+                    <a href="#{not empty link2Url ? link2Url : parent2Url}" class="breadcrumb-link">
+                        #{not empty link2Text ? link2Text : parent2Text}
+                    </a>
+                </li>
+                <ui:fragment rendered="#{not empty link3Text or not empty parent3Text or not empty currentPage}">
+                    <li class="breadcrumb-separator" aria-hidden="true">/</li>
+                </ui:fragment>
+            </ui:fragment>
+
+            <ui:fragment rendered="#{not empty link3Text or not empty parent3Text}">
+                <li class="breadcrumb-item">
+                    <a href="#{not empty link3Url ? link3Url : parent3Url}" class="breadcrumb-link">
+                        #{not empty link3Text ? link3Text : parent3Text}
+                    </a>
+                </li>
+                <ui:fragment rendered="#{not empty currentPage}">
+                    <li class="breadcrumb-separator" aria-hidden="true">/</li>
+                </ui:fragment>
+            </ui:fragment>
+
+            <ui:fragment rendered="#{not empty currentPage}">
+                <li class="breadcrumb-item" aria-current="page">
+                    <span class="breadcrumb-current">#{currentPage}</span>
+                </li>
+            </ui:fragment>
+        </ol>
+    </nav>
+</ui:composition>

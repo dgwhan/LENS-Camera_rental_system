@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <!-- Auto-include Footer Stylesheet -->
+    <h:outputStylesheet library="css" name="components/footer.css" />
+
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-container">
+            <!-- 3-Zone Content Row -->
+            <div class="footer-main">
+                <!-- Zone 1: Brand Wordmark + Short Description -->
+                <div class="footer-brand-zone">
+                    <a href="#{request.contextPath}/faces/client/pages/index.xhtml" class="footer-brand-link" aria-label="Lens Camera Rental Home">
+                        <span class="footer-brand-title">LENS</span>
+                        <span class="footer-brand-subtitle">CAMERA RENTAL</span>
+                    </a>
+                    <p class="footer-description">
+                        High-end optical and cinema equipment rental for commercial productions and independent filmmakers.
+                    </p>
+                </div>
+
+                <!-- Inter-section divider for mobile stack -->
+                <div class="footer-mobile-divider" aria-hidden="true"></div>
+
+                <!-- Zone 2: Navigation Links -->
+                <div class="footer-nav-zone">
+                    <nav class="footer-nav" aria-label="Footer Navigation">
+                        <ul class="footer-nav-links">
+                            <li><a href="#{request.contextPath}/faces/client/pages/index.xhtml" class="footer-nav-link">Home</a></li>
+                            <li><a href="#{request.contextPath}/faces/client/pages/devices.xhtml" class="footer-nav-link">Devices</a></li>
+                            <li><a href="#{request.contextPath}/faces/client/pages/pricing.xhtml" class="footer-nav-link">Pricing</a></li>
+                            <li><a href="#{request.contextPath}/faces/client/pages/contact.xhtml" class="footer-nav-link">Contact</a></li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <!-- Inter-section divider for mobile stack -->
+                <div class="footer-mobile-divider" aria-hidden="true"></div>
+
+                <!-- Zone 3: Contact Details (Right-aligned desktop, Left-aligned mobile) -->
+                <div class="footer-contact-zone">
+                    <h4 class="footer-contact-title">CONTACT</h4>
+                    <div class="footer-contact-info">
+                        <a href="mailto:support@lens.com" class="footer-contact-item">support@lens.com</a>
+                        <a href="tel:+84xxxxxxxx" class="footer-contact-item">+84 xxx xxx xxx</a>
+                        <span class="footer-contact-item footer-studio-hours">Studio Hours: Mon&#8211;Sat 08:00 &#8211; 20:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subtle Horizontal Divider -->
+            <div class="footer-divider" aria-hidden="true"></div>
+
+            <!-- Footer Bottom: Copyright & Legal Links -->
+            <div class="footer-bottom">
+                <p class="footer-copyright">&#169; 2026 Lens Camera Rental. All rights reserved.</p>
+                <div class="footer-legal-links">
+                    <a href="#" class="footer-legal-link">Terms of Rental</a>
+                    <span class="footer-legal-sep" aria-hidden="true">&#183;</span>
+                    <a href="#" class="footer-legal-link">
+                        <span class="legal-full">Equipment Insurance</span>
+                        <span class="legal-short">Insurance</span>
+                    </a>
+                    <span class="footer-legal-sep" aria-hidden="true">&#183;</span>
+                    <a href="#" class="footer-legal-link">
+                        <span class="legal-full">Privacy Policy</span>
+                        <span class="legal-short">Privacy</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</ui:composition>

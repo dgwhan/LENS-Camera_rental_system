@@ -1,0 +1,23 @@
+/* ==========================================================================
+   LENS Camera Rental - Client UI Bundle (customer.css)
+   Imports Root CSS Foundation & Common Client Components
+   ========================================================================== */
+
+@import url('../color.css');
+@import url('../font.css');
+@import url('../app.css');
+@import url('../components/header.css');
+@import url('../components/breadcrumb.css');
+@import url('../components/datepicker.css');
+@import url('../components/buttons.css');
+@import url('../components/badges.css');
+
+.customer-catalog-breadcrumb {
+    margin-bottom: 20px;
+}
+
+@media (max-width: 640px) {
+    .customer-catalog-breadcrumb {
+        margin-bottom: 14px;
+    }
+}

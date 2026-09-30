@@ -95,7 +95,7 @@
                 isActive = true;
             } else if (activeTarget === 'contact' && href.indexOf('contact') !== -1) {
                 isActive = true;
-            } else if (activeTarget === 'home' && (href.indexOf('index') !== -1 || href.endsWith('/faces/index.xhtml') || href.endsWith('/'))) {
+            } else if (activeTarget === 'home' && (href.indexOf('index') !== -1 || href.endsWith('/faces/client/pages/index.xhtml') || href.endsWith('/faces/index.xhtml') || href.endsWith('/'))) {
                 isActive = true;
             }
 

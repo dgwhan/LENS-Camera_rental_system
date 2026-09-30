@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <!-- Reusable Availability Status Badge -->
+    <ui:param name="isAvailable" value="#{not empty available ? available : (status eq 'AVAILABLE' or status eq 'available')}" />
+    <ui:param name="badgeText" value="#{not empty text ? text : (isAvailable ? 'AVAILABLE' : 'OUT OF STOCK')}" />
+    <ui:param name="badgeClass" value="#{isAvailable ? 'status-badge-available' : 'status-badge-out-of-stock'} #{not empty extraClass ? extraClass : ''}" />
+
+    <span class="device-card-badge #{badgeClass}">#{badgeText}</span>
+
+</ui:composition>

@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/templates/client-template.xhtml">
+
+    <f:metadata>
+        <f:viewParam name="id" value="#{deviceDetailController.id}" />
+        <!-- availability: load device detail only on initial page request -->
+        <f:viewAction action="#{deviceDetailController.loadDeviceDetail()}" onPostback="false" />
+    </f:metadata>
+
+    <ui:define name="title">
+        #{not empty deviceDetailController.deviceModel ? deviceDetailController.deviceModel.name.concat(' - Lens Camera Rental') : 'Device Detail - Lens Camera Rental'}
+    </ui:define>
+
+    <ui:define name="head">
+        <h:outputStylesheet library="css" name="components/buttons.css" />
+        <h:outputStylesheet library="css" name="pages/customer.css" />
+        <h:outputStylesheet library="css" name="pages/device-detail.css" />
+        <h:outputScript library="js" name="device-detail.js" />
+    </ui:define>
+
+    <ui:define name="content">
+        <!-- Main Customer Device Detail Content -->
+        <main class="device-detail-container" role="main">
+
+            <!-- Breadcrumb Navigation: Home / Devices / [Device Name] -->
+            <div class="device-detail-breadcrumb">
+                <ui:include src="/client/components/breadcrumb.xhtml">
+                    <ui:param name="link1Text" value="HOME" />
+                    <ui:param name="link1Url" value="#{request.contextPath}/faces/client/pages/index.xhtml" />
+                    <ui:param name="link2Text" value="DEVICES" />
+                    <ui:param name="link2Url" value="#{request.contextPath}/faces/client/pages/devices.xhtml" />
+                    <ui:param name="currentPage" value="#{not empty deviceDetailController.deviceModel ? deviceDetailController.deviceModel.name : 'Device Detail'}" />
+                </ui:include>
+            </div>
+
+            <!-- Two-Column Device Detail Layout -->
+            <h:panelGroup layout="block" styleClass="device-detail-grid" rendered="#{not empty deviceDetailController.deviceModel}">
+
+                <!-- Left Column: Product Image Gallery Card -->
+                <div class="device-gallery-card">
+                    <img src="#{deviceDetailController.getImageUrl(deviceDetailController.deviceModel.imageUrl)}"
+                         alt="#{deviceDetailController.deviceModel.name}"
+                         class="device-detail-image"
+                         onerror="this.onerror=null; this.src='#{deviceDetailController.getImageUrl(null)}';" />
+                </div>
+
+                <!-- Right Column: Device Information & Rental Selection -->
+                <div class="device-info-card">
+
+                    <!-- Top Meta Row: TYPE - BRAND and Compact AVAILABILITY badge -->
+                    <div class="device-meta-row">
+                        <span class="device-type-brand">
+                            #{deviceDetailController.deviceModel.type} – #{deviceDetailController.deviceModel.brand}
+                        </span>
+
+                        <!-- customer availability -->
+                        <ui:fragment rendered="#{deviceDetailController.productAvailable}">
+                            <span class="device-status-badge status-badge-available">AVAILABLE</span>
+                        </ui:fragment>
+                        <!-- out of stock handling -->
+                        <ui:fragment rendered="#{not deviceDetailController.productAvailable}">
+                            <span class="device-status-badge status-badge-out-of-stock">OUT OF STOCK</span>
+                        </ui:fragment>
+                    </div>
+
+                    <!-- Device Name Title -->
+                    <h1 class="device-detail-title">#{deviceDetailController.deviceModel.name}</h1>
+
+                    <!-- Description Section -->
+                    <ui:fragment rendered="#{not empty deviceDetailController.deviceModel.description}">
+                        <div class="device-desc-section">
+                            <span class="device-desc-label">DESCRIPTION</span>
+                            <p class="device-desc-text">#{deviceDetailController.deviceModel.description}</p>
+                        </div>
+                    </ui:fragment>
+
+                    <!-- Pricing Grid: Rate & Deposit Cards -->
+                    <div class="device-pricing-grid">
+
+                        <!-- Rate Box -->
+                        <div class="pricing-card">
+                            <span class="pricing-label">RATE</span>
+                            <div class="pricing-amount-row">
+                                <span class="pricing-value">#{deviceDetailController.formatNumber(deviceDetailController.deviceModel.rentalPrice)}</span>
+                                <span class="pricing-currency">VND</span>
+                                <span class="pricing-period">/ day</span>
+                            </div>
+                        </div>
+
+                        <!-- Deposit Box -->
+                        <div class="pricing-card">
+                            <span class="pricing-label">DEPOSIT</span>
+                            <div class="pricing-amount-row">
+                                <span class="pricing-value">#{deviceDetailController.formatNumber(deviceDetailController.deviceModel.depositAmount)}</span>
+                                <span class="pricing-currency">VND</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- customer availability: render rental controls only when product is available -->
+                    <ui:fragment rendered="#{deviceDetailController.productAvailable}">
+                        <!-- Rental Period Section (Start Date, End Date, Duration) -->
+                        <h:form id="rentalActionForm" prependId="false">
+
+                            <!-- rental period component -->
+                            <ui:include src="/client/components/rental-period.xhtml" />
+
+                            <!-- availability: hidden inputs for JSF model binding -->
+                            <h:inputHidden id="deviceModelIdHidden" value="#{deviceDetailController.id}" />
+                            <h:inputHidden id="startDateHidden" value="#{deviceDetailController.startDate}" />
+                            <h:inputHidden id="endDateHidden" value="#{deviceDetailController.endDate}" />
+
+                            <!-- Action Buttons Row: CHECK AVAILABILITY -->
+                            <div class="device-actions-row">
+
+                                <!-- availability: check selected rental period via AJAX with client validation -->
+                                <h:commandButton value="CHECK AVAILABILITY"
+                                                 action="#{deviceDetailController.checkAvailability}"
+                                                 styleClass="btn btn-check-availability"
+                                                 onclick="return validateRentalDates();">
+                                    <f:ajax execute="@form" render="availabilityResult cartFeedback" />
+                                </h:commandButton>
+
+                            </div>
+
+                            <!-- availability: ajax result container must always exist in component tree -->
+                            <h:panelGroup id="availabilityResult"
+                                          layout="block"
+                                          styleClass="availability-result">
+
+                                <!-- availability: display result only after checking -->
+                                <ui:fragment rendered="#{not empty deviceDetailController.availabilityResult}">
+
+                                    <!-- availability: display error message when unavailable -->
+                                    <ui:fragment rendered="#{not deviceDetailController.availabilityResult.available}">
+
+                                        <div class="availability-card availability-error">
+                                            <div class="availability-message">
+                                                <h:outputText value="#{deviceDetailController.availabilityResult.message}" />
+                                            </div>
+                                        </div>
+
+                                    </ui:fragment>
+
+                                    <!-- availability: rental summary form and action buttons when available -->
+                                    <ui:fragment rendered="#{deviceDetailController.availabilityResult.available}">
+
+                                        <div class="rental-summary-card">
+
+                                            <h4 class="rental-summary-title">Rental Summary</h4>
+
+                                            <div class="rental-summary-rows">
+
+                                                <div class="rental-summary-row">
+                                                    <span>Rental Period:</span>
+                                                    <span class="rental-summary-value-strong">
+                                                        #{deviceDetailController.displayStartDate} – #{deviceDetailController.displayEndDate}
+                                                    </span>
+                                                </div>
+
+                                                <div class="rental-summary-row">
+                                                    <span>Duration:</span>
+                                                    <span class="rental-summary-value-strong">
+                                                        #{deviceDetailController.rentalDays} #{deviceDetailController.rentalDays == 1 ? 'day' : 'days'}
+                                                    </span>
+                                                </div>
+
+                                                <div class="rental-summary-row">
+                                                    <span>Rental Fee:</span>
+                                                    <span class="rental-summary-value-strong">
+                                                        #{deviceDetailController.formattedRentalFee}
+                                                    </span>
+                                                </div>
+
+                                                <div class="rental-summary-row">
+                                                    <span>Deposit:</span>
+                                                    <span class="rental-summary-value-strong">
+                                                        #{deviceDetailController.formatPrice(deviceDetailController.deviceModel.depositAmount)}
+                                                    </span>
+                                                </div>
+
+                                                <div class="rental-summary-row total-row">
+                                                    <span>Estimated Total:</span>
+                                                    <span class="rental-summary-total-value">
+                                                        #{deviceDetailController.formattedEstimatedTotal}
+                                                    </span>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="detail-actions-row">
+                                                <h:commandLink action="#{deviceDetailController.addToCart}"
+                                                               styleClass="btn btn-add-to-cart"
+                                                               id="btnAddToCart">
+                                                    <span>ADD TO CART</span>
+                                                    <f:ajax execute="@form" render="cartFeedback :headerCartWrapper" />
+                                                </h:commandLink>
+
+                                                <button type="button"
+                                                        class="btn btn-rent-now"
+                                                        id="btnRentNow"
+                                                        title="Rent Now will be available in next phase"
+                                                        onclick="alert('Rent Now checkout flow will be implemented in the next phase.');">
+                                                    <span>RENT NOW</span>
+                                                </button>
+                                            </div>
+
+                                        </div>
+
+                                    </ui:fragment>
+
+                                </ui:fragment>
+
+                            </h:panelGroup>
+
+                            <!-- Native Alert feedback for cart actions -->
+                            <h:panelGroup id="cartFeedback" layout="block">
+                                <ui:fragment rendered="#{not empty facesContext.messageList}">
+                                    <script type="text/javascript">
+                                        alert('#{facesContext.messageList[0].summary}');
+                                    </script>
+                                </ui:fragment>
+                            </h:panelGroup>
+
+                        </h:form>
+                    </ui:fragment>
+
+                    <!-- out of stock ui -->
+                    <ui:fragment rendered="#{not deviceDetailController.productAvailable}">
+                        <div class="out-of-stock-notice">
+                            <div class="out-of-stock-notice-title">Currently unavailable</div>
+                            <p class="out-of-stock-notice-message">Sorry, this product is currently out of stock.</p>
+                            <p class="out-of-stock-notice-contact">Please contact the store at <strong><a href="tel:#{deviceDetailController.storePhone}" class="out-of-stock-phone">#{deviceDetailController.storePhone}</a></strong> to make an early reservation if possible.</p>
+                        </div>
+                    </ui:fragment>
+
+                </div>
+
+            </h:panelGroup>
+        </main>
+    </ui:define>
+
+</ui:composition>

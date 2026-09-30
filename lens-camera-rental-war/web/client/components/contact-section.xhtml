@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <!-- Auto-include Contact Section Stylesheet -->
+    <h:outputStylesheet library="css" name="components/contact-section.css" />
+
+    <!-- Lightweight Customer Contact Section -->
+    <section class="customer-contact-section" aria-label="Customer Support">
+        <div class="customer-contact-card">
+            <span class="contact-eyebrow">CONTACT US</span>
+            <h3 class="contact-heading">Need help choosing the right equipment?</h3>
+            <p class="contact-body">
+                Our team is available to help you find the right camera or lens for your project.
+            </p>
+            <div class="contact-channels">
+                <a href="mailto:support@lens.com" class="contact-channel-item">support@lens.com</a>
+                <span class="contact-channel-sep" aria-hidden="true">&#183;</span>
+                <a href="tel:+84xxxxxxxx" class="contact-channel-item">+84 xxx xxx xxx</a>
+            </div>
+            <div class="contact-action-wrap">
+                <ui:include src="/client/components/button.xhtml">
+                    <ui:param name="id" value="contactBtn" />
+                    <ui:param name="text" value="CONTACT US" />
+                    <ui:param name="href" value="#{request.contextPath}/faces/client/pages/contact.xhtml" />
+                    <ui:param name="variant" value="outline-dark" />
+                    <ui:param name="size" value="sm" />
+                </ui:include>
+            </div>
+        </div>
+    </section>
+
+</ui:composition>

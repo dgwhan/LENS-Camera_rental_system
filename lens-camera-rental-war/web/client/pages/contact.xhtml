@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/templates/client-template.xhtml">
+
+    <ui:define name="title">Contact - Lens Camera Rental</ui:define>
+
+    <ui:define name="head">
+        <h:outputStylesheet library="css" name="pages/customer.css" />
+    </ui:define>
+
+    <ui:define name="content">
+        <!-- Main Content Area -->
+        <main class="customer-catalog-main" role="main">
+
+            <!-- Page Title: Contact -->
+            <ui:include src="/client/components/page-title.xhtml">
+                <ui:param name="title" value="Contact Us" />
+                <ui:param name="subtitle" value="Get in touch with our equipment and studio support team." />
+                <ui:param name="asH1" value="true" />
+            </ui:include>
+
+            <!-- Contact Us Section -->
+            <ui:include src="/client/components/contact-section.xhtml" />
+
+        </main>
+    </ui:define>
+
+</ui:composition>
