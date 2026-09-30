@@ -30,12 +30,45 @@ public class DeviceModelController implements Serializable {
     private DevicesFacadeLocal devicesFacade;
 
     private DeviceModels deviceModels = new DeviceModels();
+    private Integer id;
     private boolean editMode;
     private String keyword = "";
     private Part imagePart;
     private boolean removeCurrentImage;
 
     public DeviceModelController() {
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void initDetail() {
+        if (id != null && (deviceModels == null || deviceModels.getId() == null || !deviceModels.getId().equals(id))) {
+            deviceModels = deviceModelsFacade.find(id);
+        }
+    }
+
+    public void initForm() {
+        if (id != null && (deviceModels == null || deviceModels.getId() == null || !deviceModels.getId().equals(id))) {
+            deviceModels = deviceModelsFacade.find(id);
+            if (deviceModels != null) {
+                editMode = true;
+                imagePart = null;
+                removeCurrentImage = false;
+            }
+        } else if (id == null && !editMode) {
+            if (deviceModels == null) {
+                deviceModels = new DeviceModels();
+            }
+            if (deviceModels.getImageUrl() == null) {
+                deviceModels.setImageUrl(ImageUtil.DEFAULT_IMAGE_NAME);
+            }
+        }
     }
 
     //insert
@@ -45,7 +78,8 @@ public class DeviceModelController implements Serializable {
         imagePart = null;
         removeCurrentImage = false;
         editMode = false;
-        return "form";
+        id = null;
+        return "form?faces-redirect=true";
     }
 
     public String insertDeviceModel() {
@@ -87,21 +121,27 @@ public class DeviceModelController implements Serializable {
 
     //open edit form
     public String editDeviceModel(Integer id) {
+        this.id = id;
         deviceModels = deviceModelsFacade.find(id);
         if (deviceModels == null) {
             return "/404?faces-redirect=true";
         }
 
-        System.out.println("edit img: " + deviceModels.getImageUrl());
-
         imagePart = null;
         removeCurrentImage = false;
         editMode = true;
-
-        return "form";
+        return "form?faces-redirect=true&id=" + id;
     }
 
     public String updateDeviceModel() {
+        if (deviceModels == null || (deviceModels.getId() == null && id == null)) {
+            FacesUtil.addErrorMessage("Device model not found.");
+            return null;
+        }
+        if (deviceModels.getId() == null && id != null) {
+            deviceModels.setId(id);
+        }
+
         boolean hasError = false;
         if (isDuplicateName(deviceModels.getId())) {
             hasError = true;
@@ -117,6 +157,17 @@ public class DeviceModelController implements Serializable {
         String oldImage = deviceModels.getImageUrl();
 
         try {
+            if (deviceModels.getCreatedAt() == null && deviceModels.getId() != null) {
+                DeviceModels existing = deviceModelsFacade.find(deviceModels.getId());
+                if (existing != null) {
+                    deviceModels.setCreatedAt(existing.getCreatedAt());
+                    if (oldImage == null || oldImage.isBlank()) {
+                        oldImage = existing.getImageUrl();
+                        deviceModels.setImageUrl(oldImage);
+                    }
+                }
+            }
+
             //upload ảnh mới nếu người dùng chọn
             String uploadedImage = null;
             if (imagePart != null && imagePart.getSize() > 0) {
@@ -160,8 +211,12 @@ public class DeviceModelController implements Serializable {
 
     //detail
     public String detailDeviceModel(Integer id) {
+        this.id = id;
         deviceModels = deviceModelsFacade.find(id);
-        return deviceModels != null ? "detail" : "/404?faces-redirect=true";
+        if (deviceModels == null) {
+            return "/404?faces-redirect=true";
+        }
+        return "detail?faces-redirect=true&id=" + id;
     }
 
     //delete

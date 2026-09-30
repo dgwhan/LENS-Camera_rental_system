@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core"
+    xmlns:ui="jakarta.faces.facelets">
+
+    <!-- =========================================================================
+         Rental Item Card Component
+         Reusable across Cart and Checkout pages.
+
+         Parameters:
+         - item: CartItem model representing the rented equipment
+         - readonly: boolean (true for Checkout view, false for Cart view with edit/remove actions)
+         ========================================================================= -->
+    <div class="cart-item-card #{item.expired ? 'is-expired' : ''} #{item.outOfStock ? 'is-out-of-stock' : ''}">
+
+        <!-- 1. Thumbnail Image Container -->
+        <div class="cart-item-thumb">
+            <img src="#{deviceDetailController.getImageUrl(item.deviceModels.imageUrl)}" alt="#{item.deviceModels.name}"
+                class="cart-item-img"
+                onerror="this.onerror=null; this.src='#{deviceDetailController.getImageUrl(null)}';" />
+        </div>
+
+        <!-- 2. Device Information & Rental Period Details -->
+        <div class="cart-item-details">
+            <!-- Type & Brand Metadata -->
+            <div class="cart-item-category">
+                #{item.deviceModels.type} – #{item.deviceModels.brand}
+            </div>
+
+            <!-- Device Title Link -->
+            <h3 class="cart-item-title">
+                <a href="#{request.contextPath}/faces/client/pages/detail.xhtml?id=#{item.deviceModels.id}">
+                    #{item.deviceModels.name}
+                </a>
+            </h3>
+
+            <!-- Rental Period & Duration Badge -->
+            <div
+                class="cart-item-period-badge #{item.expired ? 'is-expired' : ''} #{item.outOfStock ? 'is-out-of-stock' : ''}">
+                <span
+                    class="cart-item-dates #{item.expired ? 'is-expired' : ''} #{item.outOfStock ? 'is-out-of-stock' : ''}">
+                    <h:outputText value="#{item.startDate}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Asia/Ho_Chi_Minh" />
+                    </h:outputText>
+                    &#8211;
+                    <h:outputText value="#{item.endDate}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Asia/Ho_Chi_Minh" />
+                    </h:outputText>
+                </span>
+
+                <ui:fragment rendered="#{item.outOfStock}">
+                    <span class="cart-badge-out-of-stock">
+                        OUT OF STOCK
+                    </span>
+                </ui:fragment>
+
+                <ui:fragment rendered="#{not item.outOfStock and item.expired}">
+                    <span class="cart-badge-expired">
+                        EXPIRED
+                    </span>
+                </ui:fragment>
+
+                <ui:fragment rendered="#{not item.outOfStock and not item.expired}">
+                    <span class="cart-period-sep">|</span>
+                    <span class="cart-period-duration">
+                        #{item.duration} #{item.duration == 1 ? 'day' : 'days'}
+                    </span>
+                </ui:fragment>
+
+                <!-- Change Dates Action Button (Cart only, disabled if out of stock) -->
+                <ui:fragment rendered="#{not readonly and not item.outOfStock}">
+                    <button type="button" onclick="toggleDateEdit('#{item.cartItemId}')"
+                        class="cart-date-action-btn #{item.expired ? 'is-expired' : ''}"
+                        title="#{item.expired ? 'Select new rental dates' : 'Change rental dates'}">
+                        <span>#{item.expired ? 'Update Dates' : 'Change'}</span>
+                    </button>
+                </ui:fragment>
+            </div>
+
+            <!-- Out of Stock Notice -->
+            <ui:fragment rendered="#{item.outOfStock}">
+                <div class="cart-out-of-stock-hint">
+                    This equipment is currently out of stock.
+                </div>
+            </ui:fragment>
+
+
+            <!-- Expired Notice (Cart only) -->
+            <ui:fragment rendered="#{not readonly and not item.outOfStock and item.expired}">
+                <div class="cart-expired-hint">
+                    Rental start date has passed. Please select new dates.
+                </div>
+            </ui:fragment>
+
+            <!-- Collapsible DatePicker Editor (Cart only, not available when out of stock) -->
+            <ui:fragment rendered="#{not readonly and not item.outOfStock}">
+                <div id="dateEdit_#{item.cartItemId}" class="cart-date-editor"
+                    style="#{item.expired ? 'display: block;' : 'display: none;'}">
+                    <div class="cart-editor-header">
+                        <span class="cart-editor-title">
+                            Update Rental Period
+                        </span>
+                        <button type="button" onclick="toggleDateEdit('#{item.cartItemId}')" class="cart-editor-close"
+                            title="Close datepicker">
+
+                            Cancel
+                        </button>
+                    </div>
+
+                    <ui:include src="/client/components/datepicker.xhtml">
+                        <ui:param name="id" value="picker_#{item.cartItemId}" />
+                        <ui:param name="startDateId" value="start_#{item.cartItemId}" />
+                        <ui:param name="endDateId" value="end_#{item.cartItemId}" />
+                        <ui:param name="startValue" value="#{cartController.formatDisplayDate(item.startDate)}" />
+                        <ui:param name="endValue" value="#{cartController.formatDisplayDate(item.endDate)}" />
+                        <ui:param name="applyLabel" value="APPLY DATES" />
+                        <ui:param name="resetLabel" value="RESET" />
+                    </ui:include>
+                </div>
+            </ui:fragment>
+
+            <!-- Snapshot Rates Sub-info -->
+            <div class="cart-item-rates">
+                <span>Rental Rate: <strong>
+                        <h:outputText value="#{item.rentalPriceSnapshot}">
+                            <f:convertNumber pattern="#,##0" />
+                        </h:outputText> VND
+                    </strong>/day</span>
+                <span class="cart-period-sep">•</span>
+                <span>Deposit: <strong>
+                        <h:outputText value="#{item.depositAmountSnapshot}">
+                            <f:convertNumber pattern="#,##0" />
+                        </h:outputText> VND
+                    </strong></span>
+            </div>
+        </div>
+
+        <!-- 3. Pricing Subtotal Column & Optional Actions -->
+        <div class="cart-item-pricing-col">
+            <div>
+                <span class="cart-fee-label">
+                    #{readonly ? 'RENTAL SUBTOTAL' : 'Rental Fee'}
+                </span>
+                <span class="cart-fee-amount">
+                    <h:outputText value="#{item.subtotal}">
+                        <f:convertNumber pattern="#,##0" />
+                    </h:outputText>
+                    <span class="cart-fee-currency">VND</span>
+                </span>
+            </div>
+
+            <!-- Remove Action Button (Cart only) -->
+            <ui:fragment rendered="#{not readonly}">
+                <div class="cart-remove-wrap">
+                    <h:commandLink action="#{cartController.removeItem(item.cartItemId)}" styleClass="cart-remove-link">
+                        <span>Remove</span>
+                        <f:ajax execute="@this" render="cartMainWrapper :headerCartWrapper" />
+                    </h:commandLink>
+                </div>
+            </ui:fragment>
+        </div>
+
+    </div>
+
+</ui:composition>

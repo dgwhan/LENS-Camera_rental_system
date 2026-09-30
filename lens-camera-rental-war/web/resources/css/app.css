@@ -416,14 +416,56 @@ ul.client-messages {
     gap: 0.75rem;
     align-items: center;
     margin-bottom: 1.25rem;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    width: 100%;
 }
 
 .search-bar .search-input,
 .users-search .search-input {
-    flex: 1;
-    min-width: 220px;
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 38px;
 }
+
+.search-bar .form-select,
+.users-search .form-select,
+.search-bar .filter-select-sm,
+.users-search .filter-select-sm {
+    width: auto !important;
+    min-width: 150px;
+    max-width: 220px;
+    flex: 0 0 auto;
+    height: 38px;
+}
+
+.search-bar .btn,
+.users-search .btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    height: 38px;
+}
+
+@media (max-width: 768px) {
+    .search-bar,
+    .users-search {
+        flex-wrap: wrap;
+    }
+
+    .search-bar .search-input,
+    .users-search .search-input {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    .search-bar .form-select,
+    .users-search .form-select,
+    .search-bar .filter-select-sm,
+    .users-search .filter-select-sm {
+        width: 100% !important;
+        max-width: 100%;
+    }
+}
+
 
 .card {
     border: 1px solid var(--color-border, #e2e8f0);

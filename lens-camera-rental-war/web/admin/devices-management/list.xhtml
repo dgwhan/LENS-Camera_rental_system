@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core"
     xmlns:ui="jakarta.faces.facelets" xmlns:pt="jakarta.faces.passthrough" template="/WEB-INF/templates/admin-template.xhtml">
@@ -61,10 +61,6 @@
                         <f:ajax event="keyup" delay="300" render="devicesTableWrapper" />
                     </h:inputText>
 
-                    <h:commandButton value="Search" action="list" styleClass="btn btn-primary">
-                        <f:ajax execute="@form" render="devicesTableWrapper" />
-                    </h:commandButton>
-
                     <h:selectOneMenu id="statusFilter" value="#{deviceController.status}"
                         styleClass="form-select filter-select-sm">
                         <f:selectItem itemLabel="All Statuses" itemValue="" />
@@ -73,11 +69,16 @@
                         <f:ajax event="change" render="devicesTableWrapper" />
                     </h:selectOneMenu>
 
+                    <h:commandButton value="Search" action="list" styleClass="btn btn-primary">
+                        <f:ajax execute="@form" render="devicesTableWrapper" />
+                    </h:commandButton>
+
                     <h:commandButton value="Reset" action="#{deviceController.resetFilter()}"
                         styleClass="btn btn-outline-secondary">
                         <f:ajax render="searchBar devicesTableWrapper" />
                     </h:commandButton>
                 </h:panelGroup>
+
 
                 <div class="card">
                     <h:panelGroup id="devicesTableWrapper" layout="block" styleClass="table-wrapper">

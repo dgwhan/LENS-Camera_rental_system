@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="jakarta.faces.html"
@@ -75,10 +75,6 @@
                         <f:ajax event="keyup" delay="300" render="usersTableWrapper" />
                     </h:inputText>
 
-                    <h:commandButton value="Search" action="list" styleClass="btn btn-primary">
-                        <f:ajax execute="@form" render="usersTableWrapper" />
-                    </h:commandButton>
-
                     <!-- Role Filter -->
                     <h:selectOneMenu id="roleFilter" value="#{userController.role}"
                                      styleClass="form-select filter-select-sm">
@@ -88,11 +84,16 @@
                         <f:ajax event="change" render="usersTableWrapper" />
                     </h:selectOneMenu>
 
+                    <h:commandButton value="Search" action="list" styleClass="btn btn-primary">
+                        <f:ajax execute="@form" render="usersTableWrapper" />
+                    </h:commandButton>
+
                     <h:commandButton value="Reset" action="#{userController.resetFilter()}"
                                      styleClass="btn btn-outline-secondary">
                         <f:ajax render="searchBar usersTableWrapper" />
                     </h:commandButton>
                 </h:panelGroup>
+
 
                 <!-- Users Table Card -->
                 <div class="card">

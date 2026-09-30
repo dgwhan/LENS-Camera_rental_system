@@ -1,12 +1,17 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="jakarta.faces.html"
                 xmlns:f="jakarta.faces.core"
                 xmlns:ui="jakarta.faces.facelets"
                 template="/WEB-INF/templates/admin-template.xhtml">
+    <f:metadata>
+        <f:viewParam name="id" value="#{deviceController.id}" />
+        <f:viewAction action="#{deviceController.initDetail()}" onPostback="false" />
+    </f:metadata>
 
     <ui:param name="activeMenu" value="devices" />
+
 
     <ui:define name="title">
         Device ##{deviceController.devices.id} (#{deviceController.devices.serialNumber}) - Device Details
@@ -28,7 +33,7 @@
                                 <h1 class="detail-title">Device Details</h1>
                             </div>
                             <div class="detail-actions">
-                                <h:commandButton value="Back" action="list" immediate="true"
+                                <h:commandButton value="Back" action="list?faces-redirect=true" immediate="true"
                                                  styleClass="btn btn-outline-secondary" />
                                 <h:commandButton value="Edit Device"
                                                  action="#{deviceController.editDevice(deviceController.devices.id)}"

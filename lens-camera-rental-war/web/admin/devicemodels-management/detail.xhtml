@@ -1,7 +1,12 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core"
     xmlns:ui="jakarta.faces.facelets" template="/WEB-INF/templates/admin-template.xhtml">
+
+    <f:metadata>
+        <f:viewParam name="id" value="#{deviceModelsController.id}" />
+        <f:viewAction action="#{deviceModelsController.initDetail()}" onPostback="false" />
+    </f:metadata>
 
     <ui:param name="activeMenu" value="models" />
 
@@ -25,7 +30,7 @@
                                 <h1 class="detail-title">Device Model Details</h1>
                             </div>
                             <div class="detail-actions">
-                                <h:commandButton value="Back" action="list" immediate="true"
+                                <h:commandButton value="Back" action="list?faces-redirect=true" immediate="true"
                                     styleClass="btn btn-outline-secondary" />
                                 <h:commandButton value="Edit Model"
                                     action="#{deviceModelsController.editDeviceModel(deviceModelsController.deviceModels.id)}"

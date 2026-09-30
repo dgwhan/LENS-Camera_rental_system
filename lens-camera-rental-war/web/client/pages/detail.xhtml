@@ -202,13 +202,11 @@
                                                     <f:ajax execute="@form" render="cartFeedback :headerCartWrapper" />
                                                 </h:commandLink>
 
-                                                <button type="button"
-                                                        class="btn btn-rent-now"
-                                                        id="btnRentNow"
-                                                        title="Rent Now will be available in next phase"
-                                                        onclick="alert('Rent Now checkout flow will be implemented in the next phase.');">
+                                                <h:commandLink action="#{deviceDetailController.rentNow}"
+                                                               styleClass="btn btn-rent-now"
+                                                               id="btnRentNow">
                                                     <span>RENT NOW</span>
-                                                </button>
+                                                </h:commandLink>
                                             </div>
 
                                         </div>

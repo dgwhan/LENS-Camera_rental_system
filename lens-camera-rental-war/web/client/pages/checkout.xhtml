@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:pt="jakarta.faces.passthrough"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/templates/client-template.xhtml">
+
+    <f:metadata>
+        <f:viewParam name="type" value="#{checkoutController.checkoutType}" />
+        <f:viewParam name="modelId" value="#{checkoutController.directModelId}" />
+        <f:viewParam name="startDate" value="#{checkoutController.directStartDateStr}" />
+        <f:viewParam name="endDate" value="#{checkoutController.directEndDateStr}" />
+        <f:viewAction action="#{checkoutController.checkAuthentication()}" />
+    </f:metadata>
+
+    <ui:define name="title">Checkout - Lens Camera Rental</ui:define>
+
+    <ui:define name="head">
+        <h:outputStylesheet library="css" name="components/buttons.css" />
+        <h:outputStylesheet library="css" name="pages/customer.css" />
+        <h:outputStylesheet library="css" name="pages/cart.css" />
+        <style>
+            .auth-required {
+                color: var(--color-danger, #ef4444);
+                font-weight: 700;
+                margin-left: 0.2rem;
+            }
+            .field-error {
+                display: block;
+                color: var(--color-danger, #ef4444) !important;
+                font-size: 0.75rem;
+                font-weight: 500;
+                margin-top: 0.35rem;
+                text-align: left;
+                line-height: 1.35;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <main class="cart-page-main" role="main">
+
+            <!-- Breadcrumb Navigation: HOME / (CART or DEVICES) / CHECKOUT -->
+            <div class="cart-breadcrumb-wrap">
+                <ui:include src="/client/components/breadcrumb.xhtml">
+                    <ui:param name="link1Text" value="HOME" />
+                    <ui:param name="link1Url" value="#{request.contextPath}/faces/client/pages/index.xhtml" />
+                    <ui:param name="link2Text" value="#{checkoutController.directCheckoutMode ? 'DEVICES' : 'CART'}" />
+                    <ui:param name="link2Url" value="#{checkoutController.directCheckoutMode ? request.contextPath.concat('/faces/client/pages/devices.xhtml') : request.contextPath.concat('/faces/client/pages/cart.xhtml')}" />
+                    <ui:param name="currentPage" value="CHECKOUT" />
+                </ui:include>
+            </div>
+
+            <!-- Page Title Section Header -->
+            <div class="cart-title-wrap">
+                <ui:include src="/client/components/page-title.xhtml">
+                    <ui:param name="title" value="CHECKOUT" />
+                    <ui:param name="asH1" value="true" />
+                    <ui:param name="subtitle" value="Review your rental equipment, customer details, and confirm your order" />
+                </ui:include>
+            </div>
+
+            <!-- Checkout Form -->
+            <h:form id="checkoutForm">
+
+                <!-- Hidden inputs to preserve direct checkout state across postbacks -->
+                <h:inputHidden id="checkoutTypeHidden" value="#{checkoutController.checkoutType}" />
+                <h:inputHidden id="directModelIdHidden" value="#{checkoutController.directModelId}" />
+                <h:inputHidden id="directStartDateHidden" value="#{checkoutController.directStartDateStr}" />
+                <h:inputHidden id="directEndDateHidden" value="#{checkoutController.directEndDateStr}" />
+
+                <!-- Feedback / Error Messages Container -->
+                <h:panelGroup id="checkoutMessagesWrapper" layout="block" styleClass="cart-messages-wrap">
+                    <h:messages globalOnly="false"
+                                styleClass="client-messages"
+                                infoClass="client-alert client-alert-success"
+                                errorClass="client-alert client-alert-danger" />
+                </h:panelGroup>
+
+                <!-- ========================================================
+                     EMPTY STATE (when no checkout items)
+                     ======================================================== -->
+                <ui:fragment rendered="#{not checkoutController.hasCheckoutItems()}">
+                    <ui:include src="/client/components/empty-state.xhtml">
+                        <ui:param name="icon" value="ti ti-shopping-cart-off" />
+                        <ui:param name="title" value="No equipment selected for checkout." />
+                        <ui:param name="subtitle" value="You do not have any items ready to checkout. Browse our catalog to find gear for your next shoot." />
+                        <ui:param name="actionUrl" value="#{request.contextPath}/faces/client/pages/devices.xhtml" />
+                        <ui:param name="actionText" value="CONTINUE SHOPPING" />
+                        <ui:param name="actionVariant" value="outline-dark" />
+                        <ui:param name="actionSize" value="lg" />
+                    </ui:include>
+                </ui:fragment>
+
+                <!-- ========================================================
+                     ACTIVE STATE (when 1 or more items exist)
+                     ======================================================== -->
+                <ui:fragment rendered="#{checkoutController.hasCheckoutItems()}">
+                    <div class="cart-grid-layout">
+
+                        <!-- Left Column: Customer Information & Rental Items & Warning -->
+                        <div class="cart-items-column">
+
+                            <!-- 1. Customer Information Section -->
+                            <div class="cart-item-card" style="display: block; margin-bottom: 1.5rem;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--color-border, #e2e8f0);">
+                                    <h3 style="font-size: 1rem; font-weight: 700; color: var(--color-text, #0f172a); margin: 0; text-transform: uppercase; letter-spacing: 0.03em;">
+                                        Customer Information
+                                    </h3>
+                                    <span style="font-size: 0.75rem; color: var(--color-text-secondary, #64748b);">
+                                        <span class="auth-required">*</span> Required fields
+                                    </span>
+                                </div>
+
+                                <!-- Information Verification & Edit Notice -->
+                                <p style="font-size: 0.875rem; font-weight: 600; color: var(--color-text, #0f172a); margin: 0 0 1.25rem 0; line-height: 1.5;">
+                                    Please check your information carefully. You can edit your contact details and address below if needed.
+                                </p>
+
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                                    <div class="form-group">
+                                        <h:outputLabel for="customerName" value="Full Name" styleClass="form-label">
+                                            <span class="auth-required">*</span>
+                                        </h:outputLabel>
+                                        <h:inputText id="customerName"
+                                                     value="#{checkoutController.customerName}"
+                                                     required="true"
+                                                     requiredMessage="Customer name is required."
+                                                     styleClass="form-control"
+                                                     pt:placeholder="Enter your full name" />
+                                        <h:message for="customerName" styleClass="field-error" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <h:outputLabel for="customerPhone" value="Phone Number" styleClass="form-label">
+                                            <span class="auth-required">*</span>
+                                        </h:outputLabel>
+                                        <h:inputText id="customerPhone"
+                                                     value="#{checkoutController.customerPhone}"
+                                                     required="true"
+                                                     requiredMessage="Customer phone is required."
+                                                     styleClass="form-control"
+                                                     pt:placeholder="Enter your phone number" />
+                                        <h:message for="customerPhone" styleClass="field-error" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <h:outputLabel for="customerAddress" value="Address" styleClass="form-label">
+                                        <span class="auth-required">*</span>
+                                    </h:outputLabel>
+                                    <h:inputText id="customerAddress"
+                                                 value="#{checkoutController.customerAddress}"
+                                                 required="true"
+                                                 requiredMessage="Customer address is required."
+                                                 styleClass="form-control"
+                                                 pt:placeholder="Enter your address (street, ward, district, city)" />
+                                    <h:message for="customerAddress" styleClass="field-error" />
+                                </div>
+                            </div>
+
+                            <!-- 2. Rental Equipment Section Header -->
+                            <div class="cart-items-header">
+                                <span class="cart-count-label">
+                                    Rental Equipment (#{checkoutController.itemCount} #{checkoutController.itemCount == 1 ? 'item' : 'items'})
+                                </span>
+                            </div>
+
+                            <!-- 3. Rental Items Review List (Reusing shared rental-item-card component) -->
+                            <ui:repeat value="#{checkoutController.cartItems}" var="item">
+                                <ui:include src="/client/components/rental-item-card.xhtml">
+                                    <ui:param name="item" value="#{item}" />
+                                    <ui:param name="readonly" value="true" />
+                                </ui:include>
+                            </ui:repeat>
+
+                        </div>
+
+                        <!-- Right Column: Order Summary, Payment Method & Primary CTA -->
+                        <div class="cart-summary-column">
+                            <div class="cart-summary-sticky">
+
+                                <h3 class="cart-summary-heading">
+                                    Order Summary
+                                </h3>
+
+                                <!-- Row 1: Rental Subtotal -->
+                                <div class="cart-summary-line">
+                                    <span>Rental Subtotal</span>
+                                    <span class="cart-summary-line-val">
+                                        <h:outputText value="#{checkoutController.rentalSubtotal}">
+                                            <f:convertNumber pattern="#,##0" />
+                                        </h:outputText> VND
+                                    </span>
+                                </div>
+
+                                <!-- Row 2: Total Deposit -->
+                                <div class="cart-summary-line">
+                                    <span>Total Deposit</span>
+                                    <span class="cart-summary-line-val">
+                                        <h:outputText value="#{checkoutController.depositTotal}">
+                                            <f:convertNumber pattern="#,##0" />
+                                        </h:outputText> VND
+                                    </span>
+                                </div>
+
+                                <!-- Total Payable Row (Most Prominent) -->
+                                <div class="cart-total-row">
+                                    <span class="cart-total-label">Total Payable</span>
+                                    <div>
+                                        <span class="cart-total-amount">
+                                            <h:outputText value="#{checkoutController.totalPayable}">
+                                                <f:convertNumber pattern="#,##0" />
+                                            </h:outputText>
+                                        </span>
+                                        <span class="cart-total-curr">VND</span>
+                                    </div>
+                                </div>
+
+                                <!-- Payment Method Section (CASH only) -->
+                                <div style="background-color: var(--color-surface, #f8fafc); border: 1px solid var(--color-border, #e2e8f0); border-radius: var(--radius-md, 6px); padding: 0.875rem 1rem; margin-bottom: 1rem;">
+                                    <div style="font-size: 0.8125rem; font-weight: 700; color: var(--color-text, #0f172a); margin-bottom: 0.375rem; display: flex; align-items: center; justify-content: space-between;">
+                                        <span>Payment Method</span>
+                                        <span style="background-color: #0f172a; color: #ffffff; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em;">CASH</span>
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: var(--color-text-secondary, #64748b); line-height: 1.45;">
+                                        Payment is made in cash directly at our store when you inspect and collect the equipment.
+                                    </div>
+                                </div>
+
+                                <!-- Security Deposit Explanatory Notice -->
+                                <div class="client-alert client-alert-info">
+                                    <div>
+                                        <strong>Deposit Notice:</strong> The deposit is a refundable security guarantee returned in full when equipment is checked back in undamaged.
+                                    </div>
+                                </div>
+
+                                <!-- Pre-confirmation Review Note (Red Text) -->
+                                <p style="font-size: 0.8125rem; font-weight: 600; color: var(--color-danger, #ef4444); margin-bottom: 0.75rem; text-align: center; line-height: 1.45;">
+                                    Please review your rental dates and order details carefully before confirming.
+                                </p>
+
+                                <!-- Primary CTA: Confirm Rental (Synchronized with shared button system) -->
+                                <h:commandLink id="btnConfirmRental"
+                                               action="#{checkoutController.processCheckout}"
+                                               styleClass="btn btn-dark btn-lg btn-block">
+                                    <span>CONFIRM RENTAL</span>
+                                </h:commandLink>
+
+                                <!-- Secondary Navigation: Back to Cart or Back to Product -->
+                                <div style="margin-top: 0.75rem;">
+                                    <ui:fragment rendered="#{checkoutController.directCheckoutMode}">
+                                        <ui:include src="/client/components/button.xhtml">
+                                            <ui:param name="id" value="btnBackToProduct" />
+                                            <ui:param name="href" value="#{request.contextPath}/faces/client/pages/detail.xhtml?id=#{checkoutController.directModelId}" />
+                                            <ui:param name="text" value="BACK TO PRODUCT" />
+                                            <ui:param name="variant" value="outline-dark" />
+                                            <ui:param name="size" value="lg" />
+                                            <ui:param name="block" value="true" />
+                                        </ui:include>
+                                    </ui:fragment>
+                                    <ui:fragment rendered="#{not checkoutController.directCheckoutMode}">
+                                        <ui:include src="/client/components/button.xhtml">
+                                            <ui:param name="id" value="btnBackToCart" />
+                                            <ui:param name="href" value="#{request.contextPath}/faces/client/pages/cart.xhtml" />
+                                            <ui:param name="text" value="BACK TO CART" />
+                                            <ui:param name="variant" value="outline-dark" />
+                                            <ui:param name="size" value="lg" />
+                                            <ui:param name="block" value="true" />
+                                        </ui:include>
+                                    </ui:fragment>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </ui:fragment>
+
+            </h:form>
+
+        </main>
+    </ui:define>
+
+</ui:composition>

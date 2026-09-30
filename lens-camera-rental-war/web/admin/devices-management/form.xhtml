@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="jakarta.faces.html"
@@ -7,7 +7,15 @@
                 xmlns:pt="jakarta.faces.passthrough"
                 template="/WEB-INF/templates/admin-template.xhtml">
 
+
+    <f:metadata>
+        <f:viewParam name="id" value="#{deviceController.id}" />
+        <f:viewAction action="#{deviceController.initForm()}" onPostback="false" />
+    </f:metadata>
+
     <ui:param name="activeMenu" value="devices" />
+
+
 
     <ui:define name="title">
         #{deviceController.editMode ? 'Edit Device' : 'Create Device'} - Lens Camera Rental
@@ -112,7 +120,7 @@
 
                         <!-- NÃºt thao tÃ¡c dÆ°á»›i chÃ¢n tháº» -->
                         <div class="card-footer">
-                            <h:commandButton value="Cancel" action="list" immediate="true"
+                            <h:commandButton value="Cancel" action="list?faces-redirect=true" immediate="true"
                                 styleClass="btn btn-outline-secondary" />
 
                             <div>

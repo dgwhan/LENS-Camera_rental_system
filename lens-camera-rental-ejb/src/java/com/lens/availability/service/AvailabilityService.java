@@ -55,6 +55,9 @@ public class AvailabilityService implements AvailabilityServiceLocal {
         }
 
         int totalPhysicalDevices = devices.size();
+        int totalAvailableDevices = (int) devices.stream()
+                .filter(d -> "AVAILABLE".equalsIgnoreCase(d.getStatus()))
+                .count();
 
         //tìm các RentalItem bị conflict trong khoảng thời gian yêu cầu
         List<RentalItems> conflictingRentalItems = rentalItemsFacade.findConflictingRentalItems(deviceModelId, requestedStartDate, requestedEndDate, List.copyOf(CAPACITY_CONSUMING_STATUSES));
@@ -65,8 +68,8 @@ public class AvailabilityService implements AvailabilityServiceLocal {
         //tính số lượng thiết bị đang bị chiếm
         int occupiedCapacity = conflictingRentalItems.size();
 
-        //tính số lượng thiết bị còn khả dụng
-        int availableCapacity = totalPhysicalDevices - occupiedCapacity;
+        //tính số lượng thiết bị còn khả dụng dựa trên số lượng thiết bị vật lý có status AVAILABLE
+        int availableCapacity = totalAvailableDevices - occupiedCapacity;
 
         //xác định khả năng cho thuê
         boolean available = availableCapacity > 0;
@@ -89,10 +92,23 @@ public class AvailabilityService implements AvailabilityServiceLocal {
             return false;
         }
 
-        // Một DeviceModel là AVAILABLE khi có ít nhất 1 physical Device có status AVAILABLE
-        return devices.stream()
-                .anyMatch(d -> "AVAILABLE".equalsIgnoreCase(d.getStatus()));
+        // Đếm số lượng thiết bị vật lý có trạng thái AVAILABLE
+        long availablePhysicalCount = devices.stream()
+                .filter(d -> "AVAILABLE".equalsIgnoreCase(d.getStatus()))
+                .count();
+
+        if (availablePhysicalCount <= 0) {
+            return false;
+        }
+
+        // Đếm số đơn thuê đang giữ thiết bị (PENDING, APPROVED, ACTIVE)
+        long activeRentalsCount = rentalItemsFacade.countActiveByDeviceModelId(
+                deviceModelId, List.copyOf(CAPACITY_CONSUMING_STATUSES));
+
+        // Một DeviceModel là AVAILABLE khi số thiết bị vật lý AVAILABLE nhiều hơn số đơn thuê đang chiếm giữ
+        return availablePhysicalCount > activeRentalsCount;
     }
+
 
     // customer availability
     // out of stock handling

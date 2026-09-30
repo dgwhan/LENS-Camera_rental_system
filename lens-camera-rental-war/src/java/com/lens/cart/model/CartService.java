@@ -31,8 +31,37 @@ public class CartService implements Serializable {
     @EJB
     private UsersFacadeLocal usersFacade;
 
+    @EJB
+    private com.lens.availability.service.AvailabilityServiceLocal availabilityService;
+
     private final List<CartItem> cartItems = new ArrayList<>();
     private Integer currentUserId;
+
+    /**
+     * Checks and updates the outOfStock status for a cart item based on current model availability
+     * and rental dates.
+     *
+     * @param item cart item to check
+     */
+    public void checkItemAvailability(CartItem item) {
+        if (item == null || item.getDeviceModels() == null || availabilityService == null) {
+            return;
+        }
+        Integer modelId = item.getDeviceModels().getId();
+        if (modelId == null) {
+            return;
+        }
+
+        boolean available = availabilityService.isProductAvailable(modelId);
+        if (available && item.getStartDate() != null && item.getEndDate() != null) {
+            com.lens.availability.dto.AvailabilityResult result = availabilityService.checkAvailability(
+                    modelId, item.getStartDate(), item.getEndDate());
+            if (result != null && !result.isAvailable()) {
+                available = false;
+            }
+        }
+        item.setOutOfStock(!available);
+    }
 
     /**
      * Resolves the current authenticated user identifier.
@@ -85,8 +114,14 @@ public class CartService implements Serializable {
         if (currentUserId == null) {
             resolveCurrentUserId();
         }
+        if (cartItems != null) {
+            for (CartItem item : cartItems) {
+                checkItemAvailability(item);
+            }
+        }
         return cartItems;
     }
+
 
     /**
      * Loads the authenticated user's cart from database.

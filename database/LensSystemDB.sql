@@ -220,6 +220,10 @@ CREATE INDEX IX_CartItems_UserId ON CartItems(user_id);
 GO
 
 
+ALTER TABLE Users
+ADD address NVARCHAR(255) NULL;
+GO
+
 INSERT INTO Users (username, password, full_name, email, phone, role)
 VALUES ('admin', 'admin', N'Administrator', 'admin@lens.com', '0900000000', 'ADMIN');
 GO

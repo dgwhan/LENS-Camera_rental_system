@@ -151,4 +151,18 @@ public class CartItem implements Serializable {
     public void setItemTotal(long itemTotal) {
         this.itemTotal = itemTotal;
     }
+
+    private boolean outOfStock;
+
+    public boolean isOutOfStock() {
+        return outOfStock;
+    }
+
+    public void setOutOfStock(boolean outOfStock) {
+        this.outOfStock = outOfStock;
+    }
+
+    public boolean getOutOfStock() {
+        return outOfStock;
+    }
 }

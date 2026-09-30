@@ -31,4 +31,7 @@ public interface RentalItemsFacadeLocal {
             Date requestedStartDate,
             Date requestedEndDate,
             List<String> statuses);
+
+    long countActiveByDeviceModelId(Integer deviceModelId, List<String> statuses);
 }
+

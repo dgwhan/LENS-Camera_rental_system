@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="jakarta.faces.html"
@@ -6,6 +6,11 @@
                 xmlns:ui="jakarta.faces.facelets"
                 xmlns:pt="jakarta.faces.passthrough"
                 template="/WEB-INF/templates/admin-template.xhtml">
+
+    <f:metadata>
+        <f:viewParam name="id" value="#{deviceModelsController.id}" />
+        <f:viewAction action="#{deviceModelsController.initForm()}" onPostback="false" />
+    </f:metadata>
 
     <ui:param name="activeMenu" value="models" />
 
@@ -45,7 +50,7 @@
                                 <h1 class="page-title">#{deviceModelsController.editMode ? 'Edit Device Model' : 'Create New Device Model'}</h1>
                             </div>
                             <div>
-                                <h:commandButton value="Back to Models" action="list" immediate="true"
+                                <h:commandButton value="Back to Models" action="list?faces-redirect=true" immediate="true"
                                     styleClass="btn btn-outline-secondary" />
                             </div>
                         </div>
@@ -219,7 +224,7 @@
 
                         <!-- Actions -->
                         <div class="card-footer">
-                            <h:commandButton value="Cancel" action="list" immediate="true"
+                            <h:commandButton value="Cancel" action="list?faces-redirect=true" immediate="true"
                                 styleClass="btn btn-outline-secondary" />
                             <div>
                                 <h:commandButton value="Save Changes" action="#{deviceModelsController.updateDeviceModel}"

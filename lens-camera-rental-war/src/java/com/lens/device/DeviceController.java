@@ -32,9 +32,36 @@ public class DeviceController implements Serializable {
     private boolean editMode;
     private String keyword = "";
     private String status = "";
+    private Integer id;
 
     public DeviceController() {
         devices.setStatus("AVAILABLE");
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void initDetail() {
+        if (id != null && (devices == null || devices.getId() == null || !devices.getId().equals(id))) {
+            devices = devicesFacade.find(id);
+        }
+    }
+
+    public void initForm() {
+        if (id != null && (devices == null || devices.getId() == null || !devices.getId().equals(id))) {
+            devices = devicesFacade.find(id);
+            if (devices != null) {
+                editMode = true;
+                if (devices.getDeviceModelId() != null) {
+                    selectedDeviceModelId = devices.getDeviceModelId().getId();
+                }
+            }
+        }
     }
 
     //insert 
@@ -43,7 +70,8 @@ public class DeviceController implements Serializable {
         devices.setStatus("AVAILABLE");
         selectedDeviceModelId = null;
         editMode = false;
-        return "form";
+        id = null;
+        return "form?faces-redirect=true";
     }
 
     public String insertDevice() {
@@ -79,9 +107,10 @@ public class DeviceController implements Serializable {
     
     // Mở form chỉnh sửa thiết bị
     public String editDevice(Integer id) {
+        this.id = id;
         devices = devicesFacade.find(id);
         if (devices == null) {
-            return "/404?faces-redirect=true";
+            return "list?faces-redirect=true";
         }
         if (devices.getDeviceModelId() != null) {
             selectedDeviceModelId = devices.getDeviceModelId().getId();
@@ -89,19 +118,24 @@ public class DeviceController implements Serializable {
             selectedDeviceModelId = null;
         }
         editMode = true;
-        return "/devices-management/form?faces-redirect=true";
+        return "form?faces-redirect=true&id=" + id;
     }
+
 
     // Cập nhật thông tin thiết bị
     public String updateDevice() {
-        boolean hasError = false;
-        if (selectedDeviceModelId == null && (devices == null || devices.getDeviceModelId() == null)) {
-            FacesUtil.addFieldError("deviceForm:deviceModel", "Device model is required.");
-            hasError = true;
-        }
-        if (devices == null) {
+        if (devices == null || (devices.getId() == null && id == null)) {
             FacesUtil.addErrorMessage("Device not found.");
             return null;
+        }
+        if (devices.getId() == null && id != null) {
+            devices.setId(id);
+        }
+
+        boolean hasError = false;
+        if (selectedDeviceModelId == null && devices.getDeviceModelId() == null) {
+            FacesUtil.addFieldError("deviceForm:deviceModel", "Device model is required.");
+            hasError = true;
         }
         if (isDuplicateSerialNumber(devices.getId())) {
             hasError = true;
@@ -130,12 +164,14 @@ public class DeviceController implements Serializable {
 
     // Xem chi tiết thiết bị
     public String detailDevice(Integer id) {
+        this.id = id;
         devices = devicesFacade.find(id);
         if (devices == null) {
-            return "/devices-management/list?faces-redirect=true";
+            return "list?faces-redirect=true";
         }
-        return "/devices-management/detail?faces-redirect=true";
+        return "detail?faces-redirect=true&id=" + id;
     }
+
 
     // Xóa thiết bị
     public void deleteDevice(Integer id) {

@@ -44,16 +44,12 @@ public class HomeController implements Serializable {
         try {
             List<DeviceModels> all = deviceModelsFacade.search("");
             if (all != null && !all.isEmpty()) {
-                // customer availability
-                // product availability: prioritize AVAILABLE over OUT OF STOCK before taking the subList
-                List<DeviceModels> sortedList = new ArrayList<>(all);
-                sortedList.sort((d1, d2) -> {
-                    boolean a1 = isProductAvailable(d1.getId());
-                    boolean a2 = isProductAvailable(d2.getId());
-                    return Boolean.compare(!a1, !a2); // false (!a1) before true (!a2) -> available first
-                });
-                int limit = Math.min(4, sortedList.size());
-                featuredDevices = sortedList.subList(0, limit);
+                // Featured Devices chỉ hiển thị các thiết bị AVAILABLE, không hiện thiết bị OUT OF STOCK
+                List<DeviceModels> availableList = all.stream()
+                        .filter(d -> isProductAvailable(d.getId()))
+                        .collect(java.util.stream.Collectors.toList());
+                int limit = Math.min(4, availableList.size());
+                featuredDevices = availableList.subList(0, limit);
             } else {
                 featuredDevices = Collections.emptyList();
             }
@@ -61,6 +57,7 @@ public class HomeController implements Serializable {
             featuredDevices = Collections.emptyList();
         }
     }
+
 
     public List<DeviceModels> getFeaturedDevices() {
         if (featuredDevices == null) {

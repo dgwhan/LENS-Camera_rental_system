@@ -16,6 +16,7 @@ import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -122,7 +123,7 @@ public class DeviceDetailController implements Serializable {
      * Adds the selected rental item to the customer's cart.
      *
      * @return login page if the user is not authenticated; otherwise stays on
-     * the current page
+     *         the current page
      */
     public String addToCart() {
         if (request.getUserPrincipal() == null) {
@@ -156,6 +157,70 @@ public class DeviceDetailController implements Serializable {
         }
 
         return null;
+    }
+
+    /**
+     * Navigates directly to the checkout page for the selected device model without
+     * adding to cart.
+     *
+     * @return checkout navigation outcome or login if unauthenticated
+     */
+    public String rentNow() {
+        if (request.getUserPrincipal() == null) {
+            return "/client/pages/login?faces-redirect=true";
+        }
+
+        if (deviceModel == null) {
+            FacesUtil.addErrorMessage("Device not found.");
+            return null;
+        }
+
+        if (startDate == null || startDate.trim().isEmpty() || endDate == null || endDate.trim().isEmpty()) {
+            FacesUtil.addErrorMessage("Please select both start date and end date.");
+            return null;
+        }
+
+        try {
+            Date requestedStartDate = DateUtil.parseDate(startDate);
+            Date requestedEndDate = DateUtil.parseDate(endDate);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            Date today = calendar.getTime();
+
+            if (requestedStartDate.before(today)) {
+                FacesUtil.addErrorMessage("Rental start date cannot be in the past.");
+                return null;
+            }
+
+            if (!requestedEndDate.after(requestedStartDate)) {
+                FacesUtil.addErrorMessage("Rental end date must be after start date.");
+                return null;
+            }
+
+            if (availabilityService != null) {
+                com.lens.availability.dto.AvailabilityResult availability = availabilityService
+                        .checkAvailability(deviceModel.getId(), requestedStartDate, requestedEndDate);
+                if (!availability.isAvailable()) {
+                    FacesUtil.addErrorMessage("This device is not available for the selected dates.");
+                    return null;
+                }
+            }
+
+            String startFormatted = DateUtil.formatDate(requestedStartDate, DateUtil.DEFAULT_INPUT_PATTERN);
+            String endFormatted = DateUtil.formatDate(requestedEndDate, DateUtil.DEFAULT_INPUT_PATTERN);
+
+            return "/client/pages/checkout?faces-redirect=true&type=direct&modelId="
+                    + deviceModel.getId()
+                    + "&startDate=" + startFormatted
+                    + "&endDate=" + endFormatted;
+        } catch (ParseException ex) {
+            FacesUtil.addErrorMessage("Please select a valid rental period.");
+            return null;
+        }
     }
 
     /**

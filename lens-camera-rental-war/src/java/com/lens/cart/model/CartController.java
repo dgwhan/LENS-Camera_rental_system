@@ -3,13 +3,10 @@ package com.lens.cart.model;
 import com.lens.cart.CartItem;
 import com.lens.common.util.DateUtil;
 import com.lens.common.util.FacesUtil;
-import jakarta.faces.context.ExternalContext;
-import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Date;
@@ -214,4 +211,59 @@ public class CartController implements Serializable {
     public boolean getHasExpiredItems() {
         return hasExpiredItems();
     }
+
+    /**
+     * Checks whether an individual cart item is currently out of stock.
+     *
+     * @param item cart item to test
+     * @return true if out of stock
+     */
+    public boolean isItemOutOfStock(CartItem item) {
+        if (item == null) {
+            return false;
+        }
+        if (cartService != null) {
+            cartService.checkItemAvailability(item);
+        }
+        return item.isOutOfStock();
+    }
+
+    /**
+     * Checks if any rental item in the cart is currently out of stock.
+     *
+     * @return true if at least one cart item is out of stock
+     */
+    public boolean hasOutOfStockItems() {
+        if (cartService == null || cartService.getCartItems() == null) {
+            return false;
+        }
+        for (CartItem item : cartService.getCartItems()) {
+            if (isItemOutOfStock(item)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isHasOutOfStockItems() {
+        return hasOutOfStockItems();
+    }
+
+    public boolean getHasOutOfStockItems() {
+        return hasOutOfStockItems();
+    }
+
+    /**
+     * Determines whether checkout should be blocked due to expired dates or out of stock items.
+     *
+     * @return true if checkout is blocked
+     */
+    public boolean isCheckoutBlocked() {
+        return hasExpiredItems() || hasOutOfStockItems();
+    }
+
+    public boolean getCheckoutBlocked() {
+        return isCheckoutBlocked();
+    }
 }
+

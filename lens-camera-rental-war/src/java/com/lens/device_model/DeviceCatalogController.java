@@ -142,7 +142,17 @@ public class DeviceCatalogController implements Serializable {
                 return true;
             }).collect(Collectors.toList());
 
+
+
+            // Sắp xếp danh sách thiết bị: AVAILABLE lên trước, OUT OF STOCK xếp xuống dưới cùng
+            filteredDevices.sort((d1, d2) -> {
+                boolean a1 = isProductAvailable(d1.getId());
+                boolean a2 = isProductAvailable(d2.getId());
+                return Boolean.compare(!a1, !a2);
+            });
+
             filteredCount = filteredDevices.size();
+
             pageSize = PaginationConfig.resolvePageSize(pageSize);
 
             if (pageSize > 0) {

@@ -46,4 +46,21 @@ public class RentalItemsFacade extends AbstractFacade<RentalItems> implements Re
         return query.getResultList();
     }
 
+    @Override
+    public long countActiveByDeviceModelId(Integer deviceModelId, List<String> statuses) {
+        if (deviceModelId == null || statuses == null || statuses.isEmpty()) {
+            return 0L;
+        }
+
+        String jpql = "SELECT COUNT(ri) FROM RentalItems ri WHERE ri.deviceModelId.id = :deviceModelId AND ri.rentalOrderId.status IN :statuses";
+
+        TypedQuery<Long> query = em.createQuery(jpql, Long.class)
+                .setParameter("deviceModelId", deviceModelId)
+                .setParameter("statuses", statuses);
+
+        Long count = query.getSingleResult();
+        return count != null ? count : 0L;
+    }
+
 }
+
