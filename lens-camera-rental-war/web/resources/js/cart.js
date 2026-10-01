@@ -8,6 +8,7 @@
 
     /**
      * Toggles visibility of the inline rental date editor for a cart item.
+     * Closes any other open editors to prevent multiple expanded items.
      * @param {string} cartItemId The unique identifier of the cart item.
      */
     window.toggleDateEdit = function (cartItemId) {
@@ -15,10 +16,29 @@
         if (!box) return;
 
         var isHidden = (box.style.display === 'none' || box.style.display === '');
+
+        // Close any other open date editors in the cart to keep layout compact
+        document.querySelectorAll('.cart-date-editor').forEach(function (editor) {
+            if (editor !== box) {
+                editor.style.display = 'none';
+            }
+        });
+
         box.style.display = isHidden ? 'block' : 'none';
 
         if (isHidden && typeof window.initDatePickers === 'function') {
             window.initDatePickers();
+        }
+    };
+
+    /**
+     * Closes the inline rental date editor for a cart item.
+     * @param {string} cartItemId The unique identifier of the cart item.
+     */
+    window.closeDateEdit = function (cartItemId) {
+        var box = document.getElementById('dateEdit_' + cartItemId);
+        if (box) {
+            box.style.display = 'none';
         }
     };
 

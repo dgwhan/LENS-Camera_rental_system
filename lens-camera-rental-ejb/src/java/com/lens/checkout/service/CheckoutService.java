@@ -6,8 +6,8 @@ import com.lens.cart.entity.CartItems;
 import com.lens.cart.facade.CartItemsFacadeLocal;
 import com.lens.device_model.entity.DeviceModels;
 import com.lens.device_model.facade.DeviceModelsFacadeLocal;
-import com.lens.rentail_orders.entity.RentalOrders;
-import com.lens.rentail_orders.facade.RentalOrdersFacadeLocal;
+import com.lens.rental_orders.entity.RentalOrders;
+import com.lens.rental_orders.facade.RentalOrdersFacadeLocal;
 import com.lens.rental_items.entity.RentalItems;
 import com.lens.rental_items.facade.RentalItemsFacadeLocal;
 import com.lens.user.entity.Users;
@@ -24,8 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Handles checkout operations for both cart-based checkout and direct device
- * checkout.
+ * Handles checkout operations for both cart-based checkout and direct device checkout.
  *
  * @author Duong Ngoc Han
  */
@@ -63,15 +62,42 @@ public class CheckoutService implements CheckoutServiceLocal {
      */
     @Override
     public RentalOrders processCheckout(Integer userId, String customerName, String customerPhone) {
+        return processCheckout(userId, customerName, customerPhone, null);
+    }
+
+    /**
+     * Processes cart-based checkout for selected items, validates items and capacity,
+     * creates rental order, and removes the selected items from the cart.
+     *
+     * @param userId              the id of the authenticated user
+     * @param customerName        the customer name
+     * @param customerPhone       the customer phone number
+     * @param selectedCartItemIds list of selected cart item ids, or null for all items
+     * @return the created rental order
+     */
+    @Override
+    public RentalOrders processCheckout(Integer userId, String customerName, String customerPhone, List<Integer> selectedCartItemIds) {
         Users user = validateUser(userId);
 
         // load cart
-        List<CartItems> cartItems = cartItemsFacade.findByUserId(userId);
-        if (cartItems == null || cartItems.isEmpty()) {
+        List<CartItems> allCartItems = cartItemsFacade.findByUserId(userId);
+        if (allCartItems == null || allCartItems.isEmpty()) {
             throw new IllegalStateException("Cart is empty.");
         }
 
-        Date today = getToday();
+        List<CartItems> cartItems;
+        if (selectedCartItemIds != null && !selectedCartItemIds.isEmpty()) {
+            cartItems = allCartItems.stream()
+                    .filter(item -> selectedCartItemIds.contains(item.getId()))
+                    .collect(java.util.stream.Collectors.toList());
+            if (cartItems.isEmpty()) {
+                throw new IllegalStateException("No selected items found in cart.");
+            }
+        } else {
+            cartItems = allCartItems;
+        }
+
+        Date bookingDate = new Date();
 
         // validate cart items
         for (CartItems item : cartItems) {
@@ -79,7 +105,7 @@ public class CheckoutService implements CheckoutServiceLocal {
             Date endDate = item.getEndDate();
             int duration = item.getDuration();
 
-            validateRentalPeriod(startDate, endDate, today);
+            validateRentalPeriod(startDate, endDate, bookingDate);
 
             if (duration <= 0) {
                 throw new IllegalArgumentException("Rental duration must be greater than zero.");
@@ -119,7 +145,7 @@ public class CheckoutService implements CheckoutServiceLocal {
 
         // create rental order
         RentalOrders rentalOrder = createRentalOrder(user, customerName, customerPhone, subtotal, depositTotal,
-                totalPayable);
+                totalPayable, bookingDate);
 
         // create rental items
         for (CartItems cartItem : cartItems) {
@@ -128,8 +154,14 @@ public class CheckoutService implements CheckoutServiceLocal {
                     cartItem.getDuration(), cartItem.getRentalPrice(), cartItem.getDepositAmount(), itemSubtotal);
         }
 
-        // clear cart after successful order creation
-        cartItemsFacade.deleteByUserId(userId);
+        // clear only processed cart items after successful order creation
+        if (selectedCartItemIds != null && !selectedCartItemIds.isEmpty()) {
+            for (CartItems cartItem : cartItems) {
+                cartItemsFacade.deleteByIdAndUserId(cartItem.getId(), userId);
+            }
+        } else {
+            cartItemsFacade.deleteByUserId(userId);
+        }
 
         return rentalOrder;
     }
@@ -160,8 +192,8 @@ public class CheckoutService implements CheckoutServiceLocal {
             throw new IllegalArgumentException("Device model not found.");
         }
 
-        Date today = getToday();
-        validateRentalPeriod(startDate, endDate, today);
+        Date bookingDate = new Date();
+        validateRentalPeriod(startDate, endDate, bookingDate);
 
         int duration = calculateDuration(startDate, endDate);
 
@@ -184,7 +216,7 @@ public class CheckoutService implements CheckoutServiceLocal {
 
         // create rental order
         RentalOrders rentalOrder = createRentalOrder(user, customerName, customerPhone, subtotal, depositTotal,
-                totalPayable);
+                totalPayable, bookingDate);
 
         // create rental item
         createRentalItem(rentalOrder, deviceModel, startDate, endDate, duration, rentalPrice, depositAmount, subtotal);
@@ -214,8 +246,12 @@ public class CheckoutService implements CheckoutServiceLocal {
         return user;
     }
 
-    private Date getToday() {
+    private Date normalizeDate(Date date) {
+        if (date == null) {
+            return null;
+        }
         Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
@@ -223,16 +259,31 @@ public class CheckoutService implements CheckoutServiceLocal {
         return calendar.getTime();
     }
 
-    private void validateRentalPeriod(Date startDate, Date endDate, Date today) {
+    private Date getMinimumStartDate(Date bookingDate) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(bookingDate != null ? bookingDate : new Date());
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        return calendar.getTime();
+    }
+
+    private void validateRentalPeriod(Date startDate, Date endDate, Date bookingDate) {
         if (startDate == null || endDate == null) {
             throw new IllegalArgumentException("Rental dates are required.");
         }
 
-        if (startDate.before(today)) {
-            throw new IllegalArgumentException("Rental start date cannot be in the past.");
+        Date normalizedStartDate = normalizeDate(startDate);
+        Date normalizedEndDate = normalizeDate(endDate);
+        Date minimumStartDate = getMinimumStartDate(bookingDate);
+
+        if (normalizedStartDate.before(minimumStartDate)) {
+            throw new IllegalArgumentException("Rental orders must be placed at least one day before the rental start date.");
         }
 
-        if (!endDate.after(startDate)) {
+        if (!endDate.after(startDate) || !normalizedEndDate.after(normalizedStartDate)) {
             throw new IllegalArgumentException("Rental end date must be after start date.");
         }
     }
@@ -244,8 +295,8 @@ public class CheckoutService implements CheckoutServiceLocal {
     }
 
     private RentalOrders createRentalOrder(Users user, String customerName, String customerPhone,
-            long subtotal, long depositTotal, long totalPayable) {
-        Date now = new Date();
+            long subtotal, long depositTotal, long totalPayable, Date createdAt) {
+        Date orderTimestamp = createdAt != null ? createdAt : new Date();
         RentalOrders rentalOrder = new RentalOrders();
         rentalOrder.setUserId(user);
         rentalOrder.setCustomerName(customerName);
@@ -254,8 +305,8 @@ public class CheckoutService implements CheckoutServiceLocal {
         rentalOrder.setSubtotal(subtotal);
         rentalOrder.setDepositTotal(depositTotal);
         rentalOrder.setTotalPayable(totalPayable);
-        rentalOrder.setCreatedAt(now);
-        rentalOrder.setUpdatedAt(now);
+        rentalOrder.setCreatedAt(orderTimestamp);
+        rentalOrder.setUpdatedAt(orderTimestamp);
         rentalOrder.setPaymentMethod("CASH");
         rentalOrder.setPaymentStatus("UNPAID");
 

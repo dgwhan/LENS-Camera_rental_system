@@ -52,18 +52,17 @@
                 </div>
             </div>
 
-            <!-- Expired Dates Alert Notice -->
-            <ui:fragment rendered="#{cartController.hasExpiredItems}">
-                <div class="client-alert client-alert-danger">
-                    <strong>Action Required:</strong> One or more items in your cart have expired rental dates. Please
-                    update dates before proceeding.
+            <!-- Alert when no items are selected -->
+            <ui:fragment rendered="#{cartController.selectedCount == 0}">
+                <div class="client-alert client-alert-info">
+                    <strong>Please select at least one item to proceed.</strong>
                 </div>
             </ui:fragment>
 
-            <!-- Out of Stock Alert Notice -->
-            <ui:fragment rendered="#{cartController.hasOutOfStockItems}">
+            <!-- Combined Checkout Blocked Alert Notice when selected items have issues -->
+            <ui:fragment rendered="#{cartController.selectedCount > 0 and cartController.checkoutBlocked}">
                 <div class="client-alert client-alert-danger">
-                    Please remove out-of-stock items before proceeding to checkout.
+                    <strong>Please update expired dates or deselect unavailable items.</strong>
                 </div>
             </ui:fragment>
 
@@ -72,7 +71,7 @@
                 <ui:include src="/client/components/button.xhtml">
                     <ui:param name="id" value="btnProceedCheckout" />
                     <ui:param name="href" value="#{request.contextPath}/faces/client/pages/checkout.xhtml" />
-                    <ui:param name="text" value="PROCEED TO CHECKOUT" />
+                    <ui:param name="text" value="PROCEED TO CHECKOUT (#{cartController.selectedCount})" />
                     <ui:param name="variant" value="dark" />
                     <ui:param name="size" value="lg" />
                     <ui:param name="block" value="true" />
@@ -81,13 +80,13 @@
             <ui:fragment rendered="#{cartController.checkoutBlocked}">
                 <ui:include src="/client/components/button.xhtml">
                     <ui:param name="id" value="btnProceedCheckoutDisabled" />
-                    <ui:param name="text" value="PROCEED TO CHECKOUT" />
+                    <ui:param name="text" value="PROCEED TO CHECKOUT (#{cartController.selectedCount})" />
                     <ui:param name="variant" value="dark" />
                     <ui:param name="size" value="lg" />
                     <ui:param name="block" value="true" />
                     <ui:param name="disabled" value="true" />
                     <ui:param name="title"
-                        value="Please update rental dates or remove out-of-stock items before proceeding" />
+                        value="#{cartController.selectedCount == 0 ? 'Please select at least one item to proceed' : 'Please update rental dates or deselect unavailable items before proceeding'}" />
                 </ui:include>
             </ui:fragment>
 

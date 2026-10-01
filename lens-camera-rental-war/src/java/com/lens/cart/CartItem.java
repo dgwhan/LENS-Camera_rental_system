@@ -60,9 +60,10 @@ public class CartItem implements Serializable {
     }
 
     /**
-     * Checks if the rental start date is in the past compared to today.
+     * Checks if the rental start date violates the minimum booking lead time.
+     * Order must be placed at least one day before the rental start date.
      *
-     * @return true if the rental start date is before today
+     * @return true if the rental start date is before tomorrow (today or in the past)
      */
     public boolean isExpired() {
         if (startDate == null) {
@@ -73,7 +74,16 @@ public class CartItem implements Serializable {
         cal.set(java.util.Calendar.MINUTE, 0);
         cal.set(java.util.Calendar.SECOND, 0);
         cal.set(java.util.Calendar.MILLISECOND, 0);
-        return startDate.before(cal.getTime());
+        cal.add(java.util.Calendar.DAY_OF_MONTH, 1);
+        Date minStartDate = cal.getTime();
+
+        java.util.Calendar startCal = java.util.Calendar.getInstance();
+        startCal.setTime(startDate);
+        startCal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        startCal.set(java.util.Calendar.MINUTE, 0);
+        startCal.set(java.util.Calendar.SECOND, 0);
+        startCal.set(java.util.Calendar.MILLISECOND, 0);
+        return startCal.getTime().before(minStartDate);
     }
 
     public boolean getExpired() {
@@ -164,5 +174,19 @@ public class CartItem implements Serializable {
 
     public boolean getOutOfStock() {
         return outOfStock;
+    }
+
+    private boolean selected = true;
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public boolean getSelected() {
+        return selected;
     }
 }

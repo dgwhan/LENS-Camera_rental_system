@@ -9,7 +9,12 @@ import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Handles customer interactions for the rental cart page.
@@ -95,6 +100,40 @@ public class CartController implements Serializable {
             return;
         }
 
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        cal.add(Calendar.DAY_OF_MONTH, 1);
+        Date minimumStartDate = cal.getTime();
+
+        Calendar startCal = Calendar.getInstance();
+        startCal.setTime(startDate);
+        startCal.set(Calendar.HOUR_OF_DAY, 0);
+        startCal.set(Calendar.MINUTE, 0);
+        startCal.set(Calendar.SECOND, 0);
+        startCal.set(Calendar.MILLISECOND, 0);
+        Date normalizedStart = startCal.getTime();
+
+        if (normalizedStart.before(minimumStartDate)) {
+            FacesUtil.addErrorMessage("Rental orders must be placed at least one day before the rental start date.");
+            return;
+        }
+
+        Calendar endCal = Calendar.getInstance();
+        endCal.setTime(endDate);
+        endCal.set(Calendar.HOUR_OF_DAY, 0);
+        endCal.set(Calendar.MINUTE, 0);
+        endCal.set(Calendar.SECOND, 0);
+        endCal.set(Calendar.MILLISECOND, 0);
+        Date normalizedEnd = endCal.getTime();
+
+        if (!endDate.after(startDate) || !normalizedEnd.after(normalizedStart)) {
+            FacesUtil.addErrorMessage("Rental end date must be after start date.");
+            return;
+        }
+
         boolean updated = cartService.updateRentalPeriod(cartItemId, startDate, endDate);
 
         if (updated) {
@@ -172,19 +211,106 @@ public class CartController implements Serializable {
     }
 
     public int getItemCount() {
-        return cartService.getItemCount();
+        return cartService != null ? cartService.getItemCount() : 0;
+    }
+
+    public int getSelectedCount() {
+        return cartService != null ? cartService.getSelectedItemsCount() : 0;
     }
 
     public long getRentalSubtotal() {
-        return cartService.calculateRentalSubtotal();
+        return cartService != null ? cartService.calculateSelectedRentalSubtotal() : 0L;
     }
 
     public long getDepositTotal() {
-        return cartService.calculateDepositTotal();
+        return cartService != null ? cartService.calculateSelectedDepositTotal() : 0L;
     }
 
     public long getTotalPayable() {
-        return cartService.calculateTotalPayable();
+        return cartService != null ? cartService.calculateSelectedTotal() : 0L;
+    }
+
+    /**
+     * Toggles the selection state for a specific cart item.
+     *
+     * @param cartItemId identifier of the cart item
+     */
+    public void toggleItemSelection(String cartItemId) {
+        if (cartService != null && cartItemId != null) {
+            CartItem item = cartService.findItemById(cartItemId);
+            if (item != null) {
+                item.setSelected(!item.isSelected());
+            }
+        }
+    }
+
+    /**
+     * Checks if all items currently in the cart are selected.
+     *
+     * @return true if cart has items and all of them are selected
+     */
+    public boolean isAllSelected() {
+        if (cartService == null || cartService.getCartItems() == null || cartService.getCartItems().isEmpty()) {
+            return false;
+        }
+        for (CartItem item : cartService.getCartItems()) {
+            if (!item.isSelected()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean getAllSelected() {
+        return isAllSelected();
+    }
+
+    /**
+     * Toggles selection for all items in the cart.
+     * If all items are currently selected, deselects all.
+     * Otherwise, selects all items.
+     */
+    public void toggleSelectAll() {
+        if (cartService != null && cartService.getCartItems() != null && !cartService.getCartItems().isEmpty()) {
+            boolean targetState = !isAllSelected();
+            for (CartItem item : cartService.getCartItems()) {
+                item.setSelected(targetState);
+            }
+        }
+    }
+
+    /**
+     * Checks if any selected rental item has an expired start date.
+     *
+     * @return true if at least one selected item is expired
+     */
+    public boolean hasSelectedExpiredItems() {
+        if (cartService == null) {
+            return false;
+        }
+        for (CartItem item : cartService.getSelectedCartItems()) {
+            if (item.isExpired()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if any selected rental item is currently out of stock.
+     *
+     * @return true if at least one selected item is out of stock
+     */
+    public boolean hasSelectedOutOfStockItems() {
+        if (cartService == null) {
+            return false;
+        }
+        for (CartItem item : cartService.getSelectedCartItems()) {
+            if (isItemOutOfStock(item)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -229,7 +355,7 @@ public class CartController implements Serializable {
     }
 
     /**
-     * Checks if any rental item in the cart is currently out of stock.
+     * checks if any rental item in the cart is currently out of stock.
      *
      * @return true if at least one cart item is out of stock
      */
@@ -254,16 +380,49 @@ public class CartController implements Serializable {
     }
 
     /**
-     * Determines whether checkout should be blocked due to expired dates or out of stock items.
+     * determines whether checkout should be blocked.
+     * blocked if no items are selected, or if any selected item is expired or out of stock.
      *
      * @return true if checkout is blocked
      */
     public boolean isCheckoutBlocked() {
-        return hasExpiredItems() || hasOutOfStockItems();
+        if (getSelectedCount() == 0) {
+            return true;
+        }
+        return hasSelectedExpiredItems() || hasSelectedOutOfStockItems();
     }
 
     public boolean getCheckoutBlocked() {
         return isCheckoutBlocked();
+    }
+
+    /**
+     * returns cart items sorted so that available items appear on top,
+     * followed by out-of-stock items and expired items.
+     *
+     * @return sorted list of cart items
+     */
+    public List<CartItem> getSortedCartItems() {
+        if (cartService == null || cartService.getCartItems() == null) {
+            return Collections.emptyList();
+        }
+        List<CartItem> sortedList = new ArrayList<>(cartService.getCartItems());
+        //trigger availability check on all items
+        for (CartItem item : sortedList) {
+            isItemOutOfStock(item);
+        }
+        sortedList.sort(Comparator.comparingInt(item -> {
+            boolean expired = item.isExpired();
+            boolean outOfStock = item.isOutOfStock();
+            if (!expired && !outOfStock) {
+                return 0; //Available first
+            } else if (outOfStock && !expired) {
+                return 1; //Out of stock
+            } else {
+                return 2; //Expired
+            }
+        }));
+        return sortedList;
     }
 }
 

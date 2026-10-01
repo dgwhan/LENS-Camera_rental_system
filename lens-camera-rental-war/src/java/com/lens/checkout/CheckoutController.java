@@ -7,7 +7,7 @@ import com.lens.common.util.DateUtil;
 import com.lens.common.util.FacesUtil;
 import com.lens.device_model.entity.DeviceModels;
 import com.lens.device_model.facade.DeviceModelsFacadeLocal;
-import com.lens.rentail_orders.entity.RentalOrders;
+import com.lens.rental_orders.entity.RentalOrders;
 import jakarta.ejb.EJB;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
@@ -152,7 +152,7 @@ public class CheckoutController implements Serializable {
         if (isDirectCheckoutMode()) {
             return directItem != null;
         }
-        return cartService != null && !cartService.getCartItems().isEmpty() && cartService.getItemCount() > 0;
+        return cartService != null && !cartService.getSelectedCartItems().isEmpty();
     }
 
     /**
@@ -213,11 +213,30 @@ public class CheckoutController implements Serializable {
                     this.directItem = null;
                 }
             } else {
-                // Cart Checkout: process all cart items and clear cart
+                // Cart Checkout: process selected cart items
+                List<CartItem> selectedItems = cartService.getSelectedCartItems();
+                if (selectedItems.isEmpty()) {
+                    FacesUtil.addErrorMessage("No items selected for checkout.");
+                    return null;
+                }
+
+                List<Integer> selectedIds = new ArrayList<>();
+                for (CartItem ci : selectedItems) {
+                    if (ci.getCartItemId() != null) {
+                        try {
+                            selectedIds.add(Integer.valueOf(ci.getCartItemId()));
+                        } catch (NumberFormatException ignored) {}
+                    }
+                }
+
                 rentalOrder = checkoutService.processCheckout(
                         userId,
                         customerName.trim(),
-                        customerPhone.trim());
+                        customerPhone.trim(),
+                        selectedIds);
+
+                // remove selected items from in-memory cart
+                cartService.removeSelectedItems();
             }
 
             if (rentalOrder == null) {
@@ -239,35 +258,35 @@ public class CheckoutController implements Serializable {
         if (isDirectCheckoutMode()) {
             return directItem != null ? Collections.singletonList(directItem) : Collections.emptyList();
         }
-        return cartService.getCartItems();
+        return cartService != null ? cartService.getSelectedCartItems() : Collections.emptyList();
     }
 
     public int getItemCount() {
         if (isDirectCheckoutMode()) {
             return directItem != null ? 1 : 0;
         }
-        return cartService.getItemCount();
+        return cartService != null ? cartService.getSelectedItemsCount() : 0;
     }
 
     public long getRentalSubtotal() {
         if (isDirectCheckoutMode()) {
             return directItem != null ? directItem.getSubtotal() : 0L;
         }
-        return cartService.calculateRentalSubtotal();
+        return cartService != null ? cartService.calculateSelectedRentalSubtotal() : 0L;
     }
 
     public long getDepositTotal() {
         if (isDirectCheckoutMode()) {
             return directItem != null ? directItem.getDepositAmountSnapshot() : 0L;
         }
-        return cartService.calculateDepositTotal();
+        return cartService != null ? cartService.calculateSelectedDepositTotal() : 0L;
     }
 
     public long getTotalPayable() {
         if (isDirectCheckoutMode()) {
             return directItem != null ? directItem.getItemTotal() : 0L;
         }
-        return cartService.calculateTotalPayable();
+        return cartService != null ? cartService.calculateSelectedTotal() : 0L;
     }
 
     // Getters and Setters

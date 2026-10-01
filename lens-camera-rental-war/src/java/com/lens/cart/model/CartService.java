@@ -290,6 +290,68 @@ public class CartService implements Serializable {
     }
 
     /**
+     * Returns only the cart items that are currently selected by the customer.
+     *
+     * @return list of selected cart items
+     */
+    public List<CartItem> getSelectedCartItems() {
+        List<CartItem> allItems = getCartItems();
+        if (allItems == null) {
+            return java.util.Collections.emptyList();
+        }
+        List<CartItem> selected = new ArrayList<>();
+        for (CartItem item : allItems) {
+            if (item.isSelected()) {
+                selected.add(item);
+            }
+        }
+        return selected;
+    }
+
+    /**
+     * Calculates the total rental cost of selected cart items.
+     *
+     * @return selected rental subtotal in VND
+     */
+    public long calculateSelectedRentalSubtotal() {
+        return getSelectedCartItems().stream().mapToLong(CartItem::getSubtotal).sum();
+    }
+
+    /**
+     * Calculates the total deposit amount of selected cart items.
+     *
+     * @return selected deposit amount in VND
+     */
+    public long calculateSelectedDepositTotal() {
+        return getSelectedCartItems().stream().mapToLong(CartItem::getDepositAmountSnapshot).sum();
+    }
+
+    /**
+     * Calculates the total amount payable for selected cart items.
+     *
+     * @return total payable amount for selected items in VND
+     */
+    public long calculateSelectedTotal() {
+        return calculateSelectedRentalSubtotal() + calculateSelectedDepositTotal();
+    }
+
+    /**
+     * Returns the count of selected items in the cart.
+     *
+     * @return count of selected items
+     */
+    public int getSelectedItemsCount() {
+        return getSelectedCartItems().size();
+    }
+
+    /**
+     * Removes all currently selected items from the in-memory cart list.
+     */
+    public void removeSelectedItems() {
+        cartItems.removeIf(CartItem::isSelected);
+    }
+
+    /**
      * Calculates the total rental cost of all cart items.
      *
      * @return rental subtotal in VND
