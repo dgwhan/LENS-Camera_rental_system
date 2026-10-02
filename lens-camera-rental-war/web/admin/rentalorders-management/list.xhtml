@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core"
+    xmlns:ui="jakarta.faces.facelets" xmlns:pt="jakarta.faces.passthrough"
+    template="/WEB-INF/templates/admin-template.xhtml">
+
+    <ui:param name="activeMenu" value="orders" />
+
+    <ui:define name="title">
+        Rental Orders Management - Lens Camera Rental
+    </ui:define>
+
+    <ui:define name="head">
+        <style>
+            .order-modal-backdrop {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(15, 23, 42, 0.45);
+                backdrop-filter: blur(4px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                padding: 1.25rem;
+            }
+            .order-modal-card {
+                background: #ffffff;
+                border-radius: 12px;
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+                width: 100%;
+                max-width: 650px;
+                max-height: 90vh;
+                overflow-y: auto;
+                border: 1px solid #e2e8f0;
+                display: flex;
+                flex-direction: column;
+            }
+            .order-modal-header {
+                padding: 1rem 1.5rem;
+                border-bottom: 1px solid #e2e8f0;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background-color: #f8fafc;
+            }
+            .order-modal-title {
+                font-size: 1.125rem;
+                font-weight: 600;
+                color: #0f172a;
+                margin: 0;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .order-modal-close {
+                background: none;
+                border: none;
+                font-size: 1.25rem;
+                line-height: 1;
+                color: #64748b;
+                cursor: pointer;
+                padding: 0.25rem 0.5rem;
+                border-radius: 6px;
+            }
+            .order-modal-close:hover {
+                background-color: #e2e8f0;
+                color: #0f172a;
+            }
+            .order-modal-body {
+                padding: 1.5rem;
+                display: flex;
+                flex-direction: column;
+                gap: 1.25rem;
+            }
+            .order-detail-section-title {
+                font-size: 0.8125rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                color: #64748b;
+                margin-bottom: 0.5rem;
+            }
+            .order-detail-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem 1.25rem;
+                font-size: 0.875rem;
+            }
+            .order-detail-item {
+                display: flex;
+                flex-direction: column;
+            }
+            .order-detail-label {
+                font-size: 0.75rem;
+                color: #64748b;
+                margin-bottom: 0.15rem;
+            }
+            .order-detail-value {
+                font-weight: 500;
+                color: #1e293b;
+            }
+            .order-modal-footer {
+                padding: 1rem 1.5rem;
+                border-top: 1px solid #e2e8f0;
+                display: flex;
+                justify-content: flex-end;
+                background-color: #f8fafc;
+            }
+            .stats-grid-4 {
+                grid-template-columns: repeat(4, 1fr) !important;
+            }
+            @media (max-width: 992px) {
+                .stats-grid-4 {
+                    grid-template-columns: repeat(2, 1fr) !important;
+                }
+            }
+            @media (max-width: 640px) {
+                .stats-grid-4 {
+                    grid-template-columns: 1fr !important;
+                }
+            }
+
+            /* Order Management Tabs */
+            .order-tabs-bar {
+                display: flex;
+                gap: 0.5rem;
+                margin-bottom: 1.25rem;
+                border-bottom: 1px solid #e2e8f0;
+                padding-bottom: 0;
+            }
+            .order-tab-item {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.625rem 1rem;
+                font-size: 0.875rem;
+                font-weight: 500;
+                color: #64748b;
+                text-decoration: none !important;
+                border-bottom: 2px solid transparent;
+                transition: all 0.15s ease;
+                margin-bottom: -1px;
+                cursor: pointer;
+            }
+            .order-tab-item:hover {
+                color: #0f172a;
+            }
+            .order-tab-item.is-active {
+                color: #0f172a;
+                font-weight: 600;
+                border-bottom-color: #0f172a;
+            }
+            .tab-badge {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0.125rem 0.5rem;
+                font-size: 0.75rem;
+                font-weight: 600;
+                border-radius: 9999px;
+                background-color: #f1f5f9;
+                color: #475569;
+            }
+            .order-tab-item.is-active .tab-badge {
+                background-color: #0f172a;
+                color: #ffffff;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="main-wrapper">
+            <h:form id="ordersForm">
+
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="page-header-row">
+                        <div>
+                            <div class="page-pretitle">Overview</div>
+                            <h1 class="page-title">Rental Orders Management</h1>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Statistics Section (All in 1 single row) -->
+                <h:panelGroup id="statsCardsWrapper" layout="block" styleClass="stats-grid stats-grid-4">
+                    <!-- Total Orders -->
+                    <div class="stat-card">
+                        <span class="stat-label">Total Orders</span>
+                        <div class="stat-value">#{adminRentalOrderController.totalRentalOrders}</div>
+                    </div>
+
+                    <!-- Pending Orders -->
+                    <div class="stat-card">
+                        <span class="stat-label">Pending</span>
+                        <div class="stat-value">#{adminRentalOrderController.totalPendingOrders}</div>
+                    </div>
+
+                    <!-- Active Orders -->
+                    <div class="stat-card">
+                        <span class="stat-label">Active</span>
+                        <div class="stat-value">#{adminRentalOrderController.totalActiveOrders}</div>
+                    </div>
+
+                    <!-- Completed Orders -->
+                    <div class="stat-card">
+                        <span class="stat-label">Completed</span>
+                        <div class="stat-value">#{adminRentalOrderController.totalCompletedOrders}</div>
+                    </div>
+                </h:panelGroup>
+
+                <!-- Order Management 3 Tabs -->
+                <h:panelGroup id="ordersTabs" layout="block" styleClass="order-tabs-bar">
+                    <!-- Tab 1: Needs Action -->
+                    <h:commandLink action="#{adminRentalOrderController.changeTab('needs_action')}"
+                        styleClass="order-tab-item #{adminRentalOrderController.currentTab eq 'needs_action' ? 'is-active' : ''}">
+                        <span>Needs Action</span>
+                        <span class="tab-badge">#{adminRentalOrderController.totalNeedsActionOrders}</span>
+                        <f:ajax render="ordersTabs searchBar ordersTableWrapper statsCardsWrapper" />
+                    </h:commandLink>
+
+                    <!-- Tab 2: Active -->
+                    <h:commandLink action="#{adminRentalOrderController.changeTab('active')}"
+                        styleClass="order-tab-item #{adminRentalOrderController.currentTab eq 'active' ? 'is-active' : ''}">
+                        <span>Active</span>
+                        <span class="tab-badge">#{adminRentalOrderController.totalActiveOrders}</span>
+                        <f:ajax render="ordersTabs searchBar ordersTableWrapper statsCardsWrapper" />
+                    </h:commandLink>
+
+                    <!-- Tab 3: All Orders -->
+                    <h:commandLink action="#{adminRentalOrderController.changeTab('all')}"
+                        styleClass="order-tab-item #{adminRentalOrderController.currentTab eq 'all' ? 'is-active' : ''}">
+                        <span>All Orders</span>
+                        <span class="tab-badge">#{adminRentalOrderController.totalRentalOrders}</span>
+                        <f:ajax render="ordersTabs searchBar ordersTableWrapper statsCardsWrapper" />
+                    </h:commandLink>
+                </h:panelGroup>
+
+                <!-- Search and Filter Bar -->
+                <h:panelGroup id="searchBar" layout="block" styleClass="users-search">
+                    <h:inputText id="keyword" value="#{adminRentalOrderController.keyword}"
+                        pt:placeholder="Search customer or phone..." styleClass="form-control search-input">
+                        <f:ajax event="keyup" delay="300" render="ordersTableWrapper" />
+                    </h:inputText>
+
+                    <h:panelGroup rendered="#{adminRentalOrderController.currentTab ne 'active'}">
+                        <h:selectOneMenu id="statusFilter" value="#{adminRentalOrderController.status}"
+                            styleClass="form-select filter-select-sm">
+                            <f:selectItem itemLabel="All Statuses" itemValue="" />
+                            <f:selectItem itemLabel="Pending" itemValue="PENDING" rendered="#{adminRentalOrderController.currentTab ne 'active'}" />
+                            <f:selectItem itemLabel="Approved" itemValue="APPROVED" rendered="#{adminRentalOrderController.currentTab ne 'active'}" />
+                            <f:selectItem itemLabel="Active" itemValue="ACTIVE" rendered="#{adminRentalOrderController.currentTab eq 'all'}" />
+                            <f:selectItem itemLabel="Completed" itemValue="COMPLETED" rendered="#{adminRentalOrderController.currentTab eq 'all'}" />
+                            <f:selectItem itemLabel="Rejected" itemValue="REJECTED" rendered="#{adminRentalOrderController.currentTab eq 'all'}" />
+                            <f:ajax event="change" render="ordersTableWrapper" />
+                        </h:selectOneMenu>
+                    </h:panelGroup>
+
+                    <h:commandButton value="Search" action="list" styleClass="btn btn-primary">
+                        <f:ajax execute="@form" render="ordersTableWrapper" />
+                    </h:commandButton>
+
+                    <h:commandButton value="Reset" action="#{adminRentalOrderController.resetFilter()}"
+                        styleClass="btn btn-outline-secondary">
+                        <f:ajax render="searchBar ordersTableWrapper" />
+                    </h:commandButton>
+                </h:panelGroup>
+
+                <!-- Data Table Card -->
+                <div class="card">
+                    <h:panelGroup id="ordersTableWrapper" layout="block" styleClass="table-wrapper">
+                        <h:dataTable id="ordersTable"
+                            value="#{adminRentalOrderController.showRentalOrderList()}" var="order"
+                            styleClass="data-table">
+
+                            <!-- Order ID -->
+                            <h:column>
+                                <f:facet name="header">Order</f:facet>
+                                <code class="font-code">##{order.id}</code>
+                            </h:column>
+
+                            <!-- Customer -->
+                            <h:column>
+                                <f:facet name="header">Customer</f:facet>
+                                <div>
+                                    <h:outputText value="#{order.customerName}" styleClass="fw-semibold" />
+                                    <br />
+                                    <small style="color: var(--color-text-secondary, #64748b);">#{order.customerPhone}</small>
+                                </div>
+                            </h:column>
+
+                            <!-- Equipment -->
+                            <h:column>
+                                <f:facet name="header">Equipment</f:facet>
+                                <div>
+                                    <h:outputText value="#{adminRentalOrderController.getRentalItem(order.id).deviceModelId.name}" styleClass="fw-semibold" />
+                                    <br />
+                                    <small style="color: var(--color-text-secondary, #64748b);">#{adminRentalOrderController.getRentalItem(order.id).deviceModelId.brand}</small>
+                                </div>
+                            </h:column>
+
+                            <!-- Rental Period -->
+                            <h:column>
+                                <f:facet name="header">Rental Period</f:facet>
+                                <div>
+                                    <h:outputText
+                                        value="#{adminRentalOrderController.getRentalItem(order.id).startDate}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+                                    <span> - </span>
+                                    <h:outputText
+                                        value="#{adminRentalOrderController.getRentalItem(order.id).endDate}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+                                </div>
+                            </h:column>
+
+                            <!-- Total Payable -->
+                            <h:column>
+                                <f:facet name="header">Total</f:facet>
+                                <span class="fw-semibold">
+                                    <h:outputText value="#{order.totalPayable}">
+                                        <f:convertNumber pattern="#,##0" />
+                                    </h:outputText>
+                                    <span> VND</span>
+                                </span>
+                            </h:column>
+
+                            <!-- Order Status with Visual Overdue for ACTIVE -->
+                            <h:column>
+                                <f:facet name="header">Status</f:facet>
+                                <ui:fragment rendered="#{order.status eq 'ACTIVE'}">
+                                    <ui:fragment rendered="#{adminRentalOrderController.isOverdue(order.id)}">
+                                        <span class="badge-status badge-expired" style="font-weight: 600;" title="Active order past return end date">
+                                            Overdue
+                                        </span>
+                                    </ui:fragment>
+                                    <ui:fragment rendered="#{not adminRentalOrderController.isOverdue(order.id)}">
+                                        <span class="badge-status badge-active" title="Active rental in progress">
+                                            Active
+                                        </span>
+                                    </ui:fragment>
+                                </ui:fragment>
+
+                                <ui:fragment rendered="#{order.status ne 'ACTIVE'}">
+                                    <span class="badge-status #{order.status == 'PENDING' ? 'badge-pending' : (order.status == 'APPROVED' ? 'badge-approved' : (order.status == 'COMPLETED' ? 'badge-completed' : (order.status == 'REJECTED' ? 'badge-rejected' : 'badge-inactive')))}">
+                                        <h:outputText value="#{order.status}" />
+                                    </span>
+                                </ui:fragment>
+                            </h:column>
+
+                            <!-- Payment Status -->
+                            <h:column>
+                                <f:facet name="header">Payment</f:facet>
+                                <span class="badge-status #{adminRentalOrderController.getPaymentStatus(order.id) == 'PAID' ? 'badge-active' : 'badge-pending'}">
+                                    <h:outputText value="#{adminRentalOrderController.getPaymentStatus(order.id)}" />
+                                </span>
+                            </h:column>
+
+                            <!-- Action Column: Contextual Actions for Needs Action & View Detail -->
+                            <h:column>
+                                <f:facet name="header">Action</f:facet>
+                                <div class="table-row-actions">
+                                    <!-- PENDING: Approve | Reject -->
+                                    <ui:fragment rendered="#{order.status eq 'PENDING'}">
+                                        <h:commandButton value="Approve" action="#{adminRentalOrderController.approveOrder(order.id)}"
+                                            styleClass="btn btn-sm btn-outline-success">
+                                            <f:ajax render="ordersTableWrapper statsCardsWrapper ordersTabs" />
+                                        </h:commandButton>
+                                        <h:commandButton value="Reject" action="#{adminRentalOrderController.rejectOrder(order.id)}"
+                                            onclick="if (!confirm('Are you sure you want to reject order ##{order.id}?')) return false;"
+                                            styleClass="btn btn-sm btn-outline-danger">
+                                            <f:ajax render="ordersTableWrapper statsCardsWrapper ordersTabs" />
+                                        </h:commandButton>
+                                    </ui:fragment>
+
+                                    <!-- APPROVED + No Device Assigned: Assign Device -->
+                                    <ui:fragment rendered="#{order.status eq 'APPROVED' and not adminRentalOrderController.isDeviceAssigned(order.id)}">
+                                        <h:commandButton value="Assign Device" action="#{adminRentalOrderController.assignDevice(order.id)}"
+                                            styleClass="btn btn-sm btn-outline-primary">
+                                            <f:ajax render=":ordersForm:orderDetailModal" />
+                                        </h:commandButton>
+                                    </ui:fragment>
+
+                                    <!-- APPROVED + Device Assigned + Pending Handover: Handover -->
+                                    <ui:fragment rendered="#{order.status eq 'APPROVED' and adminRentalOrderController.isDeviceAssigned(order.id)}">
+                                        <h:commandButton value="Handover" action="#{adminRentalOrderController.handoverOrder(order.id)}"
+                                            styleClass="btn btn-sm btn-outline-warning">
+                                            <f:ajax render="ordersTableWrapper statsCardsWrapper ordersTabs" />
+                                        </h:commandButton>
+                                    </ui:fragment>
+
+                                    <!-- View Detail (Never navigates away) -->
+                                    <h:commandButton value="Detail" action="#{adminRentalOrderController.viewDetail(order.id)}"
+                                        styleClass="btn btn-sm btn-outline-info">
+                                        <f:ajax render=":ordersForm:orderDetailModal" />
+                                    </h:commandButton>
+                                </div>
+                            </h:column>
+
+                        </h:dataTable>
+                    </h:panelGroup>
+                </div>
+
+                <!-- Order Detail Modal (View Detail without navigating away) -->
+                <h:panelGroup id="orderDetailModal" layout="block">
+                    <ui:fragment rendered="#{not empty adminRentalOrderController.selectedOrder}">
+                        <div class="order-modal-backdrop" onclick="if(event.target === this) document.getElementById('ordersForm:btnCloseDetail').click();">
+                            <div class="order-modal-card">
+                                <div class="order-modal-header">
+                                    <h3 class="order-modal-title">
+                                        <span>Order ##{adminRentalOrderController.selectedOrder.id}</span>
+                                        <span class="badge-status #{adminRentalOrderController.selectedOrder.status == 'PENDING' ? 'badge-pending' : (adminRentalOrderController.selectedOrder.status == 'APPROVED' ? 'badge-approved' : (adminRentalOrderController.selectedOrder.status == 'ACTIVE' ? 'badge-active' : (adminRentalOrderController.selectedOrder.status == 'COMPLETED' ? 'badge-completed' : (adminRentalOrderController.selectedOrder.status == 'REJECTED' ? 'badge-rejected' : 'badge-inactive'))))}">
+                                            #{adminRentalOrderController.selectedOrder.status}
+                                        </span>
+                                    </h3>
+                                    <h:commandButton id="btnCloseDetailHeader" value="&#215;" action="#{adminRentalOrderController.closeDetail()}" styleClass="order-modal-close">
+                                        <f:ajax render=":ordersForm:orderDetailModal" />
+                                    </h:commandButton>
+                                </div>
+
+                                <div class="order-modal-body">
+                                    <!-- Customer Info -->
+                                    <div>
+                                        <div class="order-detail-section-title">Customer Information</div>
+                                        <div class="order-detail-grid">
+                                            <div class="order-detail-item">
+                                                <span class="order-detail-label">Customer Name</span>
+                                                <span class="order-detail-value">#{adminRentalOrderController.selectedOrder.customerName}</span>
+                                            </div>
+                                            <div class="order-detail-item">
+                                                <span class="order-detail-label">Phone Number</span>
+                                                <span class="order-detail-value">#{adminRentalOrderController.selectedOrder.customerPhone}</span>
+                                            </div>
+                                            <div class="order-detail-item" style="grid-column: span 2;">
+                                                <span class="order-detail-label">Delivery Address</span>
+                                                <span class="order-detail-value">#{not empty adminRentalOrderController.selectedHandover and not empty adminRentalOrderController.selectedHandover.deliveryAddress ? adminRentalOrderController.selectedHandover.deliveryAddress : (not empty adminRentalOrderController.selectedOrder.userId.address ? adminRentalOrderController.selectedOrder.userId.address : 'N/A')}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Equipment & Rental Period -->
+                                    <ui:fragment rendered="#{not empty adminRentalOrderController.selectedRentalItem}">
+                                        <div>
+                                            <div class="order-detail-section-title">Equipment &amp; Rental Period</div>
+                                            <div class="order-detail-grid">
+                                                <div class="order-detail-item">
+                                                    <span class="order-detail-label">Equipment Model</span>
+                                                    <span class="order-detail-value">#{adminRentalOrderController.selectedRentalItem.deviceModelId.brand} - #{adminRentalOrderController.selectedRentalItem.deviceModelId.name}</span>
+                                                </div>
+                                                <div class="order-detail-item">
+                                                    <span class="order-detail-label">Duration</span>
+                                                    <span class="order-detail-value">#{adminRentalOrderController.selectedRentalItem.duration} day(s)</span>
+                                                </div>
+                                                <div class="order-detail-item">
+                                                    <span class="order-detail-label">Start Date</span>
+                                                    <span class="order-detail-value">
+                                                        <h:outputText value="#{adminRentalOrderController.selectedRentalItem.startDate}">
+                                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                        </h:outputText>
+                                                    </span>
+                                                </div>
+                                                <div class="order-detail-item">
+                                                    <span class="order-detail-label">End Date</span>
+                                                    <span class="order-detail-value">
+                                                        <h:outputText value="#{adminRentalOrderController.selectedRentalItem.endDate}">
+                                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                        </h:outputText>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ui:fragment>
+
+                                    <!-- Financial & Payment Summary -->
+                                    <div>
+                                        <div class="order-detail-section-title">Payment &amp; Pricing</div>
+                                        <div class="order-detail-grid">
+                                            <div class="order-detail-item">
+                                                <span class="order-detail-label">Rental Subtotal</span>
+                                                <span class="order-detail-value">
+                                                    <h:outputText value="#{adminRentalOrderController.selectedOrder.subtotal}">
+                                                        <f:convertNumber pattern="#,##0" />
+                                                    </h:outputText> VND
+                                                </span>
+                                            </div>
+                                            <div class="order-detail-item">
+                                                <span class="order-detail-label">Deposit Total</span>
+                                                <span class="order-detail-value">
+                                                    <h:outputText value="#{adminRentalOrderController.selectedOrder.depositTotal}">
+                                                        <f:convertNumber pattern="#,##0" />
+                                                    </h:outputText> VND
+                                                </span>
+                                            </div>
+                                            <div class="order-detail-item">
+                                                <span class="order-detail-label">Total Payable</span>
+                                                <span class="order-detail-value" style="color: #0f172a; font-weight: 700;">
+                                                    <h:outputText value="#{adminRentalOrderController.selectedOrder.totalPayable}">
+                                                        <f:convertNumber pattern="#,##0" />
+                                                    </h:outputText> VND
+                                                </span>
+                                            </div>
+                                            <div class="order-detail-item">
+                                                <span class="order-detail-label">Payment Method &amp; Status</span>
+                                                <span class="order-detail-value">#{not empty adminRentalOrderController.selectedPayment ? adminRentalOrderController.selectedPayment.paymentMethod : 'CASH'} (#{not empty adminRentalOrderController.selectedPayment ? adminRentalOrderController.selectedPayment.paymentStatus : adminRentalOrderController.getPaymentStatus(adminRentalOrderController.selectedOrder.id)})</span>
+                                            </div>
+                                            <div class="order-detail-item">
+                                                <span class="order-detail-label">Order Created At</span>
+                                                <span class="order-detail-value">
+                                                    <h:outputText value="#{adminRentalOrderController.selectedOrder.createdAt}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                                    </h:outputText>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="order-modal-footer">
+                                    <h:commandButton id="btnCloseDetail" value="Close" action="#{adminRentalOrderController.closeDetail()}" styleClass="btn btn-outline-secondary">
+                                        <f:ajax render=":ordersForm:orderDetailModal" />
+                                    </h:commandButton>
+                                </div>
+                            </div>
+                        </div>
+                    </ui:fragment>
+                </h:panelGroup>
+
+            </h:form>
+        </div>
+    </ui:define>
+
+</ui:composition>

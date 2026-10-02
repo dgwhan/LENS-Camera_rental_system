@@ -47,6 +47,13 @@
                                 <span>Devices</span>
                             </h:link>
                         </li>
+                        
+                        <li class="sidebar-nav-item">
+                            <h:link outcome="/admin/rentalorders-management/list"
+                                    styleClass="sidebar-nav-link #{activeMenu eq 'orders' or facesContext.viewRoot.viewId.contains('rentalorders-management') ? 'active' : ''}">
+                                <span>Rental Orders</span>
+                            </h:link>
+                        </li>
                     </ul>
                 </div>
             </div>

@@ -9,6 +9,12 @@ import com.lens.rental_orders.entity.RentalOrders;
 import com.lens.rental_orders.facade.RentalOrdersFacadeLocal;
 import com.lens.rental_items.entity.RentalItems;
 import com.lens.rental_items.facade.RentalItemsFacadeLocal;
+import com.lens.rental_deposits.entity.RentalDeposits;
+import com.lens.rental_deposits.facade.RentalDepositsFacadeLocal;
+import com.lens.rental_handovers.entity.RentalHandovers;
+import com.lens.rental_handovers.facade.RentalHandoversFacadeLocal;
+import com.lens.rental_payments.entity.RentalPayments;
+import com.lens.rental_payments.facade.RentalPaymentsFacadeLocal;
 import com.lens.user.entity.Users;
 import com.lens.user.facade.UsersFacadeLocal;
 import jakarta.ejb.EJB;
@@ -32,6 +38,15 @@ public class CheckoutService implements CheckoutServiceLocal {
 
     @EJB
     private RentalOrdersFacadeLocal rentalOrdersFacade;
+
+    @EJB
+    private RentalHandoversFacadeLocal rentalHandoversFacade;
+
+    @EJB
+    private RentalPaymentsFacadeLocal rentalPaymentsFacade;
+
+    @EJB
+    private RentalDepositsFacadeLocal rentalDepositsFacade;
 
     @EJB
     private AvailabilityServiceLocal availabilityService;
@@ -205,18 +220,41 @@ public class CheckoutService implements CheckoutServiceLocal {
         rentalOrder.setUserId(user);
         rentalOrder.setCustomerName(customerName);
         rentalOrder.setCustomerPhone(customerPhone);
-        rentalOrder.setDeliveryAddress(customerAddress);
         rentalOrder.setStatus("PENDING");
         rentalOrder.setSubtotal(subtotal);
         rentalOrder.setDepositTotal(depositTotal);
         rentalOrder.setTotalPayable(totalPayable);
         rentalOrder.setCreatedAt(orderTimestamp);
         rentalOrder.setUpdatedAt(orderTimestamp);
-        rentalOrder.setPaymentMethod("CASH");
-        rentalOrder.setPaymentStatus("UNPAID");
-        rentalOrder.setDepositRefundStatus("NOT_REFUNDED");
 
         rentalOrdersFacade.create(rentalOrder);
+
+        RentalHandovers handover = new RentalHandovers();
+        handover.setRentalOrderId(rentalOrder);
+        handover.setMethod(customerAddress != null && !customerAddress.trim().isEmpty() ? "DELIVERY" : "STORE_PICKUP");
+        handover.setStatus("PENDING");
+        handover.setDeliveryAddress(customerAddress);
+        handover.setCreatedAt(orderTimestamp);
+        handover.setUpdatedAt(orderTimestamp);
+        rentalHandoversFacade.create(handover);
+
+        RentalPayments payment = new RentalPayments();
+        payment.setRentalOrderId(rentalOrder);
+        payment.setPaymentMethod("CASH");
+        payment.setPaymentStatus("UNPAID");
+        payment.setAmount(totalPayable);
+        payment.setCreatedAt(orderTimestamp);
+        payment.setUpdatedAt(orderTimestamp);
+        rentalPaymentsFacade.create(payment);
+
+        RentalDeposits deposit = new RentalDeposits();
+        deposit.setRentalOrderId(rentalOrder);
+        deposit.setAmount(depositTotal);
+        deposit.setStatus("NOT_REFUNDED");
+        deposit.setCreatedAt(orderTimestamp);
+        deposit.setUpdatedAt(orderTimestamp);
+        rentalDepositsFacade.create(deposit);
+
         return rentalOrder;
     }
 

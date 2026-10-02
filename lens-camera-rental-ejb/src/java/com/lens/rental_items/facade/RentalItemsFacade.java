@@ -34,15 +34,15 @@ public class RentalItemsFacade extends AbstractFacade<RentalItems> implements Re
         if (deviceModelId == null || requestedStartDate == null || requestedEndDate == null || statuses == null || statuses.isEmpty()) {
             return Collections.emptyList();
         }
-        
+
         String jpql = "SELECT ri FROM RentalItems ri WHERE ri.deviceModelId.id = :deviceModelId AND ri.rentalOrderId.status IN :statuses AND ri.startDate < :requestedEndDate AND ri.endDate > :requestedStartDate";
-        
+
         TypedQuery<RentalItems> query = em.createQuery(jpql, RentalItems.class)
                 .setParameter("deviceModelId", deviceModelId)
                 .setParameter("requestedStartDate", requestedStartDate)
                 .setParameter("requestedEndDate", requestedEndDate)
                 .setParameter("statuses", statuses);
-        
+
         return query.getResultList();
     }
 
@@ -62,5 +62,21 @@ public class RentalItemsFacade extends AbstractFacade<RentalItems> implements Re
         return count != null ? count : 0L;
     }
 
-}
+    @Override
+    public List<RentalItems> findByRentalOrderId(Integer rentalOrderId) {
+        return em.createQuery("SELECT ri FROM RentalItems ri WHERE ri.rentalOrderId.id = :rentalOrderId",RentalItems.class)
+                .setParameter("rentalOrderId", rentalOrderId)
+                .getResultList();
+    }
 
+    @Override
+    public List<RentalItems> findByRentalOrderIds(List<Integer> rentalOrderIds) {
+        if (rentalOrderIds == null || rentalOrderIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return em.createQuery("SELECT ri FROM RentalItems ri JOIN FETCH ri.deviceModelId LEFT JOIN FETCH ri.assignedDeviceId WHERE ri.rentalOrderId.id IN :rentalOrderIds", RentalItems.class)
+                .setParameter("rentalOrderIds", rentalOrderIds)
+                .getResultList();
+    }
+
+}

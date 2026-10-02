@@ -24,5 +24,15 @@ public interface RentalOrdersFacadeLocal {
     List<RentalOrders> findRange(int[] range);
 
     int count();
+    
+    List<RentalOrders> search(String keyword, String status);
+
+    List<RentalOrders> searchOrders(String tab, String keyword, String status);
+
+    int totalRentalOrders();
+
+    int countByStatus(String status);
+
+    int countNeedsActionOrders();
 
 }

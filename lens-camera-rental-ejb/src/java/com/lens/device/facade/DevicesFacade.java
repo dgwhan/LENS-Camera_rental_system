@@ -26,7 +26,7 @@ public class DevicesFacade extends AbstractFacade<Devices> implements DevicesFac
         super(Devices.class);
     }
 
-    // Kiểm tra trùng lặp serial number
+    //kiểm tra trùng lặp serial number
     @Override
     public boolean isSerialNumber(String serialNumber, Integer id) {
         if (serialNumber == null || serialNumber.trim().isEmpty()) {
@@ -48,14 +48,14 @@ public class DevicesFacade extends AbstractFacade<Devices> implements DevicesFac
         return count != null && count > 0;
     }
 
-    // Lấy toàn bộ danh sách thiết bị sắp xếp theo ID giảm dần
+    //lấy toàn bộ danh sách thiết bị sắp xếp theo ID giảm dần
     @Override
     public java.util.List<Devices> findAll() {
         return em.createQuery("SELECT d FROM Devices d ORDER BY d.id DESC", Devices.class)
                 .getResultList();
     }
 
-    // Tìm kiếm thiết bị theo từ khóa (serial, model, brand) và trạng thái
+    //tìm kiếm thiết bị theo từ khóa (serial, model, brand) và trạng thái
     @Override
     public java.util.List<Devices> search(String keyword, String status) {
         StringBuilder jpql = new StringBuilder("SELECT d FROM Devices d WHERE 1=1 ");

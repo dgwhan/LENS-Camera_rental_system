@@ -553,6 +553,10 @@ ul.auth-messages-list {
     margin-bottom: 1.25rem;
 }
 
+.stats-grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
 .stat-card,
 .user-stat-card {
     background-color: var(--color-white, #ffffff);

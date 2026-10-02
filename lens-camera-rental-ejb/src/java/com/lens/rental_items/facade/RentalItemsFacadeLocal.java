@@ -33,5 +33,9 @@ public interface RentalItemsFacadeLocal {
             List<String> statuses);
 
     long countActiveByDeviceModelId(Integer deviceModelId, List<String> statuses);
+    
+    List<RentalItems> findByRentalOrderId(Integer rentalOrderId);
+
+    List<RentalItems> findByRentalOrderIds(List<Integer> rentalOrderIds);
 }
 

@@ -5,6 +5,7 @@ import com.lens.device_model.entity.DeviceModels;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import java.util.List;
 
 /**
@@ -67,19 +68,26 @@ public class DeviceModelsFacade extends AbstractFacade<DeviceModels> implements 
 
     @Override
     public List<DeviceModels> search(String keyword) {
-        if (keyword == null || keyword.trim().isEmpty()) {
-            return em.createQuery("SELECT dm FROM DeviceModels dm ORDER BY dm.id DESC", DeviceModels.class)
-                    .getResultList();
+        StringBuilder jpql = new StringBuilder("SELECT dm FROM DeviceModels dm WHERE 1=1 ");
+
+        boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+
+        if (hasKeyword) {
+            jpql.append(" AND (LOWER(dm.name) LIKE :keyword ")
+                    .append(" OR LOWER(dm.brand) LIKE :keyword ")
+                    .append(" OR LOWER(dm.model) LIKE :keyword ")
+                    .append(" OR LOWER(dm.type) LIKE :keyword)");
         }
-        String jpql = "SELECT dm FROM DeviceModels dm WHERE "
-                + "LOWER(dm.name) LIKE :keyword "
-                + "OR LOWER(dm.brand) LIKE :keyword "
-                + "OR LOWER(dm.model) LIKE :keyword "
-                + "OR LOWER(dm.type) LIKE :keyword "
-                + "ORDER BY dm.id DESC";
-        return em.createQuery(jpql, DeviceModels.class)
-                .setParameter("keyword", "%" + keyword.trim().toLowerCase() + "%")
-                .getResultList();
+
+        jpql.append(" ORDER BY dm.id DESC");
+
+        TypedQuery<DeviceModels> query = em.createQuery(jpql.toString(), DeviceModels.class);
+
+        if (hasKeyword) {
+            query.setParameter("keyword", "%" + keyword.trim().toLowerCase() + "%");
+        }
+
+        return query.getResultList();
     }
 
     @Override

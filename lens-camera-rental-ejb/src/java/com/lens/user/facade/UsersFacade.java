@@ -46,24 +46,36 @@ public class UsersFacade extends AbstractFacade<Users> implements UsersFacadeLoc
 
     @Override
     public List<Users> search(String keyword, String role) {
-        String jpql = "SELECT u FROM Users u "
-                + "WHERE u.status = 'ACTIVE' "
-                + "AND (u.username LIKE :keyword "
-                + "OR u.fullName LIKE :keyword "
-                + "OR u.email LIKE :keyword "
-                + "OR u.phone LIKE :keyword)";
+        StringBuilder jpql = new StringBuilder("SELECT u FROM Users u WHERE u.status = 'ACTIVE' ");
 
-        if (role != null && !role.trim().isEmpty()) {
-            jpql += " AND u.role = :role";
+        boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+        boolean hasRole = role != null && !role.trim().isEmpty();
+
+        if (hasKeyword) {
+            jpql.append(" AND (LOWER(u.username) LIKE :keyword ")
+                    .append(" OR LOWER(u.fullName) LIKE :keyword ")
+                    .append(" OR LOWER(u.email) LIKE :keyword ")
+                    .append(" OR LOWER(u.phone) LIKE :keyword)");
         }
 
-        jpql += " ORDER BY u.id DESC";
+        if (hasRole) {
+            jpql.append(" AND u.role = :role");
+        }
 
-        var query = em.createQuery(jpql, Users.class)
-                .setParameter("keyword", "%" + (keyword == null ? "" : keyword.trim()) + "%");
+        jpql.append(" ORDER BY u.id DESC");
 
-        if (role != null && !role.trim().isEmpty()) {
-            query.setParameter("role", role);
+        TypedQuery<Users> query
+                = em.createQuery(jpql.toString(), Users.class);
+
+        if (hasKeyword) {
+            query.setParameter(
+                    "keyword",
+                    "%" + keyword.trim().toLowerCase() + "%"
+            );
+        }
+
+        if (hasRole) {
+            query.setParameter("role", role.trim());
         }
 
         return query.getResultList();

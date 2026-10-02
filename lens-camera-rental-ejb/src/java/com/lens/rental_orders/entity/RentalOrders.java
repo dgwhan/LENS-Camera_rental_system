@@ -36,16 +36,9 @@ import java.util.Date;
     @NamedQuery(name = "RentalOrders.findBySubtotal", query = "SELECT r FROM RentalOrders r WHERE r.subtotal = :subtotal"),
     @NamedQuery(name = "RentalOrders.findByDepositTotal", query = "SELECT r FROM RentalOrders r WHERE r.depositTotal = :depositTotal"),
     @NamedQuery(name = "RentalOrders.findByTotalPayable", query = "SELECT r FROM RentalOrders r WHERE r.totalPayable = :totalPayable"),
-    @NamedQuery(name = "RentalOrders.findByCreatedAt", query = "SELECT r FROM RentalOrders r WHERE r.createdAt = :createdAt"),
-    @NamedQuery(name = "RentalOrders.findByUpdatedAt", query = "SELECT r FROM RentalOrders r WHERE r.updatedAt = :updatedAt"),
-    @NamedQuery(name = "RentalOrders.findByPaymentMethod", query = "SELECT r FROM RentalOrders r WHERE r.paymentMethod = :paymentMethod"),
-    @NamedQuery(name = "RentalOrders.findByPaymentStatus", query = "SELECT r FROM RentalOrders r WHERE r.paymentStatus = :paymentStatus"),
     @NamedQuery(name = "RentalOrders.findByNote", query = "SELECT r FROM RentalOrders r WHERE r.note = :note"),
-    @NamedQuery(name = "RentalOrders.findByDeliveryAddress", query = "SELECT r FROM RentalOrders r WHERE r.deliveryAddress = :deliveryAddress"),
-    @NamedQuery(name = "RentalOrders.findByHandoverMethod", query = "SELECT r FROM RentalOrders r WHERE r.handoverMethod = :handoverMethod"),
-    @NamedQuery(name = "RentalOrders.findByHandoverStatus", query = "SELECT r FROM RentalOrders r WHERE r.handoverStatus = :handoverStatus"),
-    @NamedQuery(name = "RentalOrders.findByHandoverNote", query = "SELECT r FROM RentalOrders r WHERE r.handoverNote = :handoverNote"),
-    @NamedQuery(name = "RentalOrders.findByDepositRefundStatus", query = "SELECT r FROM RentalOrders r WHERE r.depositRefundStatus = :depositRefundStatus")})
+    @NamedQuery(name = "RentalOrders.findByCreatedAt", query = "SELECT r FROM RentalOrders r WHERE r.createdAt = :createdAt"),
+    @NamedQuery(name = "RentalOrders.findByUpdatedAt", query = "SELECT r FROM RentalOrders r WHERE r.updatedAt = :updatedAt")})
 public class RentalOrders implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -81,6 +74,9 @@ public class RentalOrders implements Serializable {
     @NotNull
     @Column(name = "total_payable")
     private long totalPayable;
+    @Size(max = 1000)
+    @Column(name = "note")
+    private String note;
     @Basic(optional = false)
     @NotNull
     @Column(name = "created_at")
@@ -91,36 +87,6 @@ public class RentalOrders implements Serializable {
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 20)
-    @Column(name = "payment_method")
-    private String paymentMethod;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 20)
-    @Column(name = "payment_status")
-    private String paymentStatus;
-    @Size(max = 1000)
-    @Column(name = "note")
-    private String note;
-    @Size(max = 255)
-    @Column(name = "delivery_address")
-    private String deliveryAddress;
-    @Size(max = 20)
-    @Column(name = "handover_method")
-    private String handoverMethod;
-    @Size(max = 20)
-    @Column(name = "handover_status")
-    private String handoverStatus;
-    @Size(max = 500)
-    @Column(name = "handover_note")
-    private String handoverNote;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 20)
-    @Column(name = "deposit_refund_status")
-    private String depositRefundStatus;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Users userId;
@@ -132,7 +98,7 @@ public class RentalOrders implements Serializable {
         this.id = id;
     }
 
-    public RentalOrders(Integer id, String customerName, String customerPhone, String status, long subtotal, long depositTotal, long totalPayable, Date createdAt, Date updatedAt, String paymentMethod, String paymentStatus, String depositRefundStatus) {
+    public RentalOrders(Integer id, String customerName, String customerPhone, String status, long subtotal, long depositTotal, long totalPayable, Date createdAt, Date updatedAt) {
         this.id = id;
         this.customerName = customerName;
         this.customerPhone = customerPhone;
@@ -142,9 +108,6 @@ public class RentalOrders implements Serializable {
         this.totalPayable = totalPayable;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.paymentMethod = paymentMethod;
-        this.paymentStatus = paymentStatus;
-        this.depositRefundStatus = depositRefundStatus;
     }
 
     public Integer getId() {
@@ -203,6 +166,14 @@ public class RentalOrders implements Serializable {
         this.totalPayable = totalPayable;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
     public Date getCreatedAt() {
         return createdAt;
     }
@@ -217,70 +188,6 @@ public class RentalOrders implements Serializable {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
-
-    public String getPaymentStatus() {
-        return paymentStatus;
-    }
-
-    public void setPaymentStatus(String paymentStatus) {
-        this.paymentStatus = paymentStatus;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public String getDeliveryAddress() {
-        return deliveryAddress;
-    }
-
-    public void setDeliveryAddress(String deliveryAddress) {
-        this.deliveryAddress = deliveryAddress;
-    }
-
-    public String getHandoverMethod() {
-        return handoverMethod;
-    }
-
-    public void setHandoverMethod(String handoverMethod) {
-        this.handoverMethod = handoverMethod;
-    }
-
-    public String getHandoverStatus() {
-        return handoverStatus;
-    }
-
-    public void setHandoverStatus(String handoverStatus) {
-        this.handoverStatus = handoverStatus;
-    }
-
-    public String getHandoverNote() {
-        return handoverNote;
-    }
-
-    public void setHandoverNote(String handoverNote) {
-        this.handoverNote = handoverNote;
-    }
-
-    public String getDepositRefundStatus() {
-        return depositRefundStatus;
-    }
-
-    public void setDepositRefundStatus(String depositRefundStatus) {
-        this.depositRefundStatus = depositRefundStatus;
     }
 
     public Users getUserId() {

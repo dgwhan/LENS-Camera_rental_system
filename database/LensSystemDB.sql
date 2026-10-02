@@ -1,8 +1,22 @@
+USE master;
+GO
+
+IF DB_ID('LensSystemDB') IS NOT NULL
+BEGIN
+    ALTER DATABASE LensSystemDB
+    SET SINGLE_USER
+    WITH ROLLBACK IMMEDIATE;
+
+    DROP DATABASE LensSystemDB;
+END;
+GO
+
 CREATE DATABASE LensSystemDB;
 GO
 
 USE LensSystemDB;
 GO
+
 
 CREATE TABLE Users (
     id INT IDENTITY(1,1) PRIMARY KEY,
@@ -12,36 +26,41 @@ CREATE TABLE Users (
     email VARCHAR(100),
     phone VARCHAR(20) NOT NULL UNIQUE,
     role VARCHAR(20) NOT NULL DEFAULT 'CUSTOMER',
+    address NVARCHAR(255) NULL,
 
-    status VARCHAR(20) NOT NULL CONSTRAINT DF_Users_Status DEFAULT 'ACTIVE',
+    status VARCHAR(20) NOT NULL
+        CONSTRAINT DF_Users_Status DEFAULT 'ACTIVE',
+
     created_at DATETIME2 NOT NULL DEFAULT GETDATE(),
-    updated_at DATETIME2 NOT NULL  DEFAULT GETDATE(),
+    updated_at DATETIME2 NOT NULL DEFAULT GETDATE(),
 
     CONSTRAINT CK_Users_Role
         CHECK (role IN ('CUSTOMER', 'ADMIN')),
 
     CONSTRAINT CK_Users_Status
-    CHECK (status IN ('ACTIVE', 'INACTIVE'))
+        CHECK (status IN ('ACTIVE', 'INACTIVE'))
 );
 GO
 
--- device models
+
 CREATE TABLE DeviceModels (
     id INT IDENTITY(1,1) PRIMARY KEY,
+
     name NVARCHAR(150) NOT NULL,
     type VARCHAR(30) NOT NULL,
     brand NVARCHAR(100) NOT NULL,
     image_url VARCHAR(500),
     model NVARCHAR(100) NOT NULL,
     description NVARCHAR(500),
+
     rental_price DECIMAL(12,0) NOT NULL,
     deposit_amount DECIMAL(12,0) NOT NULL,
 
     created_at DATETIME2 NOT NULL DEFAULT GETDATE(),
     updated_at DATETIME2 NOT NULL DEFAULT GETDATE(),
 
-    CONSTRAINT UQ_DeviceModels_Brand_Model 
-        UNIQUE (brand, model), 
+    CONSTRAINT UQ_DeviceModels_Brand_Model
+        UNIQUE (brand, model),
 
     CONSTRAINT CK_DeviceModels_RentalPrice
         CHECK (rental_price >= 0),
@@ -51,11 +70,12 @@ CREATE TABLE DeviceModels (
 );
 GO
 
--- devices
 CREATE TABLE Devices (
     id INT IDENTITY(1,1) PRIMARY KEY,
+
     device_model_id INT NOT NULL,
     serial_number VARCHAR(100) NOT NULL UNIQUE,
+
     status VARCHAR(20) NOT NULL DEFAULT 'AVAILABLE',
 
     created_at DATETIME2 NOT NULL DEFAULT GETDATE(),
@@ -66,12 +86,11 @@ CREATE TABLE Devices (
         REFERENCES DeviceModels(id),
 
     CONSTRAINT CK_Devices_Status
-        CHECK (status IN ('AVAILABLE', 'RENTING'))
+        CHECK (status IN ('AVAILABLE','RENTING','MAINTENANCE','LOST'))
 );
 GO
 
 
--- rental orders
 CREATE TABLE RentalOrders (
     id INT IDENTITY(1,1) PRIMARY KEY,
 
@@ -81,10 +100,12 @@ CREATE TABLE RentalOrders (
     customer_phone VARCHAR(20) NOT NULL,
 
     status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
-        
+
     subtotal DECIMAL(12,0) NOT NULL DEFAULT 0,
     deposit_total DECIMAL(12,0) NOT NULL DEFAULT 0,
     total_payable DECIMAL(12,0) NOT NULL DEFAULT 0,
+
+    note NVARCHAR(1000) NULL,
 
     created_at DATETIME2 NOT NULL DEFAULT GETDATE(),
     updated_at DATETIME2 NOT NULL DEFAULT GETDATE(),
@@ -94,13 +115,8 @@ CREATE TABLE RentalOrders (
         REFERENCES Users(id),
 
     CONSTRAINT CK_RentalOrders_Status
-        CHECK (status IN (
-            'PENDING',
-            'APPROVED',
-            'REJECTED',
-            'ACTIVE',
-            'COMPLETED'
-        )),
+        CHECK (status IN ( 'PENDING','APPROVED','REJECTED','ACTIVE','COMPLETED' )),
+        
 
     CONSTRAINT CK_RentalOrders_Subtotal
         CHECK (subtotal >= 0),
@@ -114,7 +130,6 @@ CREATE TABLE RentalOrders (
 GO
 
 
--- rental items
 CREATE TABLE RentalItems (
     id INT IDENTITY(1,1) PRIMARY KEY,
 
@@ -129,6 +144,9 @@ CREATE TABLE RentalItems (
     rental_price DECIMAL(12,0) NOT NULL,
     deposit_amount DECIMAL(12,0) NOT NULL,
     subtotal DECIMAL(12,0) NOT NULL,
+
+    CONSTRAINT UQ_RentalItems_RentalOrder
+        UNIQUE (rental_order_id),
 
     CONSTRAINT FK_RentalItems_RentalOrders
         FOREIGN KEY (rental_order_id)
@@ -159,25 +177,6 @@ CREATE TABLE RentalItems (
 );
 GO
 
-
--- payment
-ALTER TABLE RentalOrders
-ADD payment_method VARCHAR(20) NOT NULL DEFAULT 'CASH',
-    payment_status VARCHAR(20) NOT NULL DEFAULT 'UNPAID';
-GO
-
-ALTER TABLE RentalOrders
-ADD CONSTRAINT CK_RentalOrders_PaymentMethod
-    CHECK (payment_method IN ('CASH'));
-GO
-
-ALTER TABLE RentalOrders
-ADD CONSTRAINT CK_RentalOrders_PaymentStatus
-    CHECK (payment_status IN ('UNPAID', 'PAID'));
-GO
-
-
--- cart items
 CREATE TABLE CartItems (
     id INT IDENTITY(1,1) PRIMARY KEY,
 
@@ -216,15 +215,42 @@ CREATE TABLE CartItems (
 );
 GO
 
-CREATE INDEX IX_CartItems_UserId ON CartItems(user_id);
+CREATE INDEX IX_CartItems_UserId
+    ON CartItems(user_id);
 GO
 
-ALTER TABLE Users
-ADD address NVARCHAR(255) NULL;
-GO
 
-ALTER TABLE RentalOrders
-ADD note NVARCHAR(1000) NULL;
+CREATE TABLE RentalPayments (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+
+    rental_order_id INT NOT NULL,
+
+    payment_method VARCHAR(20) NOT NULL DEFAULT 'CASH',
+    payment_status VARCHAR(20) NOT NULL DEFAULT 'UNPAID',
+
+    amount DECIMAL(12,0) NOT NULL,
+
+    paid_at DATETIME2 NULL,
+
+    created_at DATETIME2 NOT NULL DEFAULT GETDATE(),
+    updated_at DATETIME2 NOT NULL DEFAULT GETDATE(),
+
+    CONSTRAINT UQ_RentalPayments_Order
+        UNIQUE (rental_order_id),
+
+    CONSTRAINT FK_RentalPayments_RentalOrders
+        FOREIGN KEY (rental_order_id)
+        REFERENCES RentalOrders(id),
+
+    CONSTRAINT CK_RentalPayments_Method
+        CHECK (payment_method IN ('CASH')),
+
+    CONSTRAINT CK_RentalPayments_Status
+        CHECK (payment_status IN ('UNPAID', 'PAID')),
+
+    CONSTRAINT CK_RentalPayments_Amount
+        CHECK (amount >= 0)
+);
 GO
 
 CREATE TABLE RentalHandovers (
@@ -253,27 +279,54 @@ CREATE TABLE RentalHandovers (
         REFERENCES RentalOrders(id),
 
     CONSTRAINT CK_RentalHandovers_Method
-        CHECK (method IN ('DELIVERY', 'STORE_PICKUP')),
+        CHECK (method IN ('DELIVERY','STORE_PICKUP')),   
 
     CONSTRAINT CK_RentalHandovers_Status
-        CHECK (status IN (
-            'PENDING',
-            'DELIVERING',
-            'FAILED',
-            'COMPLETED'
-        ))
+        CHECK (status IN ('PENDING','DELIVERING','FAILED','COMPLETED'))
 );
 GO
 
-ALTER TABLE RentalOrders
-ADD deposit_refund_status VARCHAR(20) NOT NULL DEFAULT 'NOT_REFUNDED';
+CREATE TABLE RentalDeposits (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+
+    rental_order_id INT NOT NULL,
+
+    amount DECIMAL(12,0) NOT NULL,
+    deducted_amount DECIMAL(12,0) NOT NULL DEFAULT 0,
+    refunded_amount DECIMAL(12,0) NOT NULL DEFAULT 0,
+
+    status VARCHAR(20) NOT NULL DEFAULT 'NOT_REFUNDED',
+
+    deduction_reason NVARCHAR(500) NULL,
+    note NVARCHAR(1000) NULL,
+
+    refunded_at DATETIME2 NULL,
+
+    created_at DATETIME2 NOT NULL DEFAULT GETDATE(),
+    updated_at DATETIME2 NOT NULL DEFAULT GETDATE(),
+
+    CONSTRAINT UQ_RentalDeposits_Order
+        UNIQUE (rental_order_id),
+
+    CONSTRAINT FK_RentalDeposits_RentalOrders
+        FOREIGN KEY (rental_order_id)
+        REFERENCES RentalOrders(id),
+
+    CONSTRAINT CK_RentalDeposits_Status
+        CHECK (status IN ('NOT_REFUNDED','REFUNDED')),
+
+    CONSTRAINT CK_RentalDeposits_Amount
+        CHECK (amount >= 0),
+
+    CONSTRAINT CK_RentalDeposits_DeductedAmount
+        CHECK (deducted_amount >= 0),
+
+    CONSTRAINT CK_RentalDeposits_RefundedAmount
+        CHECK (refunded_amount >= 0),
+);
 GO
 
-ALTER TABLE RentalOrders
-ADD CONSTRAINT CK_RentalOrders_DepositRefundStatus
-    CHECK (deposit_refund_status IN ('NOT_REFUNDED', 'REFUNDED'));
-GO
-
-INSERT INTO Users (username, password, full_name, email, phone, role)
-VALUES ('admin', 'admin', N'Administrator', 'admin@lens.com', '0900000000', 'ADMIN');
+INSERT INTO Users (username,password,full_name,email,phone,role) 
+VALUES ('admin','admin',N'Administrator','admin@lens.com','0900000000','ADMIN'
+);
 GO
