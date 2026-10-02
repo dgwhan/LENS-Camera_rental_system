@@ -2,7 +2,7 @@ package com.lens.rental_items.entity;
 
 import com.lens.device_model.entity.DeviceModels;
 import com.lens.device.entity.Devices;
-import com.lens.rentail_orders.entity.RentalOrders;
+import com.lens.rental_orders.entity.RentalOrders;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

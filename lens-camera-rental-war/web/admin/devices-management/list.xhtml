@@ -10,16 +10,9 @@
     </ui:define>
 
     <ui:define name="content">
-        <!-- Flash Alert Message (ThÃ´ng bÃ¡o thao tÃ¡c thÃ nh cÃ´ng) -->
-        <h:panelGroup rendered="#{not empty flash.actionAlert}">
-            <script type="text/javascript">
-                alert('#{flash.actionAlert}');
-            </script>
-        </h:panelGroup>
-
         <div class="main-wrapper">
             <h:form id="devicesForm">
-                <!-- TiÃªu Ä‘á» trang -->
+                <!-- TiÃƒÂªu Ã„â€˜Ã¡Â»Â trang -->
                 <div class="page-header">
                     <div class="page-header-row">
                         <div>
@@ -27,7 +20,7 @@
                             <h1 class="page-title">Devices Management</h1>
                         </div>
                         <div>
-                            <h:commandButton value="+ Add Device" action="#{deviceController.newDevice()}"
+                            <h:commandButton value="+ Add Device" action="#{adminDeviceController.newDevice()}"
                                 styleClass="btn btn-primary" />
                         </div>
                     </div>
@@ -38,30 +31,30 @@
                     <!-- Total Devices -->
                     <div class="stat-card">
                         <span class="stat-label">Total Devices</span>
-                        <div class="stat-value">#{deviceController.totalDevices}</div>
+                        <div class="stat-value">#{adminDeviceController.totalDevices}</div>
                     </div>
 
                     <!-- Available -->
                     <div class="stat-card">
                         <span class="stat-label">Available</span>
-                        <div class="stat-value">#{deviceController.totalDevicesAvailable}</div>
+                        <div class="stat-value">#{adminDeviceController.totalDevicesAvailable}</div>
                     </div>
 
                     <!-- Renting -->
                     <div class="stat-card">
                         <span class="stat-label">Renting</span>
-                        <div class="stat-value">#{deviceController.totalDevicesRenting}</div>
+                        <div class="stat-value">#{adminDeviceController.totalDevicesRenting}</div>
                     </div>
                 </h:panelGroup>
 
-                <!-- Thanh tÃ¬m kiáº¿m vÃ  bá»™ lá»c tráº¡ng thÃ¡i -->
+                <!-- Thanh tÃƒÂ¬m kiÃ¡ÂºÂ¿m vÃƒÂ  bÃ¡Â»â„¢ lÃ¡Â»Âc trÃ¡ÂºÂ¡ng thÃƒÂ¡i -->
                 <h:panelGroup id="searchBar" layout="block" styleClass="users-search">
-                    <h:inputText id="keyword" value="#{deviceController.keyword}"
+                    <h:inputText id="keyword" value="#{adminDeviceController.keyword}"
                         pt:placeholder="Search serial number, brand, model..." styleClass="form-control search-input">
                         <f:ajax event="keyup" delay="300" render="devicesTableWrapper" />
                     </h:inputText>
 
-                    <h:selectOneMenu id="statusFilter" value="#{deviceController.status}"
+                    <h:selectOneMenu id="statusFilter" value="#{adminDeviceController.status}"
                         styleClass="form-select filter-select-sm">
                         <f:selectItem itemLabel="All Statuses" itemValue="" />
                         <f:selectItem itemLabel="Available" itemValue="AVAILABLE" />
@@ -73,7 +66,7 @@
                         <f:ajax execute="@form" render="devicesTableWrapper" />
                     </h:commandButton>
 
-                    <h:commandButton value="Reset" action="#{deviceController.resetFilter()}"
+                    <h:commandButton value="Reset" action="#{adminDeviceController.resetFilter()}"
                         styleClass="btn btn-outline-secondary">
                         <f:ajax render="searchBar devicesTableWrapper" />
                     </h:commandButton>
@@ -82,7 +75,7 @@
 
                 <div class="card">
                     <h:panelGroup id="devicesTableWrapper" layout="block" styleClass="table-wrapper">
-                        <h:dataTable id="devicesTable" value="#{deviceController.devicesList}" var="device"
+                        <h:dataTable id="devicesTable" value="#{adminDeviceController.devicesList}" var="device"
                             styleClass="data-table">
 
                             <!-- ID -->
@@ -113,17 +106,17 @@
                                 </span>
                             </h:column>
 
-                            <!-- Thao tÃ¡c (Action) -->
+                            <!-- Thao tÃƒÂ¡c (Action) -->
                             <h:column>
                                 <f:facet name="header">Action</f:facet>
                                 <div class="table-row-actions">
-                                    <h:commandButton value="Detail" action="#{deviceController.detailDevice(device.id)}"
+                                    <h:commandButton value="Detail" action="#{adminDeviceController.detailDevice(device.id)}"
                                         styleClass="btn btn-sm btn-outline-info" />
 
-                                    <h:commandButton value="Edit" action="#{deviceController.editDevice(device.id)}"
+                                    <h:commandButton value="Edit" action="#{adminDeviceController.editDevice(device.id)}"
                                         styleClass="btn btn-sm btn-outline-primary" />
 
-                                    <h:commandButton value="Delete" action="#{deviceController.deleteDevice(device.id)}"
+                                    <h:commandButton value="Delete" action="#{adminDeviceController.deleteDevice(device.id)}"
                                         onclick="if (!confirm('Are you sure you want to delete this device?')) return false;"
                                         styleClass="btn btn-sm btn-outline-danger">
                                         <f:ajax render="devicesTableWrapper statsCardsWrapper" />

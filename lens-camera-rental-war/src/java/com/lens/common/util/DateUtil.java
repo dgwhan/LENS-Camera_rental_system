@@ -95,6 +95,80 @@ public final class DateUtil {
     }
 
     /**
+     * Calculates the number of whole days between two Date objects.
+     *
+     * @param start start date
+     * @param end end date
+     * @return number of whole days, or 0 if invalid / negative
+     */
+    public static long calculateDaysBetween(Date start, Date end) {
+        if (start == null || end == null) {
+            return 0;
+        }
+        long diff = end.getTime() - start.getTime();
+        long days = diff / (1000L * 60 * 60 * 24);
+        return days > 0 ? days : 0;
+    }
+
+    /**
+     * Calculates the rental duration in days between start and end dates.
+     * Guaranteed to return at least 1 day for valid rental periods.
+     *
+     * @param start rental start date
+     * @param end rental end date
+     * @return duration in days (minimum 1)
+     */
+    public static int calculateRentalDuration(Date start, Date end) {
+        if (start == null || end == null || !end.after(start)) {
+            return 0;
+        }
+        long diffInMillis = end.getTime() - start.getTime();
+        int duration = (int) Math.ceil((double) diffInMillis / (1000L * 60 * 60 * 24));
+        return duration > 0 ? duration : 1;
+    }
+
+    /**
+     * Validates that a rental period complies with business rules:
+     * <ul>
+     *   <li>Both start and end dates must be non-null.</li>
+     *   <li>Rental start date must be at least one day after booking date (tomorrow or later).</li>
+     *   <li>Rental end date must be strictly after rental start date.</li>
+     * </ul>
+     *
+     * @param startDate rental start date
+     * @param endDate rental end date
+     * @throws IllegalArgumentException on any rule violation
+     */
+    public static void validateRentalPeriod(Date startDate, Date endDate) {
+        if (startDate == null || endDate == null) {
+            throw new IllegalArgumentException("Please select both start date and end date.");
+        }
+
+        java.util.Calendar minStartCal = java.util.Calendar.getInstance();
+        minStartCal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        minStartCal.set(java.util.Calendar.MINUTE, 0);
+        minStartCal.set(java.util.Calendar.SECOND, 0);
+        minStartCal.set(java.util.Calendar.MILLISECOND, 0);
+        minStartCal.add(java.util.Calendar.DAY_OF_MONTH, 1);
+
+        java.util.Calendar startCal = java.util.Calendar.getInstance();
+        startCal.setTime(startDate);
+        startCal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        startCal.set(java.util.Calendar.MINUTE, 0);
+        startCal.set(java.util.Calendar.SECOND, 0);
+        startCal.set(java.util.Calendar.MILLISECOND, 0);
+
+        if (startCal.getTime().before(minStartCal.getTime())) {
+            throw new IllegalArgumentException(
+                    "Rental orders must be placed at least one day before the rental start date.");
+        }
+
+        if (!endDate.after(startDate)) {
+            throw new IllegalArgumentException("Rental end date must be after start date.");
+        }
+    }
+
+    /**
      * Calculates the number of whole days between two date strings (yyyy-MM-dd).
      *
      * @param startDateStr start date in 'yyyy-MM-dd'
@@ -108,12 +182,7 @@ public final class DateUtil {
         try {
             Date start = parseDate(startDateStr);
             Date end = parseDate(endDateStr);
-            if (start == null || end == null) {
-                return 0;
-            }
-            long diff = end.getTime() - start.getTime();
-            long days = diff / (1000L * 60 * 60 * 24);
-            return days > 0 ? days : 0;
+            return calculateDaysBetween(start, end);
         } catch (Exception e) {
             return 0;
         }

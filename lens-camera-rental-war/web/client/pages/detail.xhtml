@@ -17,10 +17,9 @@
     </ui:define>
 
     <ui:define name="head">
-        <h:outputStylesheet library="css" name="components/buttons.css" />
-        <h:outputStylesheet library="css" name="pages/customer.css" />
-        <h:outputStylesheet library="css" name="pages/device-detail.css" />
-        <h:outputScript library="js" name="device-detail.js" />
+        <h:outputStylesheet library="shared" name="css/components/buttons.css" />
+        <h:outputStylesheet library="client" name="css/pages/customer.css" />
+        <h:outputStylesheet library="client" name="css/pages/device-detail.css" />
     </ui:define>
 
     <ui:define name="content">
@@ -195,14 +194,14 @@
                                             </div>
 
                                             <div class="detail-actions-row">
-                                                <h:commandLink action="#{deviceDetailController.addToCart}"
+                                                <h:commandLink action="#{cartController.addToCart(deviceDetailController.id, deviceDetailController.startDate, deviceDetailController.endDate)}"
                                                                styleClass="btn btn-add-to-cart"
                                                                id="btnAddToCart">
                                                     <span>ADD TO CART</span>
                                                     <f:ajax execute="@form" render="cartFeedback :headerCartWrapper" />
                                                 </h:commandLink>
 
-                                                <h:commandLink action="#{deviceDetailController.rentNow}"
+                                                <h:commandLink action="#{cartController.rentNow(deviceDetailController.id, deviceDetailController.startDate, deviceDetailController.endDate)}"
                                                                styleClass="btn btn-rent-now"
                                                                id="btnRentNow">
                                                     <span>RENT NOW</span>
@@ -245,3 +244,5 @@
     </ui:define>
 
 </ui:composition>
+
+

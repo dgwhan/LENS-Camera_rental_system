@@ -5,9 +5,9 @@
                 xmlns:ui="jakarta.faces.facelets">
 
     <!-- Auto-include Rental Period & DatePicker Resources (100% Identical with Device Detail) -->
-    <h:outputStylesheet library="css" name="components/rental-period.css" />
-    <h:outputStylesheet library="css" name="components/datepicker.css" />
-    <h:outputScript library="js" name="datepicker.js" />
+    <h:outputStylesheet library="client" name="css/components/rental-period.css" />
+    <h:outputStylesheet library="client" name="css/components/datepicker.css" />
+    <h:outputScript library="js" name="common/datepicker.js" />
 
     <div class="rental-period-section custom-datepicker-wrapper" id="#{not empty id ? id : 'rentalPeriodWrapper'}"
          data-initial-start="#{startValue}"
@@ -74,7 +74,7 @@
                 </table>
 
                 <div class="calendar-popup-footer">
-                    <span class="calendar-footer-hint">Rental orders must be placed at least 1 day in advance</span>
+                    <span class="calendar-footer-hint">Rental calculated in 24h rolling increments</span>
                     <button type="button" class="calendar-reset-btn" data-role="reset-dates">Reset</button>
                 </div>
             </div>
@@ -105,3 +105,5 @@
 
     </div>
 </ui:composition>
+
+

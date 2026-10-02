@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:pt="jakarta.faces.passthrough"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/templates/client-template.xhtml">
+
+    <ui:param name="bodyClass" value="auth-page" />
+
+    <ui:define name="title">Create an Account - Lens Camera Rental</ui:define>
+
+    <ui:define name="head">
+        <h:outputStylesheet library="auth" name="css/auth.css" />
+    </ui:define>
+
+    <!-- Suppress header and footer for standalone auth page -->
+    <ui:define name="header" />
+    <ui:define name="footer" />
+
+    <ui:define name="content">
+        <div class="auth-container auth-container-wide">
+
+            <!-- Register Card -->
+            <div class="auth-card">
+                <div class="auth-card-header">
+                    <h2 class="auth-card-title">Create an Account</h2>
+                </div>
+
+                <div class="auth-card-body">
+                    <!-- Global FacesMessages (E.g. Registration failed: Username, email or phone number already exists) -->
+                    <h:messages globalOnly="true" 
+                                styleClass="auth-messages-list" 
+                                errorClass="auth-msg-error" 
+                                infoClass="auth-msg-info" />
+
+                    <!-- Register Form -->
+                    <h:form id="registerForm" styleClass="auth-form">
+                        <div class="auth-grid-2">
+                            <!-- Full Name -->
+                            <div class="auth-form-group auth-span-2">
+                                <h:outputLabel for="fullName" value="Full Name" styleClass="auth-label">
+                                    <span class="auth-required">*</span>
+                                </h:outputLabel>
+                                <h:inputText id="fullName" 
+                                             value="#{registerController.fullName}" 
+                                             required="true"
+                                             requiredMessage="Full name is required"
+                                             styleClass="auth-input" 
+                                             autocomplete="name" 
+                                             pt:placeholder="Enter your full name" />
+                                <h:message for="fullName" styleClass="field-error" />
+                            </div>
+
+                            <!-- Username -->
+                            <div class="auth-form-group">
+                                <h:outputLabel for="username" value="Username" styleClass="auth-label">
+                                    <span class="auth-required">*</span>
+                                </h:outputLabel>
+                                <h:inputText id="username" 
+                                             value="#{registerController.username}" 
+                                             required="true"
+                                             requiredMessage="Username is required"
+                                             styleClass="auth-input" 
+                                             autocomplete="username" 
+                                             pt:placeholder="Choose a username" />
+                                <h:message for="username" styleClass="field-error" />
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="auth-form-group">
+                                <h:outputLabel for="phone" value="Phone Number" styleClass="auth-label">
+                                    <span class="auth-required">*</span>
+                                </h:outputLabel>
+                                <h:inputText id="phone" 
+                                             value="#{registerController.phone}" 
+                                             required="true"
+                                             requiredMessage="Phone number is required"
+                                             styleClass="auth-input" 
+                                             autocomplete="tel" 
+                                             pt:placeholder="0912345678" />
+                                <h:message for="phone" styleClass="field-error" />
+                            </div>
+
+                            <!-- Email -->
+                            <div class="auth-form-group auth-span-2">
+                                <h:outputLabel for="email" value="Email Address" styleClass="auth-label">
+                                    <span class="auth-optional">(Optional)</span>
+                                </h:outputLabel>
+                                <h:inputText id="email" 
+                                             value="#{registerController.email}" 
+                                             styleClass="auth-input" 
+                                             autocomplete="email" 
+                                             pt:placeholder="name@example.com" />
+                                <h:message for="email" styleClass="field-error" />
+                            </div>
+
+                            <!-- Password -->
+                            <div class="auth-form-group">
+                                <h:outputLabel for="password" value="Password" styleClass="auth-label">
+                                    <span class="auth-required">*</span>
+                                </h:outputLabel>
+                                <h:inputSecret id="password" 
+                                               value="#{registerController.password}" 
+                                               required="true"
+                                               requiredMessage="Password is required"
+                                               styleClass="auth-input" 
+                                               autocomplete="new-password" 
+                                               pt:placeholder="Create a password" />
+                                <h:message for="password" styleClass="field-error" />
+                            </div>
+
+                            <!-- Confirm Password -->
+                            <div class="auth-form-group">
+                                <h:outputLabel for="confirmPassword" value="Confirm Password" styleClass="auth-label">
+                                    <span class="auth-required">*</span>
+                                </h:outputLabel>
+                                <h:inputSecret id="confirmPassword" 
+                                               required="true"
+                                               requiredMessage="Please confirm your password"
+                                               styleClass="auth-input" 
+                                               autocomplete="new-password" 
+                                               pt:placeholder="Confirm your password" />
+                                <span id="confirmPassError" class="field-error"></span>
+                                <h:message for="confirmPassword" styleClass="field-error" />
+                            </div>
+                        </div>
+
+                        <div class="auth-form-group auth-form-actions">
+                            <h:commandButton value="Create Account" 
+                                             action="#{registerController.register}" 
+                                             onclick="return checkPasswordMatch();"
+                                             styleClass="btn-auth" />
+                        </div>
+                    </h:form>
+                </div>
+
+                <div class="auth-card-footer">
+                    <span>Already have an account?</span>
+                    <h:link outcome="/auth/login" value="Sign In" styleClass="auth-link" />
+                </div>
+            </div>
+
+        </div>
+    </ui:define>
+
+    <ui:define name="scripts">
+        <script type="text/javascript">
+            //<![CDATA[
+            function checkPasswordMatch() {
+                var passEl = document.getElementById('registerForm:password');
+                var confirmEl = document.getElementById('registerForm:confirmPassword');
+                var errEl = document.getElementById('confirmPassError');
+                if (passEl && confirmEl) {
+                    if (passEl.value && confirmEl.value && passEl.value !== confirmEl.value) {
+                        if (errEl) {
+                            errEl.innerText = 'Passwords do not match.';
+                            errEl.style.display = 'block';
+                        }
+                        return false;
+                    }
+                }
+                if (errEl) {
+                    errEl.style.display = 'none';
+                }
+                return true;
+            }
+            //]]>
+        </script>
+    </ui:define>
+
+</ui:composition>

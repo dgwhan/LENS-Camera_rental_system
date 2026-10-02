@@ -6,26 +6,26 @@
                 xmlns:ui="jakarta.faces.facelets"
                 template="/WEB-INF/templates/admin-template.xhtml">
     <f:metadata>
-        <f:viewParam name="id" value="#{deviceController.id}" />
-        <f:viewAction action="#{deviceController.initDetail()}" onPostback="false" />
+        <f:viewParam name="id" value="#{adminDeviceController.id}" />
+        <f:viewAction action="#{adminDeviceController.initDetail()}" onPostback="false" />
     </f:metadata>
 
     <ui:param name="activeMenu" value="devices" />
 
 
     <ui:define name="title">
-        Device ##{deviceController.devices.id} (#{deviceController.devices.serialNumber}) - Device Details
+        Device ##{adminDeviceController.devices.id} (#{adminDeviceController.devices.serialNumber}) - Device Details
     </ui:define>
 
     <ui:define name="head">
-        <h:outputStylesheet library="css" name="pages/detail.css" />
+        <h:outputStylesheet library="admin" name="css/pages/detail.css" />
     </ui:define>
 
     <ui:define name="content">
         <div class="main-wrapper">
             <div class="detail-page-container">
                 <h:form id="detailForm">
-                    <!-- TiÃªu Ä‘á» trang chi tiáº¿t -->
+                    <!-- TiÃƒÂªu Ã„â€˜Ã¡Â»Â trang chi tiÃ¡ÂºÂ¿t -->
                     <div class="detail-header">
                         <div class="detail-header-row">
                             <div>
@@ -36,53 +36,53 @@
                                 <h:commandButton value="Back" action="list?faces-redirect=true" immediate="true"
                                                  styleClass="btn btn-outline-secondary" />
                                 <h:commandButton value="Edit Device"
-                                                 action="#{deviceController.editDevice(deviceController.devices.id)}"
+                                                 action="#{adminDeviceController.editDevice(adminDeviceController.devices.id)}"
                                                  styleClass="btn btn-primary" />
                             </div>
                         </div>
                     </div>
 
-                    <!-- Bá»‘ cá»¥c 2 cá»™t tiÃªu chuáº©n -->
+                    <!-- BÃ¡Â»â€˜ cÃ¡Â»Â¥c 2 cÃ¡Â»â„¢t tiÃƒÂªu chuÃ¡ÂºÂ©n -->
                     <div class="detail-layout">
-                        <!-- Cá»™t chÃ­nh (bÃªn trÃ¡i) -->
+                        <!-- CÃ¡Â»â„¢t chÃƒÂ­nh (bÃƒÂªn trÃƒÂ¡i) -->
                         <div class="detail-main">
-                            <!-- Tháº» thÃ´ng tin Ä‘á»‹nh danh thiáº¿t bá»‹ -->
+                            <!-- ThÃ¡ÂºÂ» thÃƒÂ´ng tin Ã„â€˜Ã¡Â»â€¹nh danh thiÃ¡ÂºÂ¿t bÃ¡Â»â€¹ -->
                             <div class="detail-card">
                                 <div class="detail-card-header">
                                     <h2 class="detail-card-title">Device Information</h2>
                                 </div>
                                 <div class="detail-card-body">
                                 <div class="detail-identity-row">
-                                    <img src="#{deviceController.modelImageUrl}"
-                                         alt="#{deviceController.devices.deviceModelId.name}"
+                                    <img src="#{adminDeviceController.modelImageUrl}"
+                                         alt="#{adminDeviceController.devices.deviceModelId.name}"
                                          class="detail-image"
-                                         onerror="this.onerror=null;this.src='#{deviceController.defaultImageUrl}';" />
+                                         onerror="this.onerror=null;this.src='#{adminDeviceController.defaultImageUrl}';" />
 
                                     <div class="detail-identity-content">
                                         <div class="detail-identity-field">
                                             <div class="detail-label">Serial Number</div>
                                             <h3 class="detail-identity-title">
-                                                <h:outputText value="#{deviceController.devices.serialNumber}" />
+                                                <h:outputText value="#{adminDeviceController.devices.serialNumber}" />
                                             </h3>
                                         </div>
                                         <div class="detail-identity-meta-grid">
                                             <div class="detail-item">
                                                 <div class="detail-label">Device ID</div>
                                                 <div class="detail-value detail-value-strong">
-                                                    <h:outputText value="Device ##{deviceController.devices.id}" />
+                                                    <h:outputText value="Device ##{adminDeviceController.devices.id}" />
                                                 </div>
                                             </div>
                                             <div class="detail-item">
                                                 <div class="detail-label">Model</div>
                                                 <div class="detail-value detail-value-strong">
-                                                    <h:outputText value="#{deviceController.devices.deviceModelId.brand} - #{deviceController.devices.deviceModelId.name}" />
+                                                    <h:outputText value="#{adminDeviceController.devices.deviceModelId.brand} - #{adminDeviceController.devices.deviceModelId.name}" />
                                                 </div>
                                             </div>
                                             <div class="detail-item">
                                                 <div class="detail-label">Status</div>
                                                 <div>
-                                                    <span class="badge-status #{deviceController.devices.status == 'AVAILABLE' ? 'badge-available' : 'badge-renting'}">
-                                                        <h:outputText value="#{deviceController.devices.status == 'AVAILABLE' ? 'Available' : 'Renting'}" />
+                                                    <span class="badge-status #{adminDeviceController.devices.status == 'AVAILABLE' ? 'badge-available' : 'badge-renting'}">
+                                                        <h:outputText value="#{adminDeviceController.devices.status == 'AVAILABLE' ? 'Available' : 'Renting'}" />
                                                     </span>
                                                 </div>
                                             </div>
@@ -92,7 +92,7 @@
                             </div>
                         </div>
 
-                        <!-- Tháº» thÃ´ng sá»‘ chi tiáº¿t cá»§a Model -->
+                        <!-- ThÃ¡ÂºÂ» thÃƒÂ´ng sÃ¡Â»â€˜ chi tiÃ¡ÂºÂ¿t cÃ¡Â»Â§a Model -->
                         <div class="detail-card">
                             <div class="detail-card-header">
                                 <h2 class="detail-card-title">Model Specifications</h2>
@@ -102,31 +102,31 @@
                                     <div class="detail-item">
                                         <div class="detail-label">Model Name</div>
                                         <div class="detail-value detail-value-strong">
-                                            <h:outputText value="#{deviceController.devices.deviceModelId.name}" />
+                                            <h:outputText value="#{adminDeviceController.devices.deviceModelId.name}" />
                                         </div>
                                     </div>
                                     <div class="detail-item">
                                         <div class="detail-label">Brand</div>
                                         <div class="detail-value detail-value-strong">
-                                            <h:outputText value="#{deviceController.devices.deviceModelId.brand}" />
+                                            <h:outputText value="#{adminDeviceController.devices.deviceModelId.brand}" />
                                         </div>
                                     </div>
                                     <div class="detail-item">
                                         <div class="detail-label">Model Code</div>
                                         <div class="detail-value">
-                                            <h:outputText value="#{deviceController.devices.deviceModelId.model}" />
+                                            <h:outputText value="#{adminDeviceController.devices.deviceModelId.model}" />
                                         </div>
                                     </div>
                                     <div class="detail-item">
                                         <div class="detail-label">Type</div>
                                         <div class="detail-value">
-                                            <h:outputText value="#{deviceController.devices.deviceModelId.type}" />
+                                            <h:outputText value="#{adminDeviceController.devices.deviceModelId.type}" />
                                         </div>
                                     </div>
                                     <div class="detail-item detail-item-full">
                                         <div class="detail-label">Description</div>
-                                        <div class="detail-value #{empty deviceController.devices.deviceModelId.description ? 'detail-empty' : ''}">
-                                            <h:outputText value="#{not empty deviceController.devices.deviceModelId.description ? deviceController.devices.deviceModelId.description : 'No description provided.'}" />
+                                        <div class="detail-value #{empty adminDeviceController.devices.deviceModelId.description ? 'detail-empty' : ''}">
+                                            <h:outputText value="#{not empty adminDeviceController.devices.deviceModelId.description ? adminDeviceController.devices.deviceModelId.description : 'No description provided.'}" />
                                         </div>
                                     </div>
                                 </div>
@@ -134,19 +134,19 @@
                         </div>
                     </div>
 
-                    <!-- Cá»™t phá»¥ (bÃªn pháº£i) -->
+                    <!-- CÃ¡Â»â„¢t phÃ¡Â»Â¥ (bÃƒÂªn phÃ¡ÂºÂ£i) -->
                     <div class="detail-sidebar">
-                        <!-- Tháº» tráº¡ng thÃ¡i -->
+                        <!-- ThÃ¡ÂºÂ» trÃ¡ÂºÂ¡ng thÃƒÂ¡i -->
                         <div class="detail-card">
                             <div class="detail-card-header detail-status-card-header">
                                 <h2 class="detail-card-title">Status</h2>
-                                <span class="badge-status #{deviceController.devices.status == 'AVAILABLE' ? 'badge-available' : 'badge-renting'}">
-                                    <h:outputText value="#{deviceController.devices.status == 'AVAILABLE' ? 'Available' : 'Renting'}" />
+                                <span class="badge-status #{adminDeviceController.devices.status == 'AVAILABLE' ? 'badge-available' : 'badge-renting'}">
+                                    <h:outputText value="#{adminDeviceController.devices.status == 'AVAILABLE' ? 'Available' : 'Renting'}" />
                                 </span>
                             </div>
                         </div>
 
-                        <!-- Tháº» báº£ng giÃ¡ Model -->
+                        <!-- ThÃ¡ÂºÂ» bÃ¡ÂºÂ£ng giÃƒÂ¡ Model -->
                         <div class="detail-card">
                             <div class="detail-card-header">
                                 <h2 class="detail-card-title">Pricing</h2>
@@ -157,7 +157,7 @@
                                         <div class="detail-label">Rental Price</div>
                                         <div class="detail-price-row">
                                             <span class="detail-price-value">
-                                                <h:outputText value="#{deviceController.devices.deviceModelId.rentalPrice}">
+                                                <h:outputText value="#{adminDeviceController.devices.deviceModelId.rentalPrice}">
                                                     <f:convertNumber pattern="#,##0 VND" />
                                                 </h:outputText>
                                             </span>
@@ -168,7 +168,7 @@
                                         <div class="detail-label">Deposit</div>
                                         <div class="detail-price-row">
                                             <span class="detail-price-value">
-                                                <h:outputText value="#{deviceController.devices.deviceModelId.depositAmount}">
+                                                <h:outputText value="#{adminDeviceController.devices.deviceModelId.depositAmount}">
                                                     <f:convertNumber pattern="#,##0 VND" />
                                                 </h:outputText>
                                             </span>
@@ -178,7 +178,7 @@
                             </div>
                         </div>
 
-                        <!-- Tháº» thÃ´ng tin há»‡ thá»‘ng -->
+                        <!-- ThÃ¡ÂºÂ» thÃƒÂ´ng tin hÃ¡Â»â€¡ thÃ¡Â»â€˜ng -->
                         <div class="detail-card">
                             <div class="detail-card-header">
                                 <h2 class="detail-card-title">System Information</h2>
@@ -188,16 +188,16 @@
                                     <div class="detail-meta-row">
                                         <span class="detail-meta-label">Created At</span>
                                         <span class="detail-meta-value">
-                                            <h:outputText value="#{deviceController.devices.createdAt}">
-                                                <f:convertDateTime pattern="MMM dd, yyyy Â· HH:mm" />
+                                            <h:outputText value="#{adminDeviceController.devices.createdAt}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="Asia/Ho_Chi_Minh" />
                                             </h:outputText>
                                         </span>
                                     </div>
                                     <div class="detail-meta-row">
                                         <span class="detail-meta-label">Updated At</span>
                                         <span class="detail-meta-value">
-                                            <h:outputText value="#{deviceController.devices.updatedAt}">
-                                                <f:convertDateTime pattern="MMM dd, yyyy Â· HH:mm" />
+                                            <h:outputText value="#{adminDeviceController.devices.updatedAt}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="Asia/Ho_Chi_Minh" />
                                             </h:outputText>
                                         </span>
                                     </div>

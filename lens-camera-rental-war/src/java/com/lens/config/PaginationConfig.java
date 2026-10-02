@@ -9,7 +9,6 @@ import java.util.List;
 
 /**
  * Reusable Pagination Configuration and Utility.
- * Centralizes pagination logic, calculation, and configuration for clean code across controllers and views.
  *
  * @author Duong Ngoc Han
  */

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="jakarta.faces.html"
@@ -9,8 +9,8 @@
 
 
     <f:metadata>
-        <f:viewParam name="id" value="#{deviceController.id}" />
-        <f:viewAction action="#{deviceController.initForm()}" onPostback="false" />
+        <f:viewParam name="id" value="#{adminDeviceController.id}" />
+        <f:viewAction action="#{adminDeviceController.initForm()}" onPostback="false" />
     </f:metadata>
 
     <ui:param name="activeMenu" value="devices" />
@@ -18,15 +18,15 @@
 
 
     <ui:define name="title">
-        #{deviceController.editMode ? 'Edit Device' : 'Create Device'} - Lens Camera Rental
+        #{adminDeviceController.editMode ? 'Edit Device' : 'Create Device'} - Lens Camera Rental
     </ui:define>
 
     <ui:define name="scripts">
-        <h:outputScript library="js" name="selector.js" target="body" />
+        <h:outputScript library="js" name="admin/selector.js" target="body" />
     </ui:define>
 
     <ui:define name="content">
-        <!-- ThÃ´ng bÃ¡o lá»—i khi thao tÃ¡c tháº¥t báº¡i -->
+        <!-- ThÃƒÂ´ng bÃƒÂ¡o lÃ¡Â»â€”i khi thao tÃƒÂ¡c thÃ¡ÂºÂ¥t bÃ¡ÂºÂ¡i -->
         <h:panelGroup
             rendered="#{not empty facesContext.messageList and (facesContext.messageList[0].summary eq 'Failed to create device.' or facesContext.messageList[0].summary eq 'Failed to update device.')}">
             <script type="text/javascript">
@@ -37,12 +37,12 @@
         <div class="main-wrapper">
             <div class="form-container">
                 <h:form id="deviceForm">
-                    <!-- TiÃªu Ä‘á» trang -->
+                    <!-- TiÃƒÂªu Ã„â€˜Ã¡Â»Â trang -->
                     <div class="page-header">
                         <div class="page-header-row">
                             <div>
                                 <div class="page-pretitle">Devices Management</div>
-                                <h1 class="page-title">#{deviceController.editMode ? 'Edit Device' : 'Create New Device'}</h1>
+                                <h1 class="page-title">#{adminDeviceController.editMode ? 'Edit Device' : 'Create New Device'}</h1>
                             </div>
                             <div>
                                 <h:commandButton value="Back to Devices" action="list" immediate="true"
@@ -51,17 +51,17 @@
                         </div>
                     </div>
 
-                    <!-- Tháº» Form thÃ´ng tin thiáº¿t bá»‹ -->
+                    <!-- ThÃ¡ÂºÂ» Form thÃƒÂ´ng tin thiÃ¡ÂºÂ¿t bÃ¡Â»â€¹ -->
                     <div class="card">
                         <div class="card-header">
                             <div>
-                                <h2 class="card-title">#{deviceController.editMode ? 'Edit Device Information' : 'Device Information'}</h2>
+                                <h2 class="card-title">#{adminDeviceController.editMode ? 'Edit Device Information' : 'Device Information'}</h2>
                             </div>
                         </div>
 
                         <div class="card-body">
                             <div class="form-grid">
-                                <!-- Model thiáº¿t bá»‹ -->
+                                <!-- Model thiÃ¡ÂºÂ¿t bÃ¡Â»â€¹ -->
                                 <div class="form-group" style="grid-column: 1 / -1;">
                                     <h:outputLabel for="deviceModel" styleClass="form-label">
                                         Device Model <span class="form-required">*</span>
@@ -69,25 +69,25 @@
 
                                     <div class="model-selector" data-selector="device-model">
 
-                                        <h:selectOneMenu id="deviceModel" value="#{deviceController.selectedDeviceModelId}"
+                                        <h:selectOneMenu id="deviceModel" value="#{adminDeviceController.selectedDeviceModelId}"
                                             required="true" requiredMessage="Please select a device model."
                                             styleClass="model-selector-native">
 
                                             <f:selectItem itemLabel="Select Device Model" itemValue=""
                                                 noSelectionOption="true" />
 
-                                            <f:selectItems value="#{deviceController.allDeviceModels}" var="dm"
+                                            <f:selectItems value="#{adminDeviceController.allDeviceModels}" var="dm"
                                                 itemValue="#{dm.id}" itemLabel="#{dm.name} (#{dm.model})"
                                                 itemDescription="#{dm.brand}" />
                                         </h:selectOneMenu>
 
-                                        <!-- Dá»¯ liá»‡u brand áº©n Ä‘á»ƒ JavaScript tÃ¬m kiáº¿m nhanh -->
-                                        <ui:repeat value="#{deviceController.allDeviceModels}" var="dm">
+                                        <!-- DÃ¡Â»Â¯ liÃ¡Â»â€¡u brand Ã¡ÂºÂ©n Ã„â€˜Ã¡Â»Æ’ JavaScript tÃƒÂ¬m kiÃ¡ÂºÂ¿m nhanh -->
+                                        <ui:repeat value="#{adminDeviceController.allDeviceModels}" var="dm">
                                             <span class="model-meta-data" data-id="#{dm.id}" data-brand="#{dm.brand}"
                                                 style="display:none;"></span>
                                         </ui:repeat>
 
-                                        <!-- Nháº­p tÃ¬m kiáº¿m trá»±c tiáº¿p + NÃºt mÅ©i tÃªn má»Ÿ danh sÃ¡ch -->
+                                        <!-- NhÃ¡ÂºÂ­p tÃƒÂ¬m kiÃ¡ÂºÂ¿m trÃ¡Â»Â±c tiÃ¡ÂºÂ¿p + NÃƒÂºt mÃ…Â©i tÃƒÂªn mÃ¡Â»Å¸ danh sÃƒÂ¡ch -->
                                         <div class="model-combobox">
                                             <input type="text" class="model-combobox-input"
                                                 placeholder="Select or search device model" autocomplete="off" />
@@ -95,7 +95,7 @@
                                                 aria-label="Toggle dropdown"></button>
                                         </div>
 
-                                        <!-- Menu dropdown: Hiá»ƒn thá»‹ toÃ n bá»™ danh sÃ¡ch, lá»c tá»©c thÃ¬ khi gÃµ -->
+                                        <!-- Menu dropdown: HiÃ¡Â»Æ’n thÃ¡Â»â€¹ toÃƒÂ n bÃ¡Â»â„¢ danh sÃƒÂ¡ch, lÃ¡Â»Âc tÃ¡Â»Â©c thÃƒÂ¬ khi gÃƒÂµ -->
                                         <div class="model-selector-dropdown">
                                             <div class="model-selector-results" role="listbox">
                                             </div>
@@ -105,12 +105,12 @@
                                     <h:message for="deviceModel" styleClass="field-error" />
                                 </div>
 
-                                <!-- MÃ£ sá»‘ Serial thiáº¿t bá»‹ -->
+                                <!-- MÃƒÂ£ sÃ¡Â»â€˜ Serial thiÃ¡ÂºÂ¿t bÃ¡Â»â€¹ -->
                                 <div class="form-group" style="grid-column: 1 / -1;">
                                     <h:outputLabel for="serialNumber" styleClass="form-label">
                                         Serial Number <span class="form-required">*</span>
                                     </h:outputLabel>
-                                    <h:inputText id="serialNumber" value="#{deviceController.devices.serialNumber}" required="true"
+                                    <h:inputText id="serialNumber" value="#{adminDeviceController.devices.serialNumber}" required="true"
                                         requiredMessage="Serial number is required." pt:placeholder="e.g. SN-SONY-00123"
                                         styleClass="form-control" />
                                     <h:message for="serialNumber" styleClass="field-error" />
@@ -118,16 +118,16 @@
                             </div>
                         </div>
 
-                        <!-- NÃºt thao tÃ¡c dÆ°á»›i chÃ¢n tháº» -->
+                        <!-- NÃƒÂºt thao tÃƒÂ¡c dÃ†Â°Ã¡Â»â€ºi chÃƒÂ¢n thÃ¡ÂºÂ» -->
                         <div class="card-footer">
                             <h:commandButton value="Cancel" action="list?faces-redirect=true" immediate="true"
                                 styleClass="btn btn-outline-secondary" />
 
                             <div>
-                                <h:commandButton value="Save Changes" action="#{deviceController.updateDevice()}"
-                                    rendered="#{deviceController.editMode}" styleClass="btn btn-primary" />
-                                <h:commandButton value="Create Device" action="#{deviceController.insertDevice()}"
-                                    rendered="#{not deviceController.editMode}" styleClass="btn btn-primary" />
+                                <h:commandButton value="Save Changes" action="#{adminDeviceController.updateDevice()}"
+                                    rendered="#{adminDeviceController.editMode}" styleClass="btn btn-primary" />
+                                <h:commandButton value="Create Device" action="#{adminDeviceController.insertDevice()}"
+                                    rendered="#{not adminDeviceController.editMode}" styleClass="btn btn-primary" />
                             </div>
                         </div>
                     </div>
@@ -136,3 +136,4 @@
         </div>
     </ui:define>
 </ui:composition>
+

@@ -3,8 +3,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets">
 
     <!-- Auto-include Rental Period & DatePicker Resources -->
-    <h:outputStylesheet library="css" name="components/rental-period.css" />
-    <h:outputScript library="js" name="rental-period.js" />
+    <h:outputStylesheet library="client" name="css/components/rental-period.css" />
+    <h:outputScript library="js" name="common/rental-period.js" />
 
     <div class="rental-period-section" id="#{not empty id ? id : 'rentalPeriodWrapper'}">
         <!-- Header Row: RENTAL PERIOD and DURATION -->
@@ -12,10 +12,6 @@
             <h3 class="rental-period-title">RENTAL PERIOD</h3>
             <div class="rental-header-actions">
                 <span class="rental-period-duration" data-role="duration-display">DURATION: --</span>
-                <button type="button" class="rental-change-btn" data-role="unlock-btn"
-                    title="Change rental dates">
-                    Change
-                </button>
             </div>
         </div>
 
@@ -82,6 +78,11 @@
             value="#{deviceDetailController.startDate}" />
         <input type="hidden" id="rentalEndDate" name="endDate" data-role="end-hidden"
             value="#{deviceDetailController.endDate}" />
+
+        <!-- Advance booking policy note -->
+        <div class="rental-booking-note">
+            <span>Please book at least 1 day in advance.</span>
+        </div>
     </div>
 
 </ui:composition>

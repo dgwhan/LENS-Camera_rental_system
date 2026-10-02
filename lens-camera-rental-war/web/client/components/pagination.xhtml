@@ -5,8 +5,8 @@
                 xmlns:ui="jakarta.faces.facelets">
 
     <!-- Auto-include Pagination Resources -->
-    <h:outputStylesheet library="css" name="components/pagination.css" />
-    <script type="text/javascript" src="#{request.contextPath}/resources/js/pagination.js?v=1.0"></script>
+    <h:outputStylesheet library="client" name="css/components/pagination.css" />
+    <script type="text/javascript" src="#{request.contextPath}/resources/js/common/pagination.js?v=1.0"></script>
 
     <!-- Reusable Semantic Pagination Landmark -->
     <nav id="#{not empty id ? id : 'paginationNav'}"
@@ -17,10 +17,7 @@
          data-page-size="#{not empty pageSize and pageSize gt 0 ? pageSize : paginationConfig.pageSize}"
          data-total-items="#{not empty totalItems ? totalItems : 0}"
          data-item-label="#{not empty itemLabel ? itemLabel : 'devices'}"
-         data-show-summary="#{showSummary ne false ? 'true' : 'false'}"
-         data-target-url="#{not empty targetUrl ? targetUrl : ''}"
-         data-on-page-change="#{not empty onPageChange ? onPageChange : ''}"
-         data-page-param="#{not empty pageParam ? pageParam : 'page'}">
+         data-show-summary="#{showSummary ne false ? 'true' : 'false'}">
 
         <div class="pagination-container">
             <!-- Mobile Stack Top Header -->
@@ -41,3 +38,5 @@
     </nav>
 
 </ui:composition>
+
+

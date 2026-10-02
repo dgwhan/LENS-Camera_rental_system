@@ -46,7 +46,6 @@ public class UserIdentityStore implements IdentityStore {
             return CredentialValidationResult.INVALID_RESULT;
         }
 
-        //tìm user
         Users user = usersFacade.findByUsername(username);
 
         //kiểm tra user tồn tại, status ACTIVE, và verify password

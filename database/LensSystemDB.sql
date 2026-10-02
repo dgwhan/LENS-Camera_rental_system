@@ -81,7 +81,7 @@ CREATE TABLE RentalOrders (
     customer_phone VARCHAR(20) NOT NULL,
 
     status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
-
+        
     subtotal DECIMAL(12,0) NOT NULL DEFAULT 0,
     deposit_total DECIMAL(12,0) NOT NULL DEFAULT 0,
     total_payable DECIMAL(12,0) NOT NULL DEFAULT 0,
@@ -219,9 +219,59 @@ GO
 CREATE INDEX IX_CartItems_UserId ON CartItems(user_id);
 GO
 
-
 ALTER TABLE Users
 ADD address NVARCHAR(255) NULL;
+GO
+
+ALTER TABLE RentalOrders
+ADD note NVARCHAR(1000) NULL;
+GO
+
+CREATE TABLE RentalHandovers (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+
+    rental_order_id INT NOT NULL,
+
+    method VARCHAR(20) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+
+    delivery_address NVARCHAR(255) NULL,
+
+    failure_reason VARCHAR(50) NULL,
+    note NVARCHAR(1000) NULL,
+
+    confirmed_at DATETIME2 NULL,
+
+    created_at DATETIME2 NOT NULL DEFAULT GETDATE(),
+    updated_at DATETIME2 NOT NULL DEFAULT GETDATE(),
+
+    CONSTRAINT UQ_RentalHandovers_Order
+        UNIQUE (rental_order_id),
+
+    CONSTRAINT FK_RentalHandovers_RentalOrders
+        FOREIGN KEY (rental_order_id)
+        REFERENCES RentalOrders(id),
+
+    CONSTRAINT CK_RentalHandovers_Method
+        CHECK (method IN ('DELIVERY', 'STORE_PICKUP')),
+
+    CONSTRAINT CK_RentalHandovers_Status
+        CHECK (status IN (
+            'PENDING',
+            'DELIVERING',
+            'FAILED',
+            'COMPLETED'
+        ))
+);
+GO
+
+ALTER TABLE RentalOrders
+ADD deposit_refund_status VARCHAR(20) NOT NULL DEFAULT 'NOT_REFUNDED';
+GO
+
+ALTER TABLE RentalOrders
+ADD CONSTRAINT CK_RentalOrders_DepositRefundStatus
+    CHECK (deposit_refund_status IN ('NOT_REFUNDED', 'REFUNDED'));
 GO
 
 INSERT INTO Users (username, password, full_name, email, phone, role)

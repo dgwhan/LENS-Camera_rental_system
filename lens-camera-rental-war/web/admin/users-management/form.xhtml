@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="jakarta.faces.html"
@@ -7,10 +7,15 @@
                 xmlns:pt="jakarta.faces.passthrough"
                 template="/WEB-INF/templates/admin-template.xhtml">
 
+    <f:metadata>
+        <f:viewParam name="id" value="#{adminUserController.id}" />
+        <f:viewAction action="#{adminUserController.initForm()}" onPostback="false" />
+    </f:metadata>
+
     <ui:param name="activeMenu" value="users" />
 
     <ui:define name="title">
-        #{userController.editMode ? 'Edit User' : 'Create User'} - Lens Camera Rental
+        #{adminUserController.editMode ? 'Edit User' : 'Create User'} - Lens Camera Rental
     </ui:define>
 
     <ui:define name="content">
@@ -29,10 +34,10 @@
                         <div class="page-header-row">
                             <div>
                                 <div class="page-pretitle">Users Management</div>
-                                <h1 class="page-title">#{userController.editMode ? 'Edit User' : 'Create New User'}</h1>
+                                <h1 class="page-title">#{adminUserController.editMode ? 'Edit User' : 'Create New User'}</h1>
                             </div>
                             <div>
-                                <h:commandButton value="Back to Users" action="list" immediate="true"
+                                <h:commandButton value="Back to Users" action="list?faces-redirect=true" immediate="true"
                                     styleClass="btn btn-outline-secondary" />
                             </div>
                         </div>
@@ -42,7 +47,7 @@
                     <div class="card">
                         <div class="card-header">
                             <div>
-                                <h2 class="card-title">#{userController.editMode ? 'User Information' : 'Account Details'}</h2>
+                                <h2 class="card-title">#{adminUserController.editMode ? 'User Information' : 'Account Details'}</h2>
                             </div>
                         </div>
 
@@ -50,11 +55,11 @@
                             <div class="user-form-grid">
                                 <!-- Username (Create mode only) -->
                                 <h:panelGroup layout="block" styleClass="user-form-group"
-                                    rendered="#{not userController.editMode}">
+                                    rendered="#{not adminUserController.editMode}">
                                     <h:outputLabel for="username" styleClass="form-label"> Username <span
                                             class="form-required">*</span>
                                     </h:outputLabel>
-                                    <h:inputText id="username" value="#{userController.users.username}" required="true"
+                                    <h:inputText id="username" value="#{adminUserController.users.username}" required="true"
                                         requiredMessage="Username is required." pt:placeholder="Username"
                                         styleClass="form-control" />
                                     <h:message for="username" styleClass="field-error" />
@@ -65,7 +70,7 @@
                                     <h:outputLabel for="fullName" styleClass="form-label"> Full Name <span
                                             class="form-required">*</span>
                                     </h:outputLabel>
-                                    <h:inputText id="fullName" value="#{userController.users.fullName}" required="true"
+                                    <h:inputText id="fullName" value="#{adminUserController.users.fullName}" required="true"
                                         requiredMessage="Full name is required." pt:placeholder="Enter Your Name"
                                         styleClass="form-control" />
                                     <h:message for="fullName" styleClass="field-error" />
@@ -73,11 +78,11 @@
 
                                 <!-- Password -->
                                 <h:panelGroup layout="block" styleClass="user-form-group"
-                                    rendered="#{not userController.editMode}">
+                                    rendered="#{not adminUserController.editMode}">
                                     <h:outputLabel for="password" styleClass="form-label"> Password <span
                                             class="form-required">*</span>
                                     </h:outputLabel>
-                                    <h:inputSecret id="password" value="#{userController.users.password}" required="true"
+                                    <h:inputSecret id="password" value="#{adminUserController.users.password}" required="true"
                                         requiredMessage="Password is required." pt:placeholder="Enter password"
                                         styleClass="form-control" />
                                     <h:message for="password" styleClass="field-error" />
@@ -88,7 +93,7 @@
                                     <h:outputLabel for="email" styleClass="form-label"> Email Address <span
                                             class="form-optional">(Optional)</span>
                                     </h:outputLabel>
-                                    <h:inputText id="email" value="#{userController.users.email}" pt:placeholder="email@gmail.com"
+                                    <h:inputText id="email" value="#{adminUserController.users.email}" pt:placeholder="email@gmail.com"
                                         styleClass="form-control" />
                                     <h:message for="email" styleClass="field-error" />
                                 </div>
@@ -98,7 +103,7 @@
                                     <h:outputLabel for="phone" styleClass="form-label"> Phone Number <span
                                             class="form-required">*</span>
                                     </h:outputLabel>
-                                    <h:inputText id="phone" value="#{userController.users.phone}" required="true"
+                                    <h:inputText id="phone" value="#{adminUserController.users.phone}" required="true"
                                         requiredMessage="Phone number is required." pt:placeholder="0841234567"
                                         styleClass="form-control" />
                                     <h:message for="phone" styleClass="field-error" />
@@ -109,7 +114,7 @@
                                     <h:outputLabel for="role" styleClass="form-label">
                                         Role <span class="form-required">*</span>
                                     </h:outputLabel>
-                                    <h:selectOneMenu id="role" value="#{userController.users.role}" required="true"
+                                    <h:selectOneMenu id="role" value="#{adminUserController.users.role}" required="true"
                                         requiredMessage="Role is required." styleClass="form-select">
                                         <f:selectItem itemLabel="Customer" itemValue="CUSTOMER" />
                                         <f:selectItem itemLabel="Admin" itemValue="ADMIN" />
@@ -118,11 +123,11 @@
                                 </div>
 
                                 <!-- Status -->
-                                <h:panelGroup layout="block" styleClass="user-form-group" rendered="#{userController.editMode}">
+                                <h:panelGroup layout="block" styleClass="user-form-group" rendered="#{adminUserController.editMode}">
                                     <h:outputLabel for="status" styleClass="form-label"> Account Status <span
                                             class="form-required">*</span>
                                     </h:outputLabel>
-                                    <h:selectOneMenu id="status" value="#{userController.users.status}" required="true"
+                                    <h:selectOneMenu id="status" value="#{adminUserController.users.status}" required="true"
                                         requiredMessage="Status is required." styleClass="form-select">
                                         <f:selectItem itemLabel="Active" itemValue="ACTIVE" />
                                         <f:selectItem itemLabel="Inactive" itemValue="INACTIVE" />
@@ -134,13 +139,13 @@
 
                         <!-- Actions -->
                         <div class="card-footer">
-                            <h:commandButton value="Cancel" action="list" immediate="true"
+                            <h:commandButton value="Cancel" action="list?faces-redirect=true" immediate="true"
                                 styleClass="btn btn-outline-secondary" />
                             <div>
-                                <h:commandButton value="Save Changes" action="#{userController.updateUser}"
-                                    rendered="#{userController.editMode}" styleClass="btn btn-primary" />
-                                <h:commandButton value="Create User" action="#{userController.insertUser}"
-                                    rendered="#{not userController.editMode}" styleClass="btn btn-primary" />
+                                <h:commandButton value="Save Changes" action="#{adminUserController.updateUser}"
+                                    rendered="#{adminUserController.editMode}" styleClass="btn btn-primary" />
+                                <h:commandButton value="Create User" action="#{adminUserController.insertUser}"
+                                    rendered="#{not adminUserController.editMode}" styleClass="btn btn-primary" />
                             </div>
                         </div>
                     </div>

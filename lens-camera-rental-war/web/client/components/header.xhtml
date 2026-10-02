@@ -4,13 +4,13 @@
 <ui:composition>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- JSF Stylesheet & Script Resources -->
-    <h:outputStylesheet library="css" name="color.css" />
-    <h:outputStylesheet library="css" name="font.css" />
-    <h:outputStylesheet library="css" name="app.css" />
-    <h:outputStylesheet library="css" name="components/header.css" />
-    <h:outputStylesheet library="css" name="components/search.css" />
-    <h:outputStylesheet library="css" name="components/nav.css" />
-    <h:outputScript library="js" name="header.js" />
+    <h:outputStylesheet library="shared" name="css/color.css" />
+    <h:outputStylesheet library="shared" name="css/font.css" />
+    <h:outputStylesheet library="shared" name="css/app.css" />
+    <h:outputStylesheet library="client" name="css/components/header.css" />
+    <h:outputStylesheet library="client" name="css/components/search.css" />
+    <h:outputStylesheet library="client" name="css/components/nav.css" />
+    <h:outputScript library="js" name="common/header.js" />
 
     <header class="site-header">
         <div class="header-top">
@@ -47,7 +47,7 @@
                     <!-- Cart -->
                     <h:panelGroup id="headerCartWrapper" layout="block" styleClass="header-action header-cart">
                         <ui:param name="isUserAuth" value="#{not empty request.userPrincipal or not empty sessionScope.username or not empty sessionScope.fullName}" />
-                        <a href="#{isUserAuth ? request.contextPath.concat('/faces/client/pages/cart.xhtml') : request.contextPath.concat('/faces/client/pages/login.xhtml')}" class="cart-link header-cart-link"
+                        <a href="#{isUserAuth ? request.contextPath.concat('/faces/client/pages/cart.xhtml') : request.contextPath.concat('/faces/auth/login.xhtml')}" class="cart-link header-cart-link"
                             aria-label="Shopping Cart">
                             <span class="cart-icon" aria-hidden="true"></span>
                             <ui:fragment rendered="#{isUserAuth and (cartController.itemCount > 0 or (not empty sessionScope.cartCount and sessionScope.cartCount != 0))}">
@@ -64,10 +64,10 @@
                         <!-- Guest State: Show Login & Register Links -->
                         <h:panelGroup layout="block" styleClass="auth-guest-links"
                             rendered="#{empty request.userPrincipal and empty sessionScope.username and empty sessionScope.fullName}">
-                            <a href="#{request.contextPath}/faces/client/pages/login.xhtml" class="auth-link" aria-label="Login">
+                            <a href="#{request.contextPath}/faces/auth/login.xhtml" class="auth-link" aria-label="Login">
                                 <span class="auth-text">Login</span>
                             </a>
-                            <a href="#{request.contextPath}/faces/client/pages/register.xhtml" class="auth-link auth-register"
+                            <a href="#{request.contextPath}/faces/auth/register.xhtml" class="auth-link auth-register"
                                 aria-label="Register">
                                 <span class="auth-text">Register</span>
                             </a>
@@ -87,7 +87,7 @@
 
                             <!-- User Dropdown -->
                             <div class="user-dropdown">
-                                <button type="button" class="auth-link user-dropdown-toggle" onclick="toggleUserDropdown(event)" aria-label="User Profile">
+                                <button type="button" class="auth-link user-dropdown-toggle" aria-label="User Profile">
                                     <span class="auth-text">#{not empty sessionScope.fullName ? sessionScope.fullName :
                                         (not empty authController.currentUserFullName ?
                                         authController.currentUserFullName : sessionScope.username)}</span>
@@ -133,3 +133,4 @@
 </ui:composition>
 
 </html>
+

@@ -7,17 +7,24 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title><ui:insert name="title">Lens Camera Rental - Admin</ui:insert></title>
-        <h:outputStylesheet library="css" name="color.css" />
-        <h:outputStylesheet library="css" name="font.css" />
-        <h:outputStylesheet library="css" name="app.css" />
-        <h:outputStylesheet library="css" name="components/buttons.css" />
-        <h:outputStylesheet library="css" name="components/table.css" />
-        <h:outputStylesheet library="css" name="components/badges.css" />
-        <h:outputStylesheet library="css" name="components/selector.css" />
-        <h:outputStylesheet library="css" name="components/sidebar.css" />
+        <h:outputStylesheet library="shared" name="css/color.css" />
+        <h:outputStylesheet library="shared" name="css/font.css" />
+        <h:outputStylesheet library="shared" name="css/app.css" />
+        <h:outputStylesheet library="shared" name="css/components/buttons.css" />
+        <h:outputStylesheet library="shared" name="css/components/badges.css" />
+        <h:outputStylesheet library="admin" name="css/components/table.css" />
+        <h:outputStylesheet library="admin" name="css/components/selector.css" />
+        <h:outputStylesheet library="admin" name="css/components/sidebar.css" />
         <ui:insert name="head" />
     </h:head>
     <h:body>
+        <!-- Flash Alert Message if any -->
+        <h:panelGroup rendered="#{not empty flash.actionAlert}">
+            <script type="text/javascript">
+                alert('#{flash.actionAlert}');
+            </script>
+        </h:panelGroup>
+
         <div class="app-container">
             <ui:include src="/admin/sidebar.xhtml">
                 <ui:param name="activeMenu" value="#{activeMenu}" />

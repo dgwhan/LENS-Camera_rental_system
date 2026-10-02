@@ -55,50 +55,53 @@ public class AuthService implements AuthServiceLocal {
     public Users register(RegisterRequest request) {
         if (request == null) {
             LOGGER.warning("Registration failed: RegisterRequest is null.");
-            return null;
+            throw new IllegalArgumentException("Registration request cannot be null.");
         }
 
         if (request.getUsername() == null || request.getUsername().trim().isEmpty()) {
             LOGGER.warning("Username is empty.");
-            return null;
+            throw new IllegalArgumentException("Username is required.");
         }
 
-        //kiểm tra format password
-        if (!ValidationUtil.isValidPassword(request.getPassword())) {
-            LOGGER.warning("Invalid password format.");
-            return null;
-        }
-
-        //kiểm tra format phone
-        if (!ValidationUtil.isValidPhone(request.getPhone())) {
-            LOGGER.warning("Invalid phone number format.");
-            return null;
-        }
-
-        //kiểm tra format email nếu có giá trị
-        if (!ValidationUtil.isValidEmail(request.getEmail())) {
-            LOGGER.warning("Invalid email format.");
-            return null;
-        }
-
-        //kiểm tra username đã tồn tại
+        // kiểm tra username đã tồn tại
         if (usersFacade.isUsernameExists(request.getUsername().trim())) {
             LOGGER.warning("Username already exists.");
-            return null;
+            throw new IllegalArgumentException("Username already exists.");
         }
 
-        //kiểm tra email đã tồn tại nếu có giá trị
-        if (request.getEmail() != null && !request.getEmail().trim().isEmpty()) {
-            if (usersFacade.isEmailExists(request.getEmail().trim(), null)) {
-                LOGGER.warning("Email is already in use.");
-                return null;
-            }
+        // kiểm tra format password
+        if (request.getPassword() == null || !ValidationUtil.isValidPassword(request.getPassword())) {
+            LOGGER.warning("Invalid password format.");
+            throw new IllegalArgumentException("Password must be at least 8 characters and contain both letters and numbers.");
         }
 
-        //kiểm tra phone đã tồn tại
+        // kiểm tra format phone
+        if (request.getPhone() == null || request.getPhone().trim().isEmpty()) {
+            LOGGER.warning("Phone is empty.");
+            throw new IllegalArgumentException("Phone number is required.");
+        }
+
+        if (!ValidationUtil.isValidPhone(request.getPhone().trim())) {
+            LOGGER.warning("Invalid phone number format.");
+            throw new IllegalArgumentException("Invalid phone number format (must be 10 digits starting with 0).");
+        }
+
+        // kiểm tra phone đã tồn tại
         if (usersFacade.isPhoneExists(request.getPhone().trim(), null)) {
             LOGGER.warning("Phone number is already in use.");
-            return null;
+            throw new IllegalArgumentException("Phone number is already in use.");
+        }
+
+        // kiểm tra format email nếu có giá trị
+        if (request.getEmail() != null && !request.getEmail().trim().isEmpty()) {
+            if (!ValidationUtil.isValidEmail(request.getEmail().trim())) {
+                LOGGER.warning("Invalid email format.");
+                throw new IllegalArgumentException("Invalid email format.");
+            }
+            if (usersFacade.isEmailExists(request.getEmail().trim(), null)) {
+                LOGGER.warning("Email is already in use.");
+                throw new IllegalArgumentException("Email is already in use.");
+            }
         }
 
         //tạo user mới

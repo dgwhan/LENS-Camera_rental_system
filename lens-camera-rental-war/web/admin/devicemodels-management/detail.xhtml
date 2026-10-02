@@ -4,18 +4,18 @@
     xmlns:ui="jakarta.faces.facelets" template="/WEB-INF/templates/admin-template.xhtml">
 
     <f:metadata>
-        <f:viewParam name="id" value="#{deviceModelsController.id}" />
-        <f:viewAction action="#{deviceModelsController.initDetail()}" onPostback="false" />
+        <f:viewParam name="id" value="#{adminDeviceModelController.id}" />
+        <f:viewAction action="#{adminDeviceModelController.initDetail()}" onPostback="false" />
     </f:metadata>
 
     <ui:param name="activeMenu" value="models" />
 
     <ui:define name="title">
-        #{deviceModelsController.deviceModels.name} - Device Model Details
+        #{adminDeviceModelController.deviceModels.name} - Device Model Details
     </ui:define>
 
     <ui:define name="head">
-        <h:outputStylesheet library="css" name="pages/detail.css" />
+        <h:outputStylesheet library="admin" name="css/pages/detail.css" />
     </ui:define>
 
     <ui:define name="content">
@@ -33,7 +33,7 @@
                                 <h:commandButton value="Back" action="list?faces-redirect=true" immediate="true"
                                     styleClass="btn btn-outline-secondary" />
                                 <h:commandButton value="Edit Model"
-                                    action="#{deviceModelsController.editDeviceModel(deviceModelsController.deviceModels.id)}"
+                                    action="#{adminDeviceModelController.editDeviceModel(adminDeviceModelController.deviceModels.id)}"
                                     styleClass="btn btn-primary" />
                             </div>
                         </div>
@@ -50,21 +50,21 @@
                                 </div>
                                 <div class="detail-card-body">
                                     <div class="detail-identity-row">
-                                        <img src="#{deviceModelsController.modelImageUrl}"
-                                            alt="#{deviceModelsController.deviceModels.name}" class="detail-image"
-                                            onerror="this.onerror=null;this.src='#{deviceModelsController.defaultImageUrl}';" />
+                                        <img src="#{adminDeviceModelController.modelImageUrl}"
+                                            alt="#{adminDeviceModelController.deviceModels.name}" class="detail-image"
+                                            onerror="this.onerror=null;this.src='#{adminDeviceModelController.defaultImageUrl}';" />
 
                                         <div class="detail-identity-content">
                                             <div class="detail-identity-field">
                                                 <div class="detail-label">Model Name</div>
                                                 <h3 class="detail-identity-title">
-                                                    <h:outputText value="#{deviceModelsController.deviceModels.name}" />
+                                                    <h:outputText value="#{adminDeviceModelController.deviceModels.name}" />
                                                 </h3>
                                             </div>
                                             <div class="detail-item">
                                                 <div class="detail-label">Model ID</div>
                                                 <div class="detail-value detail-value-strong">
-                                                    <h:outputText value="Model ##{deviceModelsController.deviceModels.id}" />
+                                                    <h:outputText value="Model ##{adminDeviceModelController.deviceModels.id}" />
                                                 </div>
                                             </div>
                                         </div>
@@ -82,28 +82,28 @@
                                         <div class="detail-item">
                                             <div class="detail-label">Brand</div>
                                             <div class="detail-value detail-value-strong">
-                                                <h:outputText value="#{deviceModelsController.deviceModels.brand}" />
+                                                <h:outputText value="#{adminDeviceModelController.deviceModels.brand}" />
                                             </div>
                                         </div>
                                         <div class="detail-item">
                                             <div class="detail-label">Model Code</div>
                                             <div class="detail-value">
-                                                <h:outputText value="#{deviceModelsController.deviceModels.model}" />
+                                                <h:outputText value="#{adminDeviceModelController.deviceModels.model}" />
                                             </div>
                                         </div>
                                         <div class="detail-item">
                                             <div class="detail-label">Type</div>
                                             <div class="detail-value">
                                                 <h:outputText
-                                                    value="#{deviceModelsController.deviceModels.type == 'CAMERA' ? 'Camera' : (deviceModelsController.deviceModels.type == 'LENS' ? 'Lens' : 'Accessory')}" />
+                                                    value="#{adminDeviceModelController.deviceModels.type == 'CAMERA' ? 'Camera' : (adminDeviceModelController.deviceModels.type == 'LENS' ? 'Lens' : 'Accessory')}" />
                                             </div>
                                         </div>
                                         <div class="detail-item detail-item-full">
                                             <div class="detail-label">Description</div>
                                             <div
-                                                class="detail-value #{empty deviceModelsController.deviceModels.description ? 'detail-empty' : ''}">
+                                                class="detail-value #{empty adminDeviceModelController.deviceModels.description ? 'detail-empty' : ''}">
                                                 <h:outputText
-                                                    value="#{not empty deviceModelsController.deviceModels.description ? deviceModelsController.deviceModels.description : 'No description provided.'}" />
+                                                    value="#{not empty adminDeviceModelController.deviceModels.description ? adminDeviceModelController.deviceModels.description : 'No description provided.'}" />
                                             </div>
                                         </div>
                                     </div>
@@ -132,7 +132,7 @@
                                             <div class="detail-label">Rental Price</div>
                                             <div class="detail-price-row">
                                                 <span class="detail-price-value">
-                                                    <h:outputText value="#{deviceModelsController.deviceModels.rentalPrice}">
+                                                    <h:outputText value="#{adminDeviceModelController.deviceModels.rentalPrice}">
                                                         <f:convertNumber pattern="#,##0 VND" />
                                                     </h:outputText>
                                                 </span>
@@ -143,7 +143,7 @@
                                             <div class="detail-label">Deposit</div>
                                             <div class="detail-price-row">
                                                 <span class="detail-price-value">
-                                                    <h:outputText value="#{deviceModelsController.deviceModels.depositAmount}">
+                                                    <h:outputText value="#{adminDeviceModelController.deviceModels.depositAmount}">
                                                         <f:convertNumber pattern="#,##0 VND" />
                                                     </h:outputText>
                                                 </span>
@@ -163,16 +163,16 @@
                                         <div class="detail-meta-row">
                                             <span class="detail-meta-label">Created At</span>
                                             <span class="detail-meta-value">
-                                                <h:outputText value="#{deviceModelsController.deviceModels.createdAt}">
-                                                    <f:convertDateTime pattern="MMM dd, yyyy Â· HH:mm" />
+                                                <h:outputText value="#{adminDeviceModelController.deviceModels.createdAt}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="Asia/Ho_Chi_Minh" />
                                                 </h:outputText>
                                             </span>
                                         </div>
                                         <div class="detail-meta-row">
                                             <span class="detail-meta-label">Updated At</span>
                                             <span class="detail-meta-value">
-                                                <h:outputText value="#{deviceModelsController.deviceModels.updatedAt}">
-                                                    <f:convertDateTime pattern="MMM dd, yyyy Â· HH:mm" />
+                                                <h:outputText value="#{adminDeviceModelController.deviceModels.updatedAt}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="Asia/Ho_Chi_Minh" />
                                                 </h:outputText>
                                             </span>
                                         </div>
@@ -190,13 +190,13 @@
                                 <h2 class="detail-card-title">Devices of this Model</h2>
                             </div>
                             <span class="badge-custom" style="background: #f1f5f9; color: #475569; font-weight: 600;">
-                                #{deviceModelsController.modelDevices.size()} #{deviceModelsController.modelDevices.size() == 1 ?
+                                #{adminDeviceModelController.modelDevices.size()} #{adminDeviceModelController.modelDevices.size() == 1 ?
                                 'device' : 'devices'}
                             </span>
                         </div>
                         <h:panelGroup id="modelDevicesTableWrapper" layout="block" styleClass="table-wrapper">
-                            <h:dataTable id="modelDevicesTable" value="#{deviceModelsController.modelDevices}" var="device"
-                                styleClass="data-table" rendered="#{not empty deviceModelsController.modelDevices}">
+                            <h:dataTable id="modelDevicesTable" value="#{adminDeviceModelController.modelDevices}" var="device"
+                                styleClass="data-table" rendered="#{not empty adminDeviceModelController.modelDevices}">
 
                                 <!-- ID -->
                                 <h:column>
@@ -227,17 +227,17 @@
                                     </span>
                                 </h:column>
 
-                                <!-- Thao tÃ¡c (Action) -->
+                                <!-- Thao tÃƒÂ¡c (Action) -->
                                 <h:column>
                                     <f:facet name="header">Action</f:facet>
                                     <div class="table-row-actions">
-                                        <h:commandButton value="Detail" action="#{deviceController.detailDevice(device.id)}"
+                                        <h:commandButton value="Detail" action="#{adminDeviceController.detailDevice(device.id)}"
                                             styleClass="btn btn-sm btn-outline-info" />
 
-                                        <h:commandButton value="Edit" action="#{deviceController.editDevice(device.id)}"
+                                        <h:commandButton value="Edit" action="#{adminDeviceController.editDevice(device.id)}"
                                             styleClass="btn btn-sm btn-outline-primary" />
 
-                                        <h:commandButton value="Delete" action="#{deviceController.deleteDevice(device.id)}"
+                                        <h:commandButton value="Delete" action="#{adminDeviceController.deleteDevice(device.id)}"
                                             onclick="if (!confirm('Are you sure you want to delete this device?')) return false;"
                                             styleClass="btn btn-sm btn-outline-danger">
                                             <f:ajax render="modelDevicesTableWrapper" />
@@ -247,7 +247,7 @@
                             </h:dataTable>
 
                             <!-- Empty State -->
-                            <h:panelGroup rendered="#{empty deviceModelsController.modelDevices}" layout="block"
+                            <h:panelGroup rendered="#{empty adminDeviceModelController.modelDevices}" layout="block"
                                 style="padding: 2.5rem 1.5rem; text-align: center; color: #94a3b8;">
                                 <p style="margin: 0; font-size: 0.875rem;">No physical devices registered for this model
                                     yet.</p>

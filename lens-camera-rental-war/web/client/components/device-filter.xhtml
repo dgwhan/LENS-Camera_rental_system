@@ -6,8 +6,8 @@
                 xmlns:ui="jakarta.faces.facelets">
 
     <!-- Auto-include DeviceFilter Resources -->
-    <h:outputStylesheet library="css" name="components/device-filter.css" />
-    <script type="text/javascript" src="#{request.contextPath}/resources/js/device-filter.js?v=1.0"></script>
+    <h:outputStylesheet library="client" name="css/components/device-filter.css" />
+    <script type="text/javascript" src="#{request.contextPath}/resources/js/device/device-filter.js?v=1.0"></script>
 
     <!-- Reusable DeviceFilter Component Wrapper -->
     <div id="#{not empty id ? id : 'deviceFilter'}"
@@ -17,8 +17,7 @@
          data-brand="#{not empty selectedBrand ? selectedBrand : ''}"
          data-rate="#{not empty selectedPriceRange ? selectedPriceRange : ''}"
          data-filtered-count="#{not empty filteredCount ? filteredCount : 0}"
-         data-total-count="#{not empty totalCount ? totalCount : 0}"
-         data-on-filter-change="#{not empty onFilterChange ? onFilterChange : ''}">
+         data-total-count="#{not empty totalCount ? totalCount : 0}">
 
         <div class="device-filter-container">
             <!-- 1. Desktop & Tablet Filter Controls Bar -->
@@ -225,3 +224,5 @@
     </div>
 
 </ui:composition>
+
+

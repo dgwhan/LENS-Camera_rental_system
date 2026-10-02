@@ -117,5 +117,115 @@ public class AvailabilityService implements AvailabilityServiceLocal {
         return isProductAvailable(deviceModelId) ? "AVAILABLE" : "OUT OF STOCK";
     }
 
+    /**
+     * Validates combined capacity for multiple cart items and existing rental items.
+     *
+     * @param cartItems the user's cart items
+     */
+    @Override
+    public void validateCombinedCapacity(List<com.lens.cart.entity.CartItems> cartItems) {
+        if (cartItems == null || cartItems.isEmpty()) {
+            return;
+        }
+
+        java.util.Map<Integer, List<com.lens.cart.entity.CartItems>> itemsByModel = new java.util.HashMap<>();
+
+        for (com.lens.cart.entity.CartItems item : cartItems) {
+            if (item.getDeviceModelId() != null && item.getDeviceModelId().getId() != null) {
+                Integer deviceModelId = item.getDeviceModelId().getId();
+                itemsByModel.computeIfAbsent(deviceModelId, key -> new java.util.ArrayList<>()).add(item);
+            }
+        }
+
+        for (java.util.Map.Entry<Integer, List<com.lens.cart.entity.CartItems>> entry : itemsByModel.entrySet()) {
+            Integer deviceModelId = entry.getKey();
+            List<com.lens.cart.entity.CartItems> modelCartItems = entry.getValue();
+
+            if (modelCartItems.size() <= 1) {
+                continue;
+            }
+
+            Date earliestStart = modelCartItems.get(0).getStartDate();
+            Date latestEnd = modelCartItems.get(0).getEndDate();
+
+            for (com.lens.cart.entity.CartItems item : modelCartItems) {
+                if (item.getStartDate().before(earliestStart)) {
+                    earliestStart = item.getStartDate();
+                }
+
+                if (item.getEndDate().after(latestEnd)) {
+                    latestEnd = item.getEndDate();
+                }
+            }
+
+            AvailabilityResult availability = checkAvailability(deviceModelId, earliestStart, latestEnd);
+            int totalPhysicalDevices = availability.getTotalPhysicalDevices();
+
+            List<RentalItems> conflictingRentalItems = rentalItemsFacade.findConflictingRentalItems(deviceModelId,
+                    earliestStart, latestEnd, List.copyOf(CAPACITY_CONSUMING_STATUSES));
+
+            if (conflictingRentalItems == null) {
+                conflictingRentalItems = Collections.emptyList();
+            }
+
+            // create capacity events
+            List<CapacityEvent> events = new java.util.ArrayList<>();
+
+            for (RentalItems rentalItem : conflictingRentalItems) {
+                events.add(new CapacityEvent(rentalItem.getStartDate(), 1));
+                events.add(new CapacityEvent(rentalItem.getEndDate(), -1));
+            }
+
+            for (com.lens.cart.entity.CartItems cartItem : modelCartItems) {
+                events.add(new CapacityEvent(cartItem.getStartDate(), 1));
+                events.add(new CapacityEvent(cartItem.getEndDate(), -1));
+            }
+
+            // sort events by date and process end before start
+            events.sort((first, second) -> {
+                int dateCompare = first.getDate().compareTo(second.getDate());
+                if (dateCompare != 0) {
+                    return dateCompare;
+                }
+                return Integer.compare(first.getChange(), second.getChange());
+            });
+
+            int occupiedCapacity = 0;
+            int maxOccupiedCapacity = 0;
+
+            for (CapacityEvent event : events) {
+                occupiedCapacity += event.getChange();
+                if (occupiedCapacity > maxOccupiedCapacity) {
+                    maxOccupiedCapacity = occupiedCapacity;
+                }
+            }
+
+            if (maxOccupiedCapacity > totalPhysicalDevices) {
+                throw new IllegalStateException("Not enough devices available for the selected rental periods.");
+            }
+        }
+    }
+
+    /**
+     * Represents a capacity change at a specific date.
+     */
+    private static class CapacityEvent {
+
+        private final Date date;
+        private final int change;
+
+        private CapacityEvent(Date date, int change) {
+            this.date = date;
+            this.change = change;
+        }
+
+        private Date getDate() {
+            return date;
+        }
+
+        private int getChange() {
+            return change;
+        }
+    }
 }
 

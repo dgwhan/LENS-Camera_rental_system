@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="jakarta.faces.html"
                 xmlns:ui="jakarta.faces.facelets">
 
     <!-- Auto-include PageTitle Stylesheet -->
-    <h:outputStylesheet library="css" name="components/page-title.css" />
+    <h:outputStylesheet library="client" name="css/components/page-title.css" />
 
     <!-- Reusable Page Title / Section Header Component -->
     <div id="#{not empty id ? id : 'pageTitleHeader'}"
@@ -47,3 +47,4 @@
     </div>
 
 </ui:composition>
+

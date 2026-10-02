@@ -11,6 +11,4 @@ public interface CheckoutServiceLocal {
     RentalOrders processCheckout(Integer userId, String customerName, String customerPhone);
 
     RentalOrders processCheckout(Integer userId, String customerName, String customerPhone, java.util.List<Integer> selectedCartItemIds);
-
-    RentalOrders processDirectCheckout(Integer userId, String customerName, String customerPhone, Integer deviceModelId, Date startDate, Date endDate);
 }

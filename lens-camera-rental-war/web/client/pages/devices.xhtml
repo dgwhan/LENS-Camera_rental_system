@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="jakarta.faces.html"
@@ -19,10 +19,10 @@
     <ui:define name="title">Devices - Lens Camera Rental</ui:define>
 
     <ui:define name="head">
-        <h:outputStylesheet library="css" name="pages/customer.css" />
-        <h:outputStylesheet library="css" name="components/device-filter.css" />
-        <h:outputStylesheet library="css" name="components/device-card.css" />
-        <script type="text/javascript" src="#{request.contextPath}/resources/js/device-catalog.js?v=1.0"></script>
+        <h:outputStylesheet library="client" name="css/pages/customer.css" />
+        <h:outputStylesheet library="client" name="css/components/device-filter.css" />
+        <h:outputStylesheet library="client" name="css/components/device-card.css" />
+        <script type="text/javascript" src="#{request.contextPath}/resources/js/device/device-catalog.js?v=1.0"></script>
     </ui:define>
 
     <ui:define name="content">
@@ -69,3 +69,5 @@
     </ui:define>
 
 </ui:composition>
+
+

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/templates/client-template.xhtml">
+
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{facesContext.externalContext.setResponseStatus(404)}" />
+    </f:metadata>
+
+    <ui:param name="bodyClass" value="error-page-body" />
+
+    <ui:define name="title">404 Page not found - Lens Camera Rental</ui:define>
+
+    <ui:define name="head">
+        <h:outputStylesheet library="shared" name="css/components/buttons.css" />
+    </ui:define>
+
+    <ui:define name="header" />
+    <ui:define name="footer" />
+
+    <ui:define name="content">
+        <div class="error-page-container">
+            <h1 class="error-page-title">404 Page not found</h1>
+            <h:link outcome="/client/pages/index" value="Back to Home" styleClass="btn btn-dark" />
+        </div>
+    </ui:define>
+
+</ui:composition>

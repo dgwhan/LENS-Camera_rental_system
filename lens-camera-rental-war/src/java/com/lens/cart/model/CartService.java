@@ -1,14 +1,17 @@
 package com.lens.cart.model;
 
+import com.lens.auth.UserSessionService;
 import com.lens.cart.CartItem;
 import com.lens.cart.entity.CartItems;
 import com.lens.cart.facade.CartItemsFacadeLocal;
+import com.lens.common.util.DateUtil;
 import com.lens.device_model.entity.DeviceModels;
 import com.lens.user.entity.Users;
 import com.lens.user.facade.UsersFacadeLocal;
 import jakarta.ejb.EJB;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.context.FacesContext;
+import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,85 +34,44 @@ public class CartService implements Serializable {
     @EJB
     private UsersFacadeLocal usersFacade;
 
-    @EJB
-    private com.lens.availability.service.AvailabilityServiceLocal availabilityService;
+    @Inject
+    private UserSessionService userSessionService;
+
+    @Inject
+    private CartItemAvailabilityService availabilityService;
 
     private final List<CartItem> cartItems = new ArrayList<>();
     private Integer currentUserId;
 
-    /**
-     * Checks and updates the outOfStock status for a cart item based on current model availability
-     * and rental dates.
-     *
-     * @param item cart item to check
-     */
     public void checkItemAvailability(CartItem item) {
-        if (item == null || item.getDeviceModels() == null || availabilityService == null) {
-            return;
-        }
-        Integer modelId = item.getDeviceModels().getId();
-        if (modelId == null) {
-            return;
-        }
-
-        boolean available = availabilityService.isProductAvailable(modelId);
-        if (available && item.getStartDate() != null && item.getEndDate() != null) {
-            com.lens.availability.dto.AvailabilityResult result = availabilityService.checkAvailability(
-                    modelId, item.getStartDate(), item.getEndDate());
-            if (result != null && !result.isAvailable()) {
-                available = false;
-            }
-        }
-        item.setOutOfStock(!available);
+        availabilityService.checkItemAvailability(item);
     }
 
-    /**
-     * Resolves the current authenticated user identifier.
-     * Recovers from the request principal if the session-scoped ID is null.
-     *
-     * @return current user identifier, or null if unauthenticated
-     */
     public Integer resolveCurrentUserId() {
         if (currentUserId != null) {
             return currentUserId;
         }
 
-        try {
-            FacesContext context = FacesContext.getCurrentInstance();
-            if (context != null && context.getExternalContext() != null) {
-                HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-                if (request != null && request.getUserPrincipal() != null) {
-                    String username = request.getUserPrincipal().getName();
-                    if (username != null && !username.trim().isEmpty() && usersFacade != null) {
-                        Users user = usersFacade.findByUsername(username);
-                        if (user != null) {
-                            currentUserId = user.getId();
+        if (userSessionService != null) {
+            Integer userId = userSessionService.getCurrentUserId();
+            if (userId != null) {
+                currentUserId = userId;
 
-                            // Auto-hydrate cart from database if currently empty
-                            if (cartItems.isEmpty()) {
-                                cartItemsFacade.findByUserId(currentUserId)
-                                        .stream()
-                                        .map(CartItem::fromEntity)
-                                        .forEach(cartItems::add);
-                            }
-
-                            return currentUserId;
-                        }
-                    }
+                // Auto-hydrate cart from database if currently empty
+                if (cartItems.isEmpty()) {
+                    cartItemsFacade.findByUserId(currentUserId)
+                            .stream()
+                            .map(CartItem::fromEntity)
+                            .forEach(cartItems::add);
                 }
+
+                return currentUserId;
             }
-        } catch (Exception ex) {
-            // Ignore recovery failure and return null
         }
 
         return null;
     }
 
-    /**
-     * Returns all items currently stored in the customer's cart.
-     *
-     * @return list of cart items
-     */
     public List<CartItem> getCartItems() {
         if (currentUserId == null) {
             resolveCurrentUserId();
@@ -123,11 +85,6 @@ public class CartService implements Serializable {
     }
 
 
-    /**
-     * Loads the authenticated user's cart from database.
-     *
-     * @param userId authenticated user identifier
-     */
     public void loadUserCart(Integer userId) {
         cartItems.clear();
         currentUserId = userId;
@@ -140,12 +97,6 @@ public class CartService implements Serializable {
         }
     }
 
-    /**
-     * Adds an in-memory cart item if not duplicate.
-     *
-     * @param cartItem rental item to add
-     * @return true if added
-     */
     public boolean addItem(CartItem cartItem) {
         if (cartItem == null || findDuplicateItem(cartItem) != null) {
             return false;
@@ -154,14 +105,7 @@ public class CartService implements Serializable {
         return true;
     }
 
-    /**
-     * Creates and adds a rental item to the customer's persistent cart.
-     *
-     * @param deviceModel selected device model
-     * @param startDate   rental start date
-     * @param endDate     rental end date
-     * @return true if the item was added successfully
-     */
+
     public boolean addToCart(DeviceModels deviceModel, Date startDate, Date endDate) {
         Integer userId = resolveCurrentUserId();
 
@@ -169,7 +113,7 @@ public class CartService implements Serializable {
             return false;
         }
 
-        int duration = (int) ((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+        int duration = DateUtil.calculateRentalDuration(startDate, endDate);
         if (duration <= 0) {
             return false;
         }
@@ -183,15 +127,7 @@ public class CartService implements Serializable {
         return true;
     }
 
-    /**
-     * Updates the rental period and recalculates subtotal for an existing cart
-     * item.
-     *
-     * @param cartItemId identifier of the cart item
-     * @param startDate  new rental start date
-     * @param endDate    new rental end date
-     * @return true if updated successfully
-     */
+    //updates the rental period and recalculates subtotal for an existing cartitem
     public boolean updateRentalPeriod(String cartItemId, Date startDate, Date endDate) {
         Integer userId = resolveCurrentUserId();
 
@@ -199,7 +135,7 @@ public class CartService implements Serializable {
             return false;
         }
 
-        int duration = (int) ((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+        int duration = DateUtil.calculateRentalDuration(startDate, endDate);
         if (duration <= 0) {
             return false;
         }
@@ -218,12 +154,6 @@ public class CartService implements Serializable {
         return true;
     }
 
-    /**
-     * Removes a rental item from the persistent cart by its identifier.
-     *
-     * @param cartItemId identifier of the cart item
-     * @return true if an item was removed
-     */
     public boolean removeItem(String cartItemId) {
         Integer userId = resolveCurrentUserId();
 
@@ -240,9 +170,6 @@ public class CartService implements Serializable {
         return false;
     }
 
-    /**
-     * Atomically removes all items from the customer's persistent cart.
-     */
     public void clearCart() {
         Integer userId = resolveCurrentUserId();
         if (userId != null) {
@@ -251,12 +178,7 @@ public class CartService implements Serializable {
         cartItems.clear();
     }
 
-    /**
-     * Finds a cart item by its identifier.
-     *
-     * @param cartItemId identifier of the cart item
-     * @return matching cart item or null if not found
-     */
+
     public CartItem findItemById(String cartItemId) {
         if (cartItemId == null) {
             return null;
@@ -267,12 +189,7 @@ public class CartService implements Serializable {
                 .orElse(null);
     }
 
-    /**
-     * Finds an existing item with the same device model and rental period.
-     *
-     * @param cartItem cart item to compare
-     * @return matching cart item or null if not found
-     */
+
     public CartItem findDuplicateItem(CartItem cartItem) {
         if (cartItem == null || cartItem.getDeviceModels() == null) {
             return null;
@@ -289,11 +206,32 @@ public class CartService implements Serializable {
                 .orElse(null);
     }
 
-    /**
-     * Returns only the cart items that are currently selected by the customer.
-     *
-     * @return list of selected cart items
-     */
+    public CartItem findItemByModelAndDates(Integer modelId, Date startDate, Date endDate) {
+        if (modelId == null) {
+            return null;
+        }
+        return cartItems.stream()
+                .filter(i -> i.getDeviceModels() != null
+                        && modelId.equals(i.getDeviceModels().getId())
+                        && sameDate(i.getStartDate(), startDate)
+                        && sameDate(i.getEndDate(), endDate))
+                .findFirst()
+                .orElse(null);
+    }
+
+     //selects only the specified target item.
+    public void selectOnly(CartItem targetItem) {
+        if (targetItem == null) {
+            return;
+        }
+        String targetId = targetItem.getCartItemId();
+        for (CartItem item : cartItems) {
+            boolean isTarget = targetId != null && targetId.equals(item.getCartItemId());
+            item.setSelected(isTarget);
+        }
+    }
+
+    //returns only the cart items that are currently selected by the customer.
     public List<CartItem> getSelectedCartItems() {
         List<CartItem> allItems = getCartItems();
         if (allItems == null) {
@@ -308,81 +246,38 @@ public class CartService implements Serializable {
         return selected;
     }
 
-    /**
-     * Calculates the total rental cost of selected cart items.
-     *
-     * @return selected rental subtotal in VND
-     */
     public long calculateSelectedRentalSubtotal() {
         return getSelectedCartItems().stream().mapToLong(CartItem::getSubtotal).sum();
     }
 
-    /**
-     * Calculates the total deposit amount of selected cart items.
-     *
-     * @return selected deposit amount in VND
-     */
     public long calculateSelectedDepositTotal() {
         return getSelectedCartItems().stream().mapToLong(CartItem::getDepositAmountSnapshot).sum();
     }
 
-    /**
-     * Calculates the total amount payable for selected cart items.
-     *
-     * @return total payable amount for selected items in VND
-     */
     public long calculateSelectedTotal() {
         return calculateSelectedRentalSubtotal() + calculateSelectedDepositTotal();
     }
-
-    /**
-     * Returns the count of selected items in the cart.
-     *
-     * @return count of selected items
-     */
+    //returns the count of selected items in the cart.
     public int getSelectedItemsCount() {
         return getSelectedCartItems().size();
     }
 
-    /**
-     * Removes all currently selected items from the in-memory cart list.
-     */
     public void removeSelectedItems() {
         cartItems.removeIf(CartItem::isSelected);
     }
 
-    /**
-     * Calculates the total rental cost of all cart items.
-     *
-     * @return rental subtotal in VND
-     */
     public long calculateRentalSubtotal() {
         return cartItems.stream().mapToLong(CartItem::getSubtotal).sum();
     }
 
-    /**
-     * Calculates the total deposit amount of all cart items.
-     *
-     * @return total deposit amount in VND
-     */
     public long calculateDepositTotal() {
         return cartItems.stream().mapToLong(CartItem::getDepositAmountSnapshot).sum();
     }
 
-    /**
-     * Calculates the total amount payable for the cart.
-     *
-     * @return total payable amount in VND
-     */
     public long calculateTotalPayable() {
         return calculateRentalSubtotal() + calculateDepositTotal();
     }
 
-    /**
-     * Returns the number of items currently stored in the cart.
-     *
-     * @return cart item count
-     */
     public int getItemCount() {
         return cartItems.size();
     }

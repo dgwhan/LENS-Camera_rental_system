@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="jakarta.faces.html"
@@ -6,14 +6,19 @@
                 xmlns:ui="jakarta.faces.facelets"
                 template="/WEB-INF/templates/admin-template.xhtml">
 
+    <f:metadata>
+        <f:viewParam name="id" value="#{adminUserController.id}" />
+        <f:viewAction action="#{adminUserController.initDetail()}" onPostback="false" />
+    </f:metadata>
+
     <ui:param name="activeMenu" value="users" />
 
     <ui:define name="title">
-        #{userController.users.fullName} - User Details
+        #{adminUserController.users.fullName} - User Details
     </ui:define>
 
     <ui:define name="head">
-        <h:outputStylesheet library="css" name="pages/detail.css" />
+        <h:outputStylesheet library="admin" name="css/pages/detail.css" />
     </ui:define>
 
     <ui:define name="content">
@@ -28,10 +33,10 @@
                                 <h1 class="detail-title">User Details</h1>
                             </div>
                             <div class="detail-actions">
-                                <h:commandButton value="Back" action="list" immediate="true"
+                                <h:commandButton value="Back" action="list?faces-redirect=true" immediate="true"
                                                  styleClass="btn btn-outline-secondary" />
                                 <h:commandButton value="Edit User"
-                                                 action="#{userController.editUser(userController.users.id)}"
+                                                 action="#{adminUserController.editUser(adminUserController.users.id)}"
                                                  styleClass="btn btn-primary" />
                             </div>
                         </div>
@@ -49,34 +54,34 @@
                                 <div class="detail-card-body">
                                     <div class="detail-identity-row">
                                         <div class="detail-avatar">
-                                            <h:outputText value="#{userController.users.fullName != null and userController.users.fullName.length() > 0 ? userController.users.fullName.substring(0, 1).toUpperCase() : 'U'}" />
+                                            <h:outputText value="#{adminUserController.users.fullName != null and adminUserController.users.fullName.length() > 0 ? adminUserController.users.fullName.substring(0, 1).toUpperCase() : 'U'}" />
                                         </div>
 
                                         <div class="detail-identity-content">
                                             <div class="detail-identity-field">
                                                 <div class="detail-label">Full Name</div>
                                                 <h3 class="detail-identity-title">
-                                                    <h:outputText value="#{userController.users.fullName}" />
+                                                    <h:outputText value="#{adminUserController.users.fullName}" />
                                                 </h3>
                                             </div>
                                             <div class="detail-identity-meta-grid">
                                                 <div class="detail-item">
                                                     <div class="detail-label">User ID</div>
                                                     <div class="detail-value detail-value-strong">
-                                                        <h:outputText value="User ##{userController.users.id}" />
+                                                        <h:outputText value="User ##{adminUserController.users.id}" />
                                                     </div>
                                                 </div>
                                                 <div class="detail-item">
                                                     <div class="detail-label">Username</div>
                                                     <div class="detail-value">
-                                                        <h:outputText value="@#{userController.users.username}" />
+                                                        <h:outputText value="@#{adminUserController.users.username}" />
                                                     </div>
                                                 </div>
                                                 <div class="detail-item">
                                                     <div class="detail-label">Role</div>
                                                     <div>
-                                                        <span class="badge-role #{userController.users.role == 'ADMIN' ? 'badge-admin' : 'badge-customer'}">
-                                                            <h:outputText value="#{userController.users.role == 'ADMIN' ? 'Admin' : 'Customer'}" />
+                                                        <span class="badge-role #{adminUserController.users.role == 'ADMIN' ? 'badge-admin' : 'badge-customer'}">
+                                                            <h:outputText value="#{adminUserController.users.role == 'ADMIN' ? 'Admin' : 'Customer'}" />
                                                         </span>
                                                     </div>
                                                 </div>
@@ -96,19 +101,19 @@
                                         <div class="detail-item">
                                             <div class="detail-label">Username</div>
                                             <div class="detail-value">
-                                                <h:outputText value="#{userController.users.username}" />
+                                                <h:outputText value="#{adminUserController.users.username}" />
                                             </div>
                                         </div>
                                         <div class="detail-item">
                                             <div class="detail-label">Email Address</div>
-                                            <div class="detail-value #{empty userController.users.email ? 'detail-empty' : ''}">
-                                                <h:outputText value="#{not empty userController.users.email ? userController.users.email : 'None provided'}" />
+                                            <div class="detail-value #{empty adminUserController.users.email ? 'detail-empty' : ''}">
+                                                <h:outputText value="#{not empty adminUserController.users.email ? adminUserController.users.email : 'None provided'}" />
                                             </div>
                                         </div>
                                         <div class="detail-item">
                                             <div class="detail-label">Phone Number</div>
                                             <div class="detail-value">
-                                                <h:outputText value="#{userController.users.phone}" />
+                                                <h:outputText value="#{adminUserController.users.phone}" />
                                             </div>
                                         </div>
                                     </div>
@@ -122,8 +127,8 @@
                             <div class="detail-card">
                                 <div class="detail-card-header detail-status-card-header">
                                     <h2 class="detail-card-title">Status</h2>
-                                    <span class="badge-status #{userController.users.status == 'ACTIVE' ? 'badge-active' : 'badge-inactive'}">
-                                        <h:outputText value="#{userController.users.status == 'ACTIVE' ? 'Active' : 'Inactive'}" />
+                                    <span class="badge-status #{adminUserController.users.status == 'ACTIVE' ? 'badge-active' : 'badge-inactive'}">
+                                        <h:outputText value="#{adminUserController.users.status == 'ACTIVE' ? 'Active' : 'Inactive'}" />
                                     </span>
                                 </div>
                             </div>
@@ -138,16 +143,16 @@
                                         <div class="detail-meta-row">
                                             <span class="detail-meta-label">Created At</span>
                                             <span class="detail-meta-value">
-                                                <h:outputText value="#{userController.users.createdAt}">
-                                                    <f:convertDateTime pattern="MMM dd, yyyy Â· HH:mm" />
+                                                <h:outputText value="#{adminUserController.users.createdAt}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="Asia/Ho_Chi_Minh" />
                                                 </h:outputText>
                                             </span>
                                         </div>
                                         <div class="detail-meta-row">
                                             <span class="detail-meta-label">Updated At</span>
                                             <span class="detail-meta-value">
-                                                <h:outputText value="#{userController.users.updatedAt}">
-                                                    <f:convertDateTime pattern="MMM dd, yyyy Â· HH:mm" />
+                                                <h:outputText value="#{adminUserController.users.updatedAt}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="Asia/Ho_Chi_Minh" />
                                                 </h:outputText>
                                             </span>
                                         </div>

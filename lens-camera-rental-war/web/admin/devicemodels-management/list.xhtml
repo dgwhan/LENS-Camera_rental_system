@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core"
     xmlns:ui="jakarta.faces.facelets" xmlns:pt="jakarta.faces.passthrough" template="/WEB-INF/templates/admin-template.xhtml">
@@ -10,18 +10,10 @@
     </ui:define>
 
     <ui:define name="content">
-        <!-- Flash Alert Message (Create / Update notification) -->
-        <h:panelGroup rendered="#{not empty flash.actionAlert}">
-            <script type="text/javascript">
-                alert('#{flash.actionAlert}');
-            </script>
-        </h:panelGroup>
-
         <script type="text/javascript">
             function onDeleteEvent(data) {
                 if (data.status === 'success') {
                     alert('Device model deleted successfully.');
-                    window.location.reload();
                 }
             }
         </script>
@@ -35,7 +27,7 @@
                             <h1 class="page-title">Device Models Management</h1>
                         </div>
                         <div>
-                            <h:commandButton value="+ Add Model" action="#{deviceModelsController.newDeviceModel()}"
+                            <h:commandButton value="+ Add Model" action="#{adminDeviceModelController.newDeviceModel()}"
                                 styleClass="btn btn-primary" />
                         </div>
                     </div>
@@ -46,25 +38,25 @@
                     <!-- Total Models -->
                     <div class="stat-card">
                         <span class="stat-label">Total Models</span>
-                        <div class="stat-value">#{deviceModelsController.totalDeviceModels}</div>
+                        <div class="stat-value">#{adminDeviceModelController.totalDeviceModels}</div>
                     </div>
 
                     <!-- Brands -->
                     <div class="stat-card">
                         <span class="stat-label">Total Brands</span>
-                        <div class="stat-value">#{deviceModelsController.totalModelBrand}</div>
+                        <div class="stat-value">#{adminDeviceModelController.totalModelBrand}</div>
                     </div>
 
                     <!-- Model Types -->
                     <div class="stat-card">
                         <span class="stat-label">Total Model Types</span>
-                        <div class="stat-value">#{deviceModelsController.totalModelType}</div>
+                        <div class="stat-value">#{adminDeviceModelController.totalModelType}</div>
                     </div>
                 </h:panelGroup>
 
                 <!-- Search Bar -->
                 <h:panelGroup id="searchBar" layout="block" styleClass="users-search">
-                    <h:inputText id="keyword" value="#{deviceModelsController.keyword}"
+                    <h:inputText id="keyword" value="#{adminDeviceModelController.keyword}"
                         pt:placeholder="Search model name, brand, model code, type..."
                         styleClass="form-control search-input">
                         <f:ajax event="keyup" delay="300" render="deviceModelsTableWrapper" />
@@ -74,7 +66,7 @@
                         <f:ajax execute="@form" render="deviceModelsTableWrapper" />
                     </h:commandButton>
 
-                    <h:commandButton value="Reset" action="#{deviceModelsController.resetFilter()}"
+                    <h:commandButton value="Reset" action="#{adminDeviceModelController.resetFilter()}"
                         styleClass="btn btn-outline-secondary">
                         <f:ajax render="searchBar deviceModelsTableWrapper" />
                     </h:commandButton>
@@ -82,7 +74,7 @@
 
                 <div class="card">
                     <h:panelGroup id="deviceModelsTableWrapper" layout="block" styleClass="table-wrapper">
-                        <h:dataTable id="deviceModelsTable" value="#{deviceModelsController.showAllDeviceModel()}" var="dm"
+                        <h:dataTable id="deviceModelsTable" value="#{adminDeviceModelController.showAllDeviceModel()}" var="dm"
                             styleClass="data-table">
 
                             <!-- ID -->
@@ -94,9 +86,9 @@
                             <!-- Image -->
                             <h:column>
                                 <f:facet name="header">Image</f:facet>
-                                <img src="#{deviceModelsController.getImageUrl(dm.imageUrl)}" alt="#{dm.name}"
+                                <img src="#{adminDeviceModelController.getImageUrl(dm.imageUrl)}" alt="#{dm.name}"
                                     class="model-table-thumb"
-                                    onerror="this.onerror=null;this.src='#{deviceModelsController.defaultImageUrl}';" />
+                                    onerror="this.onerror=null;this.src='#{adminDeviceModelController.defaultImageUrl}';" />
                             </h:column>
 
                             <!-- Name -->
@@ -140,11 +132,11 @@
                             <h:column>
                                 <f:facet name="header">Action</f:facet>
                                 <div class="table-row-actions">
-                                    <h:commandButton value="Detail" action="#{deviceModelsController.detailDeviceModel(dm.id)}"
+                                    <h:commandButton value="Detail" action="#{adminDeviceModelController.detailDeviceModel(dm.id)}"
                                         styleClass="btn btn-sm btn-outline-info" />
-                                    <h:commandButton value="Edit" action="#{deviceModelsController.editDeviceModel(dm.id)}"
+                                    <h:commandButton value="Edit" action="#{adminDeviceModelController.editDeviceModel(dm.id)}"
                                         styleClass="btn btn-sm btn-outline-primary" />
-                                    <h:commandButton value="Delete" action="#{deviceModelsController.deleteDeviceModel(dm.id)}"
+                                    <h:commandButton value="Delete" action="#{adminDeviceModelController.deleteDeviceModel(dm.id)}"
                                         styleClass="btn btn-sm btn-outline-danger"
                                         onclick="if (!confirm('Are you sure you want to delete this device model?')) return false;">
                                         <f:ajax render="deviceModelsTableWrapper statsCardsWrapper"

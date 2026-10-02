@@ -8,19 +8,15 @@
                 template="/WEB-INF/templates/client-template.xhtml">
 
     <f:metadata>
-        <f:viewParam name="type" value="#{checkoutController.checkoutType}" />
-        <f:viewParam name="modelId" value="#{checkoutController.directModelId}" />
-        <f:viewParam name="startDate" value="#{checkoutController.directStartDateStr}" />
-        <f:viewParam name="endDate" value="#{checkoutController.directEndDateStr}" />
         <f:viewAction action="#{checkoutController.checkAuthentication()}" />
     </f:metadata>
 
     <ui:define name="title">Checkout - Lens Camera Rental</ui:define>
 
     <ui:define name="head">
-        <h:outputStylesheet library="css" name="components/buttons.css" />
-        <h:outputStylesheet library="css" name="pages/customer.css" />
-        <h:outputStylesheet library="css" name="pages/cart.css" />
+        <h:outputStylesheet library="shared" name="css/components/buttons.css" />
+        <h:outputStylesheet library="client" name="css/pages/customer.css" />
+        <h:outputStylesheet library="client" name="css/pages/cart.css" />
         <style>
             .auth-required {
                 color: var(--color-danger, #ef4444);
@@ -47,8 +43,8 @@
                 <ui:include src="/client/components/breadcrumb.xhtml">
                     <ui:param name="link1Text" value="HOME" />
                     <ui:param name="link1Url" value="#{request.contextPath}/faces/client/pages/index.xhtml" />
-                    <ui:param name="link2Text" value="#{checkoutController.directCheckoutMode ? 'DEVICES' : 'CART'}" />
-                    <ui:param name="link2Url" value="#{checkoutController.directCheckoutMode ? request.contextPath.concat('/faces/client/pages/devices.xhtml') : request.contextPath.concat('/faces/client/pages/cart.xhtml')}" />
+                    <ui:param name="link2Text" value="CART" />
+                    <ui:param name="link2Url" value="#{request.contextPath}/faces/client/pages/cart.xhtml" />
                     <ui:param name="currentPage" value="CHECKOUT" />
                 </ui:include>
             </div>
@@ -64,12 +60,6 @@
 
             <!-- Checkout Form -->
             <h:form id="checkoutForm">
-
-                <!-- Hidden inputs to preserve direct checkout state across postbacks -->
-                <h:inputHidden id="checkoutTypeHidden" value="#{checkoutController.checkoutType}" />
-                <h:inputHidden id="directModelIdHidden" value="#{checkoutController.directModelId}" />
-                <h:inputHidden id="directStartDateHidden" value="#{checkoutController.directStartDateStr}" />
-                <h:inputHidden id="directEndDateHidden" value="#{checkoutController.directEndDateStr}" />
 
                 <!-- Feedback / Error Messages Container -->
                 <h:panelGroup id="checkoutMessagesWrapper" layout="block" styleClass="cart-messages-wrap">
@@ -249,28 +239,16 @@
                                     <span>CONFIRM RENTAL</span>
                                 </h:commandLink>
 
-                                <!-- Secondary Navigation: Back to Cart or Back to Product -->
+                                <!-- Secondary Navigation: Back to Cart -->
                                 <div style="margin-top: 0.75rem;">
-                                    <ui:fragment rendered="#{checkoutController.directCheckoutMode}">
-                                        <ui:include src="/client/components/button.xhtml">
-                                            <ui:param name="id" value="btnBackToProduct" />
-                                            <ui:param name="href" value="#{request.contextPath}/faces/client/pages/detail.xhtml?id=#{checkoutController.directModelId}" />
-                                            <ui:param name="text" value="BACK TO PRODUCT" />
-                                            <ui:param name="variant" value="outline-dark" />
-                                            <ui:param name="size" value="lg" />
-                                            <ui:param name="block" value="true" />
-                                        </ui:include>
-                                    </ui:fragment>
-                                    <ui:fragment rendered="#{not checkoutController.directCheckoutMode}">
-                                        <ui:include src="/client/components/button.xhtml">
-                                            <ui:param name="id" value="btnBackToCart" />
-                                            <ui:param name="href" value="#{request.contextPath}/faces/client/pages/cart.xhtml" />
-                                            <ui:param name="text" value="BACK TO CART" />
-                                            <ui:param name="variant" value="outline-dark" />
-                                            <ui:param name="size" value="lg" />
-                                            <ui:param name="block" value="true" />
-                                        </ui:include>
-                                    </ui:fragment>
+                                    <ui:include src="/client/components/button.xhtml">
+                                        <ui:param name="id" value="btnBackToCart" />
+                                        <ui:param name="href" value="#{request.contextPath}/faces/client/pages/cart.xhtml" />
+                                        <ui:param name="text" value="BACK TO CART" />
+                                        <ui:param name="variant" value="outline-dark" />
+                                        <ui:param name="size" value="lg" />
+                                        <ui:param name="block" value="true" />
+                                    </ui:include>
                                 </div>
 
                             </div>
@@ -285,3 +263,4 @@
     </ui:define>
 
 </ui:composition>
+

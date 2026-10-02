@@ -1,16 +1,16 @@
 package com.lens.cart.model;
 
+import com.lens.auth.UserSessionService;
 import com.lens.cart.CartItem;
 import com.lens.common.util.DateUtil;
 import com.lens.common.util.FacesUtil;
+import com.lens.rental.RentalService;
 import jakarta.inject.Named;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serializable;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -31,7 +31,13 @@ public class CartController implements Serializable {
     private CartService cartService;
 
     @Inject
-    private HttpServletRequest request;
+    private RentalService rentalService;
+
+    @Inject
+    private CartItemAvailabilityService availabilityService;
+
+    @Inject
+    private UserSessionService userSessionService;
 
     /**
      * Checks if the user is authenticated. If not, redirects to the login page
@@ -41,7 +47,7 @@ public class CartController implements Serializable {
      */
     public String checkAuthentication() {
         if (!isAuthenticated()) {
-            return "/client/pages/login?faces-redirect=true";
+            return "/auth/login?faces-redirect=true";
         }
         return null;
     }
@@ -52,19 +58,77 @@ public class CartController implements Serializable {
      * @return true if authenticated, false otherwise
      */
     public boolean isAuthenticated() {
-        if (request != null && request.getUserPrincipal() != null) {
-            return true;
-        }
-        return cartService != null && cartService.resolveCurrentUserId() != null;
+        return userSessionService != null && userSessionService.isAuthenticated();
     }
 
     public CartService getCartService() {
         return cartService;
     }
 
+    /**
+     * Adds a device model to the cart from the device detail page.
+     * Auth guard and user feedback live here; business logic lives in RentalService.
+     *
+     * @param modelId      device model id
+     * @param startDateStr rental start date string (yyyy-MM-dd)
+     * @param endDateStr   rental end date string (yyyy-MM-dd)
+     * @return navigation outcome, or null to stay on the current page
+     */
+    public String addToCart(Integer modelId, String startDateStr, String endDateStr) {
+        if (!isAuthenticated()) {
+            return "/auth/login?faces-redirect=true";
+        }
+        try {
+            rentalService.addToCart(modelId, startDateStr, endDateStr);
+            FacesUtil.addSuccessMessage("Added to cart successfully!");
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            FacesUtil.addErrorMessage(ex.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Adds a device model to the cart and redirects to the checkout page.
+     * Used by the "Rent Now" button on the device detail page.
+     *
+     * @param modelId      device model id
+     * @param startDateStr rental start date string (yyyy-MM-dd)
+     * @param endDateStr   rental end date string (yyyy-MM-dd)
+     * @return navigation outcome to checkout, or null on validation failure
+     */
+    public String rentNow(Integer modelId, String startDateStr, String endDateStr) {
+        if (!isAuthenticated()) {
+            return "/auth/login?faces-redirect=true";
+        }
+        try {
+            rentalService.rentNow(modelId, startDateStr, endDateStr);
+            return "/client/pages/checkout?faces-redirect=true";
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            FacesUtil.addErrorMessage(ex.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Saves the edited rental period for a cart item.
+     * Delegates validation and persistence to RentalService.
+     */
+    public void saveRentalPeriodUpdate() {
+        try {
+            rentalService.updateRentalPeriod(editCartItemId, editStartDate, editEndDate);
+            FacesUtil.addSuccessMessage("Rental period updated successfully.");
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            FacesUtil.addErrorMessage(ex.getMessage());
+        }
+    }
+
+    /**
+     * Removes a single item from the customer's cart.
+     *
+     * @param cartItemId identifier of the cart item to remove
+     */
     public void removeItem(String cartItemId) {
         boolean removed = cartService.removeItem(cartItemId);
-
         if (removed) {
             FacesUtil.addSuccessMessage("Item removed successfully.");
         } else {
@@ -87,99 +151,12 @@ public class CartController implements Serializable {
         clearCart();
     }
 
-    /**
-     * Updates the rental period for a cart item.
-     *
-     * @param cartItemId identifier of the cart item
-     * @param startDate  new start date
-     * @param endDate    new end date
-     */
-    public void updateRentalPeriod(String cartItemId, Date startDate, Date endDate) {
-        if (startDate == null || endDate == null) {
-            FacesUtil.addErrorMessage("Please select valid rental start and end dates.");
-            return;
-        }
-
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        cal.add(Calendar.DAY_OF_MONTH, 1);
-        Date minimumStartDate = cal.getTime();
-
-        Calendar startCal = Calendar.getInstance();
-        startCal.setTime(startDate);
-        startCal.set(Calendar.HOUR_OF_DAY, 0);
-        startCal.set(Calendar.MINUTE, 0);
-        startCal.set(Calendar.SECOND, 0);
-        startCal.set(Calendar.MILLISECOND, 0);
-        Date normalizedStart = startCal.getTime();
-
-        if (normalizedStart.before(minimumStartDate)) {
-            FacesUtil.addErrorMessage("Rental orders must be placed at least one day before the rental start date.");
-            return;
-        }
-
-        Calendar endCal = Calendar.getInstance();
-        endCal.setTime(endDate);
-        endCal.set(Calendar.HOUR_OF_DAY, 0);
-        endCal.set(Calendar.MINUTE, 0);
-        endCal.set(Calendar.SECOND, 0);
-        endCal.set(Calendar.MILLISECOND, 0);
-        Date normalizedEnd = endCal.getTime();
-
-        if (!endDate.after(startDate) || !normalizedEnd.after(normalizedStart)) {
-            FacesUtil.addErrorMessage("Rental end date must be after start date.");
-            return;
-        }
-
-        boolean updated = cartService.updateRentalPeriod(cartItemId, startDate, endDate);
-
-        if (updated) {
-            FacesUtil.addSuccessMessage("Rental period updated successfully.");
-        } else {
-            FacesUtil.addErrorMessage("Unable to update rental period. End date must be after start date.");
-        }
-    }
-
-    /**
-     * Updates the rental period for a cart item using date strings in yyyy-MM-dd
-     * format.
-     *
-     * @param cartItemId   identifier of the cart item
-     * @param startDateStr new start date string
-     * @param endDateStr   new end date string
-     */
-    public void updateRentalPeriod(String cartItemId, String startDateStr, String endDateStr) {
-        if (startDateStr == null || startDateStr.trim().isEmpty() || endDateStr == null
-                || endDateStr.trim().isEmpty()) {
-            FacesUtil.addErrorMessage("Please select valid rental start and end dates.");
-            return;
-        }
-
-        try {
-            Date startDate = DateUtil.parseDate(startDateStr);
-            Date endDate = DateUtil.parseDate(endDateStr);
-            updateRentalPeriod(cartItemId, startDate, endDate);
-        } catch (ParseException ex) {
-            FacesUtil.addErrorMessage("Invalid date format. Please use valid dates.");
-        }
-    }
-
     private String editCartItemId;
     private String editStartDate;
     private String editEndDate;
 
-    public void saveRentalPeriodUpdate() {
-        updateRentalPeriod(editCartItemId, editStartDate, editEndDate);
-    }
-
     public String formatDateForInput(Date date) {
-        if (date == null) {
-            return "";
-        }
-        return new java.text.SimpleDateFormat("yyyy-MM-dd").format(date);
+        return DateUtil.formatDate(date, DateUtil.DEFAULT_INPUT_PATTERN);
     }
 
     public String formatDisplayDate(Date date) {
@@ -340,6 +317,7 @@ public class CartController implements Serializable {
 
     /**
      * Checks whether an individual cart item is currently out of stock.
+     * Delegates to {@link CartItemAvailabilityService}.
      *
      * @param item cart item to test
      * @return true if out of stock
@@ -348,10 +326,7 @@ public class CartController implements Serializable {
         if (item == null) {
             return false;
         }
-        if (cartService != null) {
-            cartService.checkItemAvailability(item);
-        }
-        return item.isOutOfStock();
+        return availabilityService.isOutOfStock(item);
     }
 
     /**

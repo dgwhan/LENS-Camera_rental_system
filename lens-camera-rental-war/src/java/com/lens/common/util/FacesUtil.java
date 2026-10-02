@@ -22,7 +22,6 @@ public class FacesUtil {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, message, null));
     }
 
-    // Gửi phản hồi lỗi HTTP 404 về client để container hiển thị trang 404 chuẩn
     public static void redirectTo404(String message) {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (facesContext != null) {
@@ -31,7 +30,7 @@ public class FacesUtil {
                 ec.responseSendError(404, message != null && !message.isBlank() ? message : "Resource not found");
                 facesContext.responseComplete();
             } catch (IOException ex) {
-                // Ignore fallback
+               
             }
         }
     }

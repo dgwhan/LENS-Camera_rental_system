@@ -1,31 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="jakarta.faces.html"
-                xmlns:f="jakarta.faces.core"
-                xmlns:ui="jakarta.faces.facelets"
-                xmlns:pt="jakarta.faces.passthrough"
-                template="/WEB-INF/templates/admin-template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core"
+    xmlns:ui="jakarta.faces.facelets" xmlns:pt="jakarta.faces.passthrough"
+    template="/WEB-INF/templates/admin-template.xhtml">
 
     <f:metadata>
-        <f:viewParam name="id" value="#{deviceModelsController.id}" />
-        <f:viewAction action="#{deviceModelsController.initForm()}" onPostback="false" />
+        <f:viewParam name="id" value="#{adminDeviceModelController.id}" />
+        <f:viewAction action="#{adminDeviceModelController.initForm()}" onPostback="false" />
     </f:metadata>
 
     <ui:param name="activeMenu" value="models" />
 
     <ui:define name="title">
-        #{deviceModelsController.editMode ? 'Edit Device Model' : 'Create Device Model'} - Lens Camera Rental
+        #{adminDeviceModelController.editMode ? 'Edit Device Model' : 'Create Device Model'} - Lens Camera Rental
     </ui:define>
 
     <ui:define name="head">
-        <h:outputStylesheet library="css" name="components/image-upload.css" />
+        <h:outputStylesheet library="admin" name="css/components/image-upload.css" />
     </ui:define>
 
     <ui:define name="scripts">
-        <h:outputScript library="js" name="money-input.js" />
-        <h:outputScript library="js" name="image-preview.js" />
-        <h:outputScript library="js" name="textarea-auto-resize.js" />
+        <h:outputScript library="js" name="admin/money-input.js" />
+        <h:outputScript library="js" name="admin/image-preview.js" />
+        <h:outputScript library="js" name="admin/textarea-auto-resize.js" />
     </ui:define>
 
     <ui:define name="content">
@@ -39,19 +36,21 @@
 
         <div class="main-wrapper">
             <div class="form-container">
-                <h:form id="deviceModelForm" enctype="multipart/form-data" onsubmit="cleanMoneyInputs();">
-                    <h:inputHidden value="#{deviceModelsController.deviceModels.id}" rendered="#{deviceModelsController.editMode}" />
+                <h:form id="deviceModelForm" enctype="multipart/form-data">
+                    <h:inputHidden value="#{adminDeviceModelController.deviceModels.id}"
+                        rendered="#{adminDeviceModelController.editMode}" />
 
                     <!-- Header -->
                     <div class="page-header">
                         <div class="page-header-row">
                             <div>
                                 <div class="page-pretitle">Device Models Management</div>
-                                <h1 class="page-title">#{deviceModelsController.editMode ? 'Edit Device Model' : 'Create New Device Model'}</h1>
+                                <h1 class="page-title">#{adminDeviceModelController.editMode ? 'Edit Device Model' :
+                                    'Create New Device Model'}</h1>
                             </div>
                             <div>
-                                <h:commandButton value="Back to Models" action="list?faces-redirect=true" immediate="true"
-                                    styleClass="btn btn-outline-secondary" />
+                                <h:commandButton value="Back to Models" action="list?faces-redirect=true"
+                                    immediate="true" styleClass="btn btn-outline-secondary" />
                             </div>
                         </div>
                     </div>
@@ -60,7 +59,8 @@
                     <div class="card">
                         <div class="card-header">
                             <div>
-                                <h2 class="card-title">#{deviceModelsController.editMode ? 'Device Model Information' : 'Model Details'}</h2>
+                                <h2 class="card-title">#{adminDeviceModelController.editMode ? 'Device Model
+                                    Information' : 'Model Details'}</h2>
                             </div>
                         </div>
 
@@ -71,8 +71,8 @@
                                     <h:outputLabel for="name" styleClass="form-label">
                                         Device Model Name <span class="form-required">*</span>
                                     </h:outputLabel>
-                                    <h:inputText id="name" value="#{deviceModelsController.deviceModels.name}" required="true"
-                                        requiredMessage="Device model name is required."
+                                    <h:inputText id="name" value="#{adminDeviceModelController.deviceModels.name}"
+                                        required="true" requiredMessage="Device model name is required."
                                         pt:placeholder="e.g. Sony Alpha A7 IV" styleClass="form-control" />
                                     <h:message for="name" styleClass="field-error" />
                                 </div>
@@ -82,9 +82,9 @@
                                     <h:outputLabel for="brand" styleClass="form-label">
                                         Brand <span class="form-required">*</span>
                                     </h:outputLabel>
-                                    <h:inputText id="brand" value="#{deviceModelsController.deviceModels.brand}" required="true"
-                                        requiredMessage="Brand is required." pt:placeholder="e.g. Sony, Canon, Nikon"
-                                        styleClass="form-control" />
+                                    <h:inputText id="brand" value="#{adminDeviceModelController.deviceModels.brand}"
+                                        required="true" requiredMessage="Brand is required."
+                                        pt:placeholder="e.g. Sony, Canon, Nikon" styleClass="form-control" />
                                     <h:message for="brand" styleClass="field-error" />
                                 </div>
 
@@ -93,9 +93,9 @@
                                     <h:outputLabel for="model" styleClass="form-label">
                                         Model Code <span class="form-required">*</span>
                                     </h:outputLabel>
-                                    <h:inputText id="model" value="#{deviceModelsController.deviceModels.model}" required="true"
-                                        requiredMessage="Model is required." pt:placeholder="e.g. ILCE-7M4"
-                                        styleClass="form-control" />
+                                    <h:inputText id="model" value="#{adminDeviceModelController.deviceModels.model}"
+                                        required="true" requiredMessage="Model is required."
+                                        pt:placeholder="e.g. ILCE-7M4" styleClass="form-control" />
                                     <h:message for="model" styleClass="field-error" />
                                 </div>
 
@@ -104,9 +104,9 @@
                                     <h:outputLabel for="type" styleClass="form-label">
                                         Type <span class="form-required">*</span>
                                     </h:outputLabel>
-                                    <h:inputText id="type" value="#{deviceModelsController.deviceModels.type}" required="true"
-                                        requiredMessage="Type is required." pt:placeholder="e.g. Camera, Lens, Accessory"
-                                        styleClass="form-control" />
+                                    <h:inputText id="type" value="#{adminDeviceModelController.deviceModels.type}"
+                                        required="true" requiredMessage="Type is required."
+                                        pt:placeholder="e.g. Camera, Lens, Accessory" styleClass="form-control" />
                                     <h:message for="type" styleClass="field-error" />
                                 </div>
 
@@ -115,10 +115,10 @@
                                     <h:outputLabel for="rentalPrice" styleClass="form-label">
                                         Rental Price <span class="form-required">*</span>
                                     </h:outputLabel>
-                                    <h:inputText id="rentalPrice" value="#{deviceModelsController.deviceModels.rentalPrice}"
-                                        required="true" requiredMessage="Rental price is required."
-                                        pt:placeholder="e.g. 250,000" pt:inputmode="numeric"
-                                        styleClass="form-control money-input">
+                                    <h:inputText id="rentalPrice"
+                                        value="#{adminDeviceModelController.deviceModels.rentalPrice}" required="true"
+                                        requiredMessage="Rental price is required." pt:placeholder="e.g. 250,000"
+                                        pt:inputmode="numeric" styleClass="form-control money-input">
                                         <f:validateLongRange minimum="0" maximum="999999999999" />
                                     </h:inputText>
                                     <h:message for="rentalPrice" styleClass="field-error" />
@@ -129,10 +129,10 @@
                                     <h:outputLabel for="depositAmount" styleClass="form-label">
                                         Deposit Amount <span class="form-required">*</span>
                                     </h:outputLabel>
-                                    <h:inputText id="depositAmount" value="#{deviceModelsController.deviceModels.depositAmount}"
-                                        required="true" requiredMessage="Deposit amount is required."
-                                        pt:placeholder="e.g. 5,000,000" pt:inputmode="numeric"
-                                        styleClass="form-control money-input">
+                                    <h:inputText id="depositAmount"
+                                        value="#{adminDeviceModelController.deviceModels.depositAmount}" required="true"
+                                        requiredMessage="Deposit amount is required." pt:placeholder="e.g. 5,000,000"
+                                        pt:inputmode="numeric" styleClass="form-control money-input">
                                         <f:validateLongRange minimum="0" maximum="999999999999" />
                                     </h:inputText>
                                     <h:message for="depositAmount" styleClass="field-error" />
@@ -143,9 +143,9 @@
                                     <h:outputLabel for="description" styleClass="form-label">
                                         Description <span class="form-optional">(Optional)</span>
                                     </h:outputLabel>
-                                    <h:inputTextarea id="description" value="#{deviceModelsController.deviceModels.description}"
-                                        rows="3" pt:placeholder="Enter device model description..."
-                                        styleClass="form-control"
+                                    <h:inputTextarea id="description"
+                                        value="#{adminDeviceModelController.deviceModels.description}" rows="3"
+                                        pt:placeholder="Enter device model description..." styleClass="form-control"
                                         style="width: 100%; min-height: 80px; resize: vertical;" />
                                     <h:message for="description" styleClass="field-error" />
                                 </div>
@@ -158,25 +158,28 @@
 
                                     <!-- Current Image Card -->
                                     <div id="currentImageContainer" class="current-image-card"
-                                        style="display: #{deviceModelsController.editMode and deviceModelsController.hasCustomImage ? 'flex' : 'none'};">
-                                        <img id="currentImage" src="#{deviceModelsController.modelImageUrl}"
-                                            data-original-src="#{deviceModelsController.editMode and deviceModelsController.hasCustomImage ? deviceModelsController.modelImageUrl : ''}"
-                                            data-default-src="#{deviceModelsController.defaultImageUrl}"
-                                            alt="#{deviceModelsController.deviceModels.name}" class="current-image-thumb"
-                                            onerror="this.onerror=null;this.src='#{deviceModelsController.defaultImageUrl}';" />
+                                        style="display: #{adminDeviceModelController.editMode and adminDeviceModelController.hasCustomImage ? 'flex' : 'none'};">
+                                        <img id="currentImage" src="#{adminDeviceModelController.modelImageUrl}"
+                                            data-original-src="#{adminDeviceModelController.editMode and adminDeviceModelController.hasCustomImage ? adminDeviceModelController.modelImageUrl : ''}"
+                                            data-default-src="#{adminDeviceModelController.defaultImageUrl}"
+                                            alt="#{adminDeviceModelController.deviceModels.name}"
+                                            class="current-image-thumb"
+                                            onerror="this.onerror=null;this.src='#{adminDeviceModelController.defaultImageUrl}';" />
 
                                         <div id="currentImageMeta" class="current-image-meta"
-                                            style="display: #{deviceModelsController.editMode and deviceModelsController.hasCustomImage ? 'flex' : 'none'};">
+                                            style="display: #{adminDeviceModelController.editMode and adminDeviceModelController.hasCustomImage ? 'flex' : 'none'};">
                                             <span id="currentImageLabel" class="current-image-label">
                                                 Current image
                                             </span>
                                             <span id="currentImageFilename" class="current-image-filename">
-                                                #{deviceModelsController.editMode and deviceModelsController.hasCustomImage ? deviceModelsController.deviceModels.imageUrl : ''}
+                                                #{adminDeviceModelController.editMode and
+                                                adminDeviceModelController.hasCustomImage ?
+                                                adminDeviceModelController.deviceModels.imageUrl : ''}
                                             </span>
-                                            <span class="current-image-dims">120 Ã— 120</span>
+                                            <span class="current-image-dims">120 x 120</span>
                                             <div class="current-image-divider"></div>
                                             <button type="button" class="btn btn-outline-danger btn-sm btn-remove-image"
-                                                onclick="removeCurrentImage(); var fn=document.getElementById('uploadFileName'); if(fn){ fn.textContent='No file chosen'; }">
+                                                onclick="removeCurrentImage();">
                                                 Remove image
                                             </button>
                                         </div>
@@ -184,9 +187,10 @@
 
                                     <!-- Empty State (when no image exists) -->
                                     <div id="currentImageEmptyState" class="current-image-empty-state"
-                                        style="display: #{deviceModelsController.editMode and deviceModelsController.hasCustomImage ? 'none' : 'flex'};">
+                                        style="display: #{adminDeviceModelController.editMode and adminDeviceModelController.hasCustomImage ? 'none' : 'flex'};">
                                         <span class="empty-state-title">No image yet</span>
-                                        <span class="empty-state-subtitle">Choose a file to upload a device image.</span>
+                                        <span class="empty-state-subtitle">Choose a file to upload a device
+                                            image.</span>
                                     </div>
 
                                     <!-- Choose New Image -->
@@ -203,20 +207,22 @@
                                                 </div>
                                                 <div class="upload-text-content">
                                                     <span class="upload-title">Choose file</span>
-                                                    <span id="uploadFileName" class="upload-filename">No file chosen</span>
+                                                    <span id="uploadFileName" class="upload-filename">No file
+                                                        chosen</span>
                                                 </div>
                                             </div>
                                             <button type="button" class="btn-browse" tabindex="-1">Browse</button>
-                                            <h:inputFile id="imageFile" value="#{deviceModelsController.imagePart}"
-                                                styleClass="upload-hidden-input" accept="image/png, image/jpeg, image/webp"
-                                                onchange="var f=this.files&amp;&amp;this.files[0]; var fn=document.getElementById('uploadFileName'); if(fn){ fn.textContent=f?f.name:'No file chosen'; } var cfn=document.getElementById('currentImageFilename'); if(cfn&amp;&amp;f){ cfn.textContent=f.name; }" />
+                                            <h:inputFile id="imageFile" value="#{adminDeviceModelController.imagePart}"
+                                                styleClass="upload-hidden-input"
+                                                accept="image/png, image/jpeg, image/webp" />
                                         </div>
                                         <small class="form-hint upload-hint">
-                                            JPG, PNG, WEBP Â· Max 5MB
+                                            JPG, PNG, WEBP - Max 5MB
                                         </small>
                                     </div>
 
-                                    <h:inputHidden id="removeCurrentImage" value="#{deviceModelsController.removeCurrentImage}" />
+                                    <h:inputHidden id="removeCurrentImage"
+                                        value="#{adminDeviceModelController.removeCurrentImage}" />
                                     <h:message for="imageFile" styleClass="field-error" />
                                 </div>
                             </div>
@@ -227,11 +233,12 @@
                             <h:commandButton value="Cancel" action="list?faces-redirect=true" immediate="true"
                                 styleClass="btn btn-outline-secondary" />
                             <div>
-                                <h:commandButton value="Save Changes" action="#{deviceModelsController.updateDeviceModel}"
-                                    onclick="cleanMoneyInputs();" rendered="#{deviceModelsController.editMode}"
-                                    styleClass="btn btn-primary" />
-                                <h:commandButton value="Create Device Model" action="#{deviceModelsController.insertDeviceModel}"
-                                    onclick="cleanMoneyInputs();" rendered="#{not deviceModelsController.editMode}"
+                                <h:commandButton value="Save Changes"
+                                    action="#{adminDeviceModelController.updateDeviceModel}"
+                                    rendered="#{adminDeviceModelController.editMode}" styleClass="btn btn-primary" />
+                                <h:commandButton value="Create Device Model"
+                                    action="#{adminDeviceModelController.insertDeviceModel}"
+                                    rendered="#{not adminDeviceModelController.editMode}"
                                     styleClass="btn btn-primary" />
                             </div>
                         </div>

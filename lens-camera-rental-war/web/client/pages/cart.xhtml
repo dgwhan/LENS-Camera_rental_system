@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="jakarta.faces.html"
@@ -13,13 +13,13 @@
     <ui:define name="title">Rental Cart - Lens Camera Rental</ui:define>
 
     <ui:define name="head">
-        <h:outputStylesheet library="css" name="components/buttons.css" />
-        <h:outputStylesheet library="css" name="components/badges.css" />
-        <h:outputStylesheet library="css" name="components/rental-period.css" />
-        <h:outputStylesheet library="css" name="components/datepicker.css" />
-        <h:outputStylesheet library="css" name="pages/customer.css" />
-        <h:outputStylesheet library="css" name="pages/cart.css" />
-        <h:outputScript library="js" name="cart.js" />
+        <h:outputStylesheet library="shared" name="css/components/buttons.css" />
+        <h:outputStylesheet library="shared" name="css/components/badges.css" />
+        <h:outputStylesheet library="client" name="css/components/rental-period.css" />
+        <h:outputStylesheet library="client" name="css/components/datepicker.css" />
+        <h:outputStylesheet library="client" name="css/pages/customer.css" />
+        <h:outputStylesheet library="client" name="css/pages/cart.css" />
+        <h:outputScript library="js" name="cart/cart.js" />
     </ui:define>
 
     <ui:define name="content">
@@ -150,3 +150,5 @@
     </ui:define>
 
 </ui:composition>
+
+
