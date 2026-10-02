@@ -18,10 +18,31 @@
         <ui:insert name="head" />
     </h:head>
     <h:body>
-        <!-- Flash Alert Message if any -->
-        <h:panelGroup rendered="#{not empty flash.actionAlert}">
+        <!-- Global Feedback & Alert Messages (localhost say alert) -->
+        <h:panelGroup id="globalAdminAlertsPanel" rendered="#{not empty flash.actionAlert or not empty facesContext.messageList}" layout="block" style="display:none;">
+            <h:outputText value="#{flash.actionAlert}" styleClass="admin-alert-msg" rendered="#{not empty flash.actionAlert}" />
+            <ui:repeat value="#{facesContext.messageList}" var="m">
+                <span class="admin-alert-msg">#{m.summary}</span>
+            </ui:repeat>
             <script type="text/javascript">
-                alert('#{flash.actionAlert}');
+                (function() {
+                    var els = document.querySelectorAll('.admin-alert-msg');
+                    var msgs = [];
+                    els.forEach(function(el) {
+                        var text = (el.textContent || '').trim();
+                        if (text) {
+                            msgs.push(text);
+                        }
+                    });
+                    var unique = Array.from(new Set(msgs));
+                    if (unique.length &gt; 0) {
+                        var alertText = unique.join('\n');
+                        if (window._lastAdminAlertShown !== alertText) {
+                            window._lastAdminAlertShown = alertText;
+                            alert(alertText);
+                        }
+                    }
+                })();
             </script>
         </h:panelGroup>
 

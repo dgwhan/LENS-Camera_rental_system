@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="jakarta.faces.html"
@@ -26,13 +26,7 @@
     </ui:define>
 
     <ui:define name="content">
-        <!-- ThÃƒÂ´ng bÃƒÂ¡o lÃ¡Â»â€”i khi thao tÃƒÂ¡c thÃ¡ÂºÂ¥t bÃ¡ÂºÂ¡i -->
-        <h:panelGroup
-            rendered="#{not empty facesContext.messageList and (facesContext.messageList[0].summary eq 'Failed to create device.' or facesContext.messageList[0].summary eq 'Failed to update device.')}">
-            <script type="text/javascript">
-                alert('#{facesContext.messageList[0].summary}');
-            </script>
-        </h:panelGroup>
+
 
         <div class="main-wrapper">
             <div class="form-container">

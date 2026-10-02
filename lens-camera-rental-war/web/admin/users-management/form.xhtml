@@ -19,12 +19,7 @@
     </ui:define>
 
     <ui:define name="content">
-        <h:panelGroup
-            rendered="#{not empty facesContext.messageList and (facesContext.messageList[0].summary eq 'Failed to create user.' or facesContext.messageList[0].summary eq 'Failed to update user.')}">
-            <script type="text/javascript">
-                alert('#{facesContext.messageList[0].summary}');
-            </script>
-        </h:panelGroup>
+
 
         <div class="main-wrapper">
             <div class="user-page-container">

@@ -111,22 +111,16 @@ public class CheckoutController implements Serializable {
         }
 
         try {
-            RentalOrders rentalOrder = checkoutService.processCheckout(
-                    userId,
-                    customerName.trim(),
-                    customerPhone.trim(),
-                    selectedIds);
+            List<RentalOrders> rentalOrders = checkoutService.processCheckout(userId, customerName.trim(), customerPhone.trim(),  customerAddress.trim(), selectedIds);
 
-            if (rentalOrder == null) {
+            if (rentalOrders == null || rentalOrders.isEmpty()) {
                 FacesUtil.addErrorMessage("Unable to complete checkout.");
                 return null;
             }
 
-            // Remove selected items from in-memory cart
             cartService.removeSelectedItems();
 
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put(
-                    "actionAlert", "Rental order placed successfully.");
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("actionAlert", "Rental order placed successfully.");
             return "/client/pages/index?faces-redirect=true";
 
         } catch (IllegalArgumentException | IllegalStateException ex) {

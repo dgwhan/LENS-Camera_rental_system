@@ -6,13 +6,10 @@ import com.lens.cart.entity.CartItems;
 import com.lens.cart.facade.CartItemsFacadeLocal;
 import com.lens.common.util.DateUtil;
 import com.lens.device_model.entity.DeviceModels;
-import com.lens.user.entity.Users;
 import com.lens.user.facade.UsersFacadeLocal;
 import jakarta.ejb.EJB;
 import jakarta.enterprise.context.SessionScoped;
-import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -84,7 +81,6 @@ public class CartService implements Serializable {
         return cartItems;
     }
 
-
     public void loadUserCart(Integer userId) {
         cartItems.clear();
         currentUserId = userId;
@@ -104,7 +100,6 @@ public class CartService implements Serializable {
         cartItems.add(cartItem);
         return true;
     }
-
 
     public boolean addToCart(DeviceModels deviceModel, Date startDate, Date endDate) {
         Integer userId = resolveCurrentUserId();
@@ -127,7 +122,7 @@ public class CartService implements Serializable {
         return true;
     }
 
-    //updates the rental period and recalculates subtotal for an existing cartitem
+    // updates the rental period and recalculates subtotal for an existing cartitem
     public boolean updateRentalPeriod(String cartItemId, Date startDate, Date endDate) {
         Integer userId = resolveCurrentUserId();
 
@@ -178,7 +173,6 @@ public class CartService implements Serializable {
         cartItems.clear();
     }
 
-
     public CartItem findItemById(String cartItemId) {
         if (cartItemId == null) {
             return null;
@@ -188,7 +182,6 @@ public class CartService implements Serializable {
                 .findFirst()
                 .orElse(null);
     }
-
 
     public CartItem findDuplicateItem(CartItem cartItem) {
         if (cartItem == null || cartItem.getDeviceModels() == null) {
@@ -219,7 +212,7 @@ public class CartService implements Serializable {
                 .orElse(null);
     }
 
-     //selects only the specified target item.
+    // selects only the specified target item.
     public void selectOnly(CartItem targetItem) {
         if (targetItem == null) {
             return;
@@ -231,7 +224,7 @@ public class CartService implements Serializable {
         }
     }
 
-    //returns only the cart items that are currently selected by the customer.
+    // returns only the cart items that are currently selected by the customer.
     public List<CartItem> getSelectedCartItems() {
         List<CartItem> allItems = getCartItems();
         if (allItems == null) {
@@ -257,7 +250,8 @@ public class CartService implements Serializable {
     public long calculateSelectedTotal() {
         return calculateSelectedRentalSubtotal() + calculateSelectedDepositTotal();
     }
-    //returns the count of selected items in the cart.
+
+    // returns the count of selected items in the cart.
     public int getSelectedItemsCount() {
         return getSelectedCartItems().size();
     }

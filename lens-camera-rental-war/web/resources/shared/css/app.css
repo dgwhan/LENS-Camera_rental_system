@@ -166,10 +166,10 @@ a:hover {
     color: #991b1b;
 }
 
-ul.client-messages {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+ul.client-messages,
+.cart-messages-wrap,
+ul.auth-messages-list {
+    display: none !important;
 }
 
 /* --------------------------------------------------------------------------

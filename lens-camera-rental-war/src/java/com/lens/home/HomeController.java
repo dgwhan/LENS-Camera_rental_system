@@ -9,7 +9,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Named;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,7 +43,8 @@ public class HomeController implements Serializable {
         try {
             List<DeviceModels> all = deviceModelsFacade.search("");
             if (all != null && !all.isEmpty()) {
-                // Featured Devices chỉ hiển thị các thiết bị AVAILABLE, không hiện thiết bị OUT OF STOCK
+                // Featured Devices chỉ hiển thị các thiết bị AVAILABLE, không hiện thiết bị OUT
+                // OF STOCK
                 List<DeviceModels> availableList = all.stream()
                         .filter(d -> isProductAvailable(d.getId()))
                         .collect(java.util.stream.Collectors.toList());
@@ -57,7 +57,6 @@ public class HomeController implements Serializable {
             featuredDevices = Collections.emptyList();
         }
     }
-
 
     public List<DeviceModels> getFeaturedDevices() {
         if (featuredDevices == null) {
@@ -100,4 +99,3 @@ public class HomeController implements Serializable {
         return availabilityService.getProductAvailabilityStatus(id);
     }
 }
-

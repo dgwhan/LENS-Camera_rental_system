@@ -8,7 +8,6 @@ import com.lens.rental.RentalService;
 import jakarta.inject.Named;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,7 +66,8 @@ public class CartController implements Serializable {
 
     /**
      * Adds a device model to the cart from the device detail page.
-     * Auth guard and user feedback live here; business logic lives in RentalService.
+     * Auth guard and user feedback live here; business logic lives in
+     * RentalService.
      *
      * @param modelId      device model id
      * @param startDateStr rental start date string (yyyy-MM-dd)
@@ -356,7 +356,8 @@ public class CartController implements Serializable {
 
     /**
      * determines whether checkout should be blocked.
-     * blocked if no items are selected, or if any selected item is expired or out of stock.
+     * blocked if no items are selected, or if any selected item is expired or out
+     * of stock.
      *
      * @return true if checkout is blocked
      */
@@ -382,7 +383,7 @@ public class CartController implements Serializable {
             return Collections.emptyList();
         }
         List<CartItem> sortedList = new ArrayList<>(cartService.getCartItems());
-        //trigger availability check on all items
+        // trigger availability check on all items
         for (CartItem item : sortedList) {
             isItemOutOfStock(item);
         }
@@ -390,14 +391,13 @@ public class CartController implements Serializable {
             boolean expired = item.isExpired();
             boolean outOfStock = item.isOutOfStock();
             if (!expired && !outOfStock) {
-                return 0; //Available first
+                return 0; // Available first
             } else if (outOfStock && !expired) {
-                return 1; //Out of stock
+                return 1; // Out of stock
             } else {
-                return 2; //Expired
+                return 2; // Expired
             }
         }));
         return sortedList;
     }
 }
-

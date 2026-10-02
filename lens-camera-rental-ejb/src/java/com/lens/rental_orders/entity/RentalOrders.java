@@ -120,13 +120,12 @@ public class RentalOrders implements Serializable {
     @NotNull
     @Size(min = 1, max = 20)
     @Column(name = "deposit_refund_status")
-    private String depositRefundStatus = "NOT_REFUNDED";
+    private String depositRefundStatus;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Users userId;
 
     public RentalOrders() {
-        this.depositRefundStatus = "NOT_REFUNDED";
     }
 
     public RentalOrders(Integer id) {

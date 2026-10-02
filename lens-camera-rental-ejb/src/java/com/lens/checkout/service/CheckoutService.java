@@ -44,12 +44,12 @@ public class CheckoutService implements CheckoutServiceLocal {
 
 
     @Override
-    public RentalOrders processCheckout(Integer userId, String customerName, String customerPhone) {
-        return processCheckout(userId, customerName, customerPhone, null);
+    public List<RentalOrders> processCheckout(Integer userId, String customerName, String customerPhone, String customerAddress) {
+        return processCheckout(userId, customerName, customerPhone, customerAddress, null);
     }
 
     @Override
-    public RentalOrders processCheckout(Integer userId, String customerName, String customerPhone, List<Integer> selectedCartItemIds) {
+    public List<RentalOrders> processCheckout(Integer userId, String customerName, String customerPhone, String customerAddress, List<Integer> selectedCartItemIds) {
         Users user = validateUser(userId);
 
         //load cart
@@ -92,7 +92,7 @@ public class CheckoutService implements CheckoutServiceLocal {
                 throw new IllegalArgumentException("Invalid rental price or deposit amount.");
             }
 
-            // check availability for each cart item
+            //check availability for each cart item
             Integer deviceModelId = item.getDeviceModelId().getId();
             AvailabilityResult availability = availabilityService.checkAvailability(deviceModelId, startDate, endDate);
 
@@ -104,30 +104,30 @@ public class CheckoutService implements CheckoutServiceLocal {
         //check combined capacity via AvailabilityService (single source of truth)
         availabilityService.validateCombinedCapacity(cartItems);
 
-        // calculate order totals from snapshot values
-        long subtotal = 0;
-        long depositTotal = 0;
+       //create one rental order and rental item for each cart item
+       List<RentalOrders> rentalOrders = new ArrayList<>();
+       
+       for (CartItems cartItem : cartItems) {
+           long itemSubtotal = (long) cartItem.getDuration() * cartItem.getRentalPrice();
+           long itemDeposit = cartItem.getDepositAmount();
+           long itemTotal = itemSubtotal + itemDeposit;
+           
+           RentalOrders rentalOrder = createRentalOrder(user, customerName, customerPhone, customerAddress, itemSubtotal, itemDeposit, itemTotal, bookingDate);
+           createRentalItem(
+                   rentalOrder, 
+                   cartItem.getDeviceModelId(), 
+                   cartItem.getStartDate(),
+                   cartItem.getEndDate(),
+                   cartItem.getDuration(),
+                   cartItem.getRentalPrice(),
+                   cartItem.getDepositAmount(),
+                   itemSubtotal
+           );
+           
+           rentalOrders.add(rentalOrder);
+       }
 
-        for (CartItems item : cartItems) {
-            long itemSubtotal = (long) item.getDuration() * item.getRentalPrice();
-            subtotal += itemSubtotal;
-            depositTotal += item.getDepositAmount();
-        }
-
-        long totalPayable = subtotal + depositTotal;
-
-        //create rental order
-        RentalOrders rentalOrder = createRentalOrder(user, customerName, customerPhone, subtotal, depositTotal,
-                totalPayable, bookingDate);
-
-        //create rental items
-        for (CartItems cartItem : cartItems) {
-            long itemSubtotal = (long) cartItem.getDuration() * cartItem.getRentalPrice();
-            createRentalItem(rentalOrder, cartItem.getDeviceModelId(), cartItem.getStartDate(), cartItem.getEndDate(),
-                    cartItem.getDuration(), cartItem.getRentalPrice(), cartItem.getDepositAmount(), itemSubtotal);
-        }
-
-        //clear only processed cart items after successful order creation
+        //clear only processed cart items after successful order creation (DB handle)
         if (selectedCartItemIds != null && !selectedCartItemIds.isEmpty()) {
             for (CartItems cartItem : cartItems) {
                 cartItemsFacade.deleteByIdAndUserId(cartItem.getId(), userId);
@@ -136,7 +136,7 @@ public class CheckoutService implements CheckoutServiceLocal {
             cartItemsFacade.deleteByUserId(userId);
         }
 
-        return rentalOrder;
+        return rentalOrders; 
     }
 
     private Users validateUser(Integer userId) {
@@ -198,13 +198,14 @@ public class CheckoutService implements CheckoutServiceLocal {
         }
     }
 
-    private RentalOrders createRentalOrder(Users user, String customerName, String customerPhone,
+    private RentalOrders createRentalOrder(Users user, String customerName, String customerPhone, String customerAddress,
             long subtotal, long depositTotal, long totalPayable, Date createdAt) {
         Date orderTimestamp = createdAt != null ? createdAt : new Date();
         RentalOrders rentalOrder = new RentalOrders();
         rentalOrder.setUserId(user);
         rentalOrder.setCustomerName(customerName);
         rentalOrder.setCustomerPhone(customerPhone);
+        rentalOrder.setDeliveryAddress(customerAddress);
         rentalOrder.setStatus("PENDING");
         rentalOrder.setSubtotal(subtotal);
         rentalOrder.setDepositTotal(depositTotal);

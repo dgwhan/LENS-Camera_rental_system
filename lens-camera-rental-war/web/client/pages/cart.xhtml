@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="jakarta.faces.html"
@@ -47,16 +47,15 @@
             <!-- Cart Main Form Wrapper for AJAX Updates -->
             <h:form id="cartForm" prependId="false">
 
-                <!-- Global Feedback Messages -->
-                <h:panelGroup id="cartMessagesWrapper" layout="block" styleClass="cart-messages-wrap">
-                    <h:messages globalOnly="true"
-                                styleClass="client-messages"
-                                infoClass="client-alert client-alert-success"
-                                errorClass="client-alert client-alert-danger" />
-                </h:panelGroup>
-
                 <!-- Container rendered dynamically based on cart state -->
                 <h:panelGroup id="cartMainWrapper" layout="block">
+
+                    <!-- Alert feedback for AJAX cart actions -->
+                    <ui:fragment rendered="#{not empty facesContext.messageList}">
+                        <script type="text/javascript">
+                            alert('#{facesContext.messageList[0].summary}');
+                        </script>
+                    </ui:fragment>
 
                     <!-- ========================================================
                          EMPTY STATE (when cart has no items)
