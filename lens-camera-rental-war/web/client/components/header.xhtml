@@ -1,132 +1,137 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets">
-<ui:composition>
-    <!-- JSF Stylesheet & Script Resources -->
-    <h:outputStylesheet library="client" name="css/components/header.css" />
-    <h:outputStylesheet library="client" name="css/components/search.css" />
-    <h:outputStylesheet library="client" name="css/components/nav.css" />
-    <h:outputScript library="js" name="common/header.js" />
+    <ui:composition>
+        <!-- JSF Stylesheet & Script Resources -->
+        <h:outputStylesheet library="client" name="css/components/header.css" />
+        <h:outputStylesheet library="client" name="css/components/search.css" />
+        <h:outputStylesheet library="client" name="css/components/nav.css" />
+        <h:outputScript library="js" name="common/header.js" />
 
-    <header class="site-header">
-        <div class="header-top">
-            <!-- Row 1: Primary Header Row (72px) -->
-            <div class="header-log header-top-container">
-                <!-- Mobile Navigation Menu Button (Pure CSS Hamburger Icon, No SVG) -->
-                <button type="button" class="mobile-menu-btn" aria-label="Menu">
-                    <span class="menu-icon" aria-hidden="true"></span>
-                </button>
+        <header class="site-header">
+            <div class="header-top">
+                <!-- Row 1: Primary Header Row (72px) -->
+                <div class="header-log header-top-container">
+                    <!-- Mobile Navigation Menu Button (Pure CSS Hamburger Icon, No SVG) -->
+                    <button type="button" class="mobile-menu-btn" aria-label="Menu">
+                        <span class="menu-icon" aria-hidden="true"></span>
+                    </button>
 
-                <!-- Brand / Logo Typographic Wordmark -->
-                <div class="header-logo">
-                    <a href="#{request.contextPath}/faces/client/pages/index.xhtml" class="header-brand brand-link"
-                        aria-label="LENS Camera Rental Home">
-                        <h1 class="title brand-title">LENS</h1>
-                        <p class="sub-title brand-subtitle">CAMERA RENTAL</p>
-                    </a>
-                </div>
-
-                <!-- Centered Search Field -->
-                <div class="header-search">
-                    <form action="#{request.contextPath}/faces/client/pages/index.xhtml" method="get" id="searchForm"
-                        class="search-form">
-                        <span class="search-icon-wrapper" aria-hidden="true">
-                            <span class="search-icon"></span>
-                        </span>
-                        <input type="text" name="q" id="searchInput" class="search-input" placeholder="Search devices"
-                            aria-label="Search devices" />
-                    </form>
-                </div>
-
-                <!-- Actions: Cart & Authentication -->
-                <div class="header-actions">
-                    <!-- Cart -->
-                    <h:panelGroup id="headerCartWrapper" layout="block" styleClass="header-action header-cart">
-                        <ui:param name="isUserAuth" value="#{not empty request.userPrincipal or not empty sessionScope.username or not empty sessionScope.fullName}" />
-                        <a href="#{isUserAuth ? request.contextPath.concat('/faces/client/pages/cart.xhtml') : request.contextPath.concat('/faces/auth/login.xhtml')}" class="cart-link header-cart-link"
-                            aria-label="Shopping Cart">
-                            <span class="cart-icon" aria-hidden="true"></span>
-                            <ui:fragment rendered="#{isUserAuth and (cartController.itemCount > 0 or (not empty sessionScope.cartCount and sessionScope.cartCount != 0))}">
-                                <span class="cart-badge">#{cartController.itemCount > 0 ? cartController.itemCount : sessionScope.cartCount}</span>
-                            </ui:fragment>
+                    <!-- Brand / Logo Typographic Wordmark -->
+                    <div class="header-logo">
+                        <a href="#{request.contextPath}/faces/client/pages/index.xhtml" class="header-brand brand-link"
+                           aria-label="LENS Camera Rental Home">
+                            <h1 class="title brand-title">LENS</h1>
+                            <p class="sub-title brand-subtitle">CAMERA RENTAL</p>
                         </a>
-                    </h:panelGroup>
+                    </div>
 
-                    <!-- Monochrome Action Divider -->
-                    <span class="action-divider" aria-hidden="true"></span>
+                    <!-- Centered Search Field -->
+                    <div class="header-search">
+                        <form action="#{request.contextPath}/faces/client/pages/index.xhtml" method="get" id="searchForm"
+                              class="search-form">
+                            <span class="search-icon-wrapper" aria-hidden="true">
+                                <span class="search-icon"></span>
+                            </span>
+                            <input type="text" name="q" id="searchInput" class="search-input" placeholder="Search devices"
+                                   aria-label="Search devices" />
+                        </form>
+                    </div>
 
-                    <!-- Auth Actions: Guest vs Logged In State -->
-                    <div class="header-action header-auth">
-                        <!-- Guest State: Show Login & Register Links -->
-                        <h:panelGroup layout="block" styleClass="auth-guest-links"
-                            rendered="#{empty request.userPrincipal and empty sessionScope.username and empty sessionScope.fullName}">
-                            <a href="#{request.contextPath}/faces/auth/login.xhtml" class="auth-link" aria-label="Login">
-                                <span class="auth-text">Login</span>
-                            </a>
-                            <a href="#{request.contextPath}/faces/auth/register.xhtml" class="auth-link auth-register"
-                                aria-label="Register">
-                                <span class="auth-text">Register</span>
+                    <!-- Actions: Cart & Authentication -->
+                    <div class="header-actions">
+                        <!-- Cart -->
+                        <h:panelGroup id="headerCartWrapper" layout="block" styleClass="header-action header-cart">
+                            <ui:param name="isUserAuth" value="#{not empty request.userPrincipal or not empty sessionScope.username or not empty sessionScope.fullName}" />
+                            <a href="#{isUserAuth ? request.contextPath.concat('/faces/client/pages/cart.xhtml') : request.contextPath.concat('/faces/auth/login.xhtml')}" class="cart-link header-cart-link"
+                               aria-label="Shopping Cart">
+                                <span class="cart-icon" aria-hidden="true"></span>
+                                <ui:fragment rendered="#{isUserAuth and (cartController.itemCount > 0 or (not empty sessionScope.cartCount and sessionScope.cartCount != 0))}">
+                                    <span class="cart-badge">#{cartController.itemCount > 0 ? cartController.itemCount : sessionScope.cartCount}</span>
+                                </ui:fragment>
                             </a>
                         </h:panelGroup>
 
-                        <!-- Logged In State: Show User Menu & Logout -->
-                        <h:panelGroup layout="block" styleClass="auth-user-logged"
-                            rendered="#{not empty request.userPrincipal or not empty sessionScope.username or not empty sessionScope.fullName}">
-                            <!-- Admin Shortcut (if user has ADMIN role) -->
-                            <h:panelGroup rendered="#{request.isUserInRole('ADMIN') or sessionScope.role eq 'ADMIN'}">
-                                <a href="#{request.contextPath}/faces/admin/dashboard.xhtml"
-                                    class="auth-link auth-admin-link" aria-label="Admin Dashboard"
-                                    title="Go to Admin Dashboard">
-                                    <span class="auth-text">Dashboard</span>
+                        <!-- Monochrome Action Divider -->
+                        <span class="action-divider" aria-hidden="true"></span>
+
+                        <!-- Auth Actions: Guest vs Logged In State -->
+                        <div class="header-action header-auth">
+                            <!-- Guest State: Show Login & Register Links -->
+                            <h:panelGroup layout="block" styleClass="auth-guest-links"
+                                          rendered="#{empty request.userPrincipal and empty sessionScope.username and empty sessionScope.fullName}">
+                                <a href="#{request.contextPath}/faces/auth/login.xhtml" class="auth-link" aria-label="Login">
+                                    <span class="auth-text">Login</span>
+                                </a>
+                                <a href="#{request.contextPath}/faces/auth/register.xhtml" class="auth-link auth-register"
+                                   aria-label="Register">
+                                    <span class="auth-text">Register</span>
                                 </a>
                             </h:panelGroup>
 
-                            <!-- User Dropdown -->
-                            <div class="user-dropdown">
-                                <button type="button" class="auth-link user-dropdown-toggle" aria-label="User Profile">
-                                    <span class="auth-text">#{not empty sessionScope.fullName ? sessionScope.fullName :
-                                        (not empty authController.currentUserFullName ?
-                                        authController.currentUserFullName : sessionScope.username)}</span>
-                                    <span class="user-dropdown-caret">&#9662;</span>
-                                </button>
-                                <div id="userDropdownMenu" class="user-dropdown-menu">
-                                    <h:form id="headerLogoutForm" styleClass="user-dropdown-form">
-                                        <h:commandLink action="#{authController.logout}" value="Logout"
-                                            styleClass="user-dropdown-item dropdown-item-danger" />
-                                    </h:form>
+                            <!-- Logged In State: Show User Menu & Logout -->
+                            <h:panelGroup layout="block" styleClass="auth-user-logged"
+                                          rendered="#{not empty request.userPrincipal or not empty sessionScope.username or not empty sessionScope.fullName}">
+                                <!-- Admin Shortcut (if user has ADMIN role) -->
+                                <h:panelGroup rendered="#{request.isUserInRole('ADMIN') or sessionScope.role eq 'ADMIN'}">
+                                    <a href="#{request.contextPath}/faces/admin/dashboard.xhtml"
+                                       class="auth-link auth-admin-link" aria-label="Admin Dashboard"
+                                       title="Go to Admin Dashboard">
+                                        <span class="auth-text">Dashboard</span>
+                                    </a>
+                                </h:panelGroup>
+
+                                <!-- User Dropdown -->
+                                <div class="user-dropdown">
+                                    <button type="button" class="auth-link user-dropdown-toggle" aria-label="User Profile">
+                                        <span class="auth-text">#{not empty sessionScope.fullName ? sessionScope.fullName :
+                                                                  (not empty authController.currentUserFullName ?
+                                                                  authController.currentUserFullName : sessionScope.username)}</span>
+                                        <span class="user-dropdown-caret">&#9662;</span>
+                                    </button>
+                                    <div id="userDropdownMenu" class="user-dropdown-menu">
+                                        <a href="#{request.contextPath}/faces/client/pages/orders.xhtml"
+                                           class="user-dropdown-item">
+                                            My Orders
+                                        </a>
+
+                                        <h:form id="headerLogoutForm" styleClass="user-dropdown-form">
+                                            <h:commandLink action="#{authController.logout}" value="Logout"
+                                                           styleClass="user-dropdown-item dropdown-item-danger" />
+                                        </h:form>
+                                    </div>
                                 </div>
-                            </div>
-                        </h:panelGroup>
+                            </h:panelGroup>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Centered Horizontal Navigation (44px) -->
+                <div class="header-navigation">
+                    <div class="header-nav-container">
+                        <ui:param name="currView" value="#{facesContext.viewRoot.viewId}" />
+                        <ui:param name="isDevicesActive" value="#{currView.contains('devices') or currView.contains('detail')}" />
+                        <ui:param name="isPricingActive" value="#{currView.contains('pricing')}" />
+                        <ui:param name="isContactActive" value="#{currView.contains('contact')}" />
+                        <ui:param name="isHomeActive" value="#{!isDevicesActive and !isPricingActive and !isContactActive}" />
+
+                        <nav class="main-nav" aria-label="Main Navigation">
+                            <ul class="nav-links">
+                                <li><a href="#{request.contextPath}/faces/client/pages/index.xhtml" class="#{isHomeActive ? 'active' : ''}"
+                                       aria-current="#{isHomeActive ? 'page' : null}">Home</a></li>
+                                <li><a href="#{request.contextPath}/faces/client/pages/devices.xhtml" class="#{isDevicesActive ? 'active' : ''}"
+                                       aria-current="#{isDevicesActive ? 'page' : null}">Devices</a></li>
+                                <li><a href="#{request.contextPath}/faces/client/pages/pricing.xhtml" class="#{isPricingActive ? 'active' : ''}"
+                                       aria-current="#{isPricingActive ? 'page' : null}">Pricing</a></li>
+                                <li><a href="#{request.contextPath}/faces/client/pages/contact.xhtml" class="#{isContactActive ? 'active' : ''}"
+                                       aria-current="#{isContactActive ? 'page' : null}">Contact</a></li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>
-
-            <!-- Row 2: Centered Horizontal Navigation (44px) -->
-            <div class="header-navigation">
-                <div class="header-nav-container">
-                    <ui:param name="currView" value="#{facesContext.viewRoot.viewId}" />
-                    <ui:param name="isDevicesActive" value="#{currView.contains('devices') or currView.contains('detail')}" />
-                    <ui:param name="isPricingActive" value="#{currView.contains('pricing')}" />
-                    <ui:param name="isContactActive" value="#{currView.contains('contact')}" />
-                    <ui:param name="isHomeActive" value="#{!isDevicesActive and !isPricingActive and !isContactActive}" />
-
-                    <nav class="main-nav" aria-label="Main Navigation">
-                        <ul class="nav-links">
-                            <li><a href="#{request.contextPath}/faces/client/pages/index.xhtml" class="#{isHomeActive ? 'active' : ''}"
-                                    aria-current="#{isHomeActive ? 'page' : null}">Home</a></li>
-                            <li><a href="#{request.contextPath}/faces/client/pages/devices.xhtml" class="#{isDevicesActive ? 'active' : ''}"
-                                    aria-current="#{isDevicesActive ? 'page' : null}">Devices</a></li>
-                            <li><a href="#{request.contextPath}/faces/client/pages/pricing.xhtml" class="#{isPricingActive ? 'active' : ''}"
-                                    aria-current="#{isPricingActive ? 'page' : null}">Pricing</a></li>
-                            <li><a href="#{request.contextPath}/faces/client/pages/contact.xhtml" class="#{isContactActive ? 'active' : ''}"
-                                    aria-current="#{isContactActive ? 'page' : null}">Contact</a></li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </header>
-</ui:composition>
+        </header>
+    </ui:composition>
 
 </html>
 

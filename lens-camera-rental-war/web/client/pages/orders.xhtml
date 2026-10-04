@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/templates/client-template.xhtml">
+
+    <ui:define name="title">
+        My Orders - Lens System
+    </ui:define>
+
+    <ui:define name="head">
+        <h:outputStylesheet library="client" name="css/pages/orders.css" />
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="orders-page">
+            <div class="orders-header">
+                <div>
+                    <span class="orders-pretitle">Account</span>
+                    <h1 class="orders-title">My Orders</h1>
+                    <p class="orders-description">View your rental orders and booking details.</p>
+                </div>
+            </div>
+
+            <h:panelGroup id="ordersContent" layout="block">
+                <h:panelGroup rendered="#{not empty customerRentalOrderController.orders}"
+                              layout="block"
+                              styleClass="orders-list">
+
+                    <ui:repeat value="#{customerRentalOrderController.orders}" var="order">
+                        <article class="order-card">
+                            <div class="order-card-main">
+                                <div class="order-card-header">
+                                    <div>
+                                        <span class="order-label">Order</span>
+                                        <h2 class="order-number">##{order.id}</h2>
+                                    </div>
+
+                                    <span class="order-status order-status-#{order.status.toLowerCase()}">
+                                        #{order.status}
+                                    </span>
+                                </div>
+
+                                <div class="order-info-grid">
+                                    <div class="order-info-item">
+                                        <span class="order-info-label">Placed</span>
+                                        <span class="order-info-value">
+                                            <h:outputText value="#{order.createdAt}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm"
+                                                                   timeZone="Asia/Ho_Chi_Minh" />
+                                            </h:outputText>
+                                        </span>
+                                    </div>
+
+                                    <div class="order-info-item">
+                                        <span class="order-info-label">Customer</span>
+                                        <span class="order-info-value">#{order.customerName}</span>
+                                    </div>
+
+                                    <div class="order-info-item">
+                                        <span class="order-info-label">Total</span>
+                                        <span class="order-info-value order-total">
+                                            <h:outputText value="#{order.totalPayable}">
+                                                <f:convertNumber pattern="#,##0 VND" />
+                                            </h:outputText>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="order-card-action">
+                                <h:link outcome="/client/pages/order-detail"
+                                        styleClass="order-view-link">
+                                    <f:param name="orderId" value="#{order.id}" />
+                                    View Details
+                                </h:link>
+                            </div>
+                        </article>
+                    </ui:repeat>
+
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{empty customerRentalOrderController.orders}"
+                              layout="block"
+                              styleClass="orders-empty">
+                    <div class="orders-empty-icon">—</div>
+                    <h2>No orders yet</h2>
+                    <p>Your rental orders will appear here after checkout.</p>
+
+                    <h:link outcome="/client/pages/devices"
+                            styleClass="orders-browse-link">
+                        Browse Devices
+                    </h:link>
+                </h:panelGroup>
+            </h:panelGroup>
+        </div>
+    </ui:define>
+
+    <ui:define name="scripts">
+    </ui:define>
+
+    <f:metadata>
+        <f:event type="preRenderView"
+                 listener="#{customerRentalOrderController.init}" />
+    </f:metadata>
+
+</ui:composition>

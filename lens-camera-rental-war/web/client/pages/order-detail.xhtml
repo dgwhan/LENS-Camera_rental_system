@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core"
+    xmlns:ui="jakarta.faces.facelets" template="/WEB-INF/templates/client-template.xhtml">
+
+    <ui:define name="title">
+        Order Details - Lens System
+    </ui:define>
+
+    <ui:define name="head">
+        <h:outputStylesheet library="client" name="css/pages/order-detail.css" />
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="customer-order-detail-page">
+
+            <h:panelGroup rendered="#{customerRentalOrderDetailController.orderFound}" layout="block">
+
+                <div class="customer-order-detail-header">
+                    <div>
+                        <span class="customer-order-detail-pretitle">My Orders</span>
+                        <h1 class="customer-order-detail-title">Order Details</h1>
+                    </div>
+
+                    <h:link outcome="/client/pages/orders" styleClass="customer-order-back-link">
+                        Back to Orders
+                    </h:link>
+                </div>
+
+                <div class="customer-order-layout">
+
+                    <section class="customer-order-card customer-order-bill">
+                        <div class="customer-order-card-header">
+                            <div>
+                                <h2>Order Bill</h2>
+                                <span class="customer-order-created">
+                                    Placed
+                                    <h:outputText value="#{customerRentalOrderDetailController.rentalOrder.createdAt}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="Asia/Ho_Chi_Minh" />
+                                    </h:outputText>
+                                </span>
+                            </div>
+
+                            <div class="customer-order-header-right">
+                                <span class="customer-order-number">
+                                    ##{customerRentalOrderDetailController.rentalOrder.id}
+                                </span>
+                                <span
+                                    class="order-status order-status-#{customerRentalOrderDetailController.rentalOrder.status.toLowerCase()}">
+                                    #{customerRentalOrderDetailController.rentalOrder.status}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="customer-order-card-body">
+
+                            <section class="customer-order-section">
+                                <h3>Customer Information</h3>
+
+                                <div class="customer-order-info-grid">
+                                    <div class="customer-order-info-item">
+                                        <span class="customer-order-label">Name</span>
+                                        <span class="customer-order-value">
+                                            #{customerRentalOrderDetailController.rentalOrder.customerName}
+                                        </span>
+                                    </div>
+
+                                    <div class="customer-order-info-item">
+                                        <span class="customer-order-label">Phone</span>
+                                        <span class="customer-order-value">
+                                            #{customerRentalOrderDetailController.rentalOrder.customerPhone}
+                                        </span>
+                                    </div>
+
+                                    <div class="customer-order-info-item">
+                                        <span class="customer-order-label">Address</span>
+                                        <span class="customer-order-value">
+                                            #{empty customerRentalOrderDetailController.rentalOrder.customerAddress
+                                            ? '-'
+                                            : customerRentalOrderDetailController.rentalOrder.customerAddress}
+                                        </span>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <div class="customer-order-divider"></div>
+
+                            <section class="customer-order-section">
+                                <h3>Rental Summary</h3>
+
+                                <div class="customer-rental-items">
+                                    <ui:repeat value="#{customerRentalOrderDetailController.rentalItems}" var="item">
+
+                                        <div class="customer-rental-item">
+                                            <div class="customer-rental-item-main">
+                                                <span class="customer-order-label">Device</span>
+                                                <span class="customer-rental-device-name">
+                                                    #{item.deviceModelId.name}
+                                                </span>
+                                            </div>
+
+                                            <div class="customer-rental-item-info">
+                                                <span class="customer-order-label">Rental Period</span>
+                                                <span class="customer-order-value">
+                                                    <h:outputText value="#{item.startDate}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy"
+                                                            timeZone="Asia/Ho_Chi_Minh" />
+                                                    </h:outputText>
+                                                    <span class="customer-rental-date-separator">-</span>
+                                                    <h:outputText value="#{item.endDate}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy"
+                                                            timeZone="Asia/Ho_Chi_Minh" />
+                                                    </h:outputText>
+                                                </span>
+                                            </div>
+
+                                            <div class="customer-rental-item-info">
+                                                <span class="customer-order-label">Duration</span>
+                                                <span class="customer-order-value">
+                                                    #{item.duration}
+                                                    #{item.duration == 1 ? 'day' : 'days'}
+                                                </span>
+                                            </div>
+
+                                            <div class="customer-rental-item-info">
+                                                <span class="customer-order-label">Rate / Day</span>
+                                                <span class="customer-order-value customer-order-value-strong">
+                                                    <h:outputText value="#{item.rentalPrice}">
+                                                        <f:convertNumber pattern="#,##0 VND" />
+                                                    </h:outputText>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                    </ui:repeat>
+                                </div>
+                            </section>
+
+                            <div class="customer-order-divider"></div>
+
+                            <section class="customer-order-section">
+                                <h3>Order Information</h3>
+
+                                <div class="customer-order-meta-grid">
+                                    <div class="customer-order-info-item">
+                                        <span class="customer-order-label">Placed</span>
+                                        <span class="customer-order-value">
+                                            <h:outputText
+                                                value="#{customerRentalOrderDetailController.rentalOrder.createdAt}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm"
+                                                    timeZone="Asia/Ho_Chi_Minh" />
+                                            </h:outputText>
+                                        </span>
+                                    </div>
+
+                                    <div class="customer-order-info-item">
+                                        <span class="customer-order-label">Handover</span>
+                                        <span class="customer-order-value">-</span>
+                                    </div>
+
+                                    <div class="customer-order-info-item">
+                                        <span class="customer-order-label">Customer Address</span>
+                                        <span class="customer-order-value">
+                                            #{empty customerRentalOrderDetailController.rentalOrder.customerAddress
+                                            ? '-'
+                                            : customerRentalOrderDetailController.rentalOrder.customerAddress}
+                                        </span>
+                                    </div>
+                                </div>
+                            </section>
+
+                        </div>
+                    </section>
+
+                    <aside class="customer-order-card customer-payment-card">
+                        <div class="customer-order-card-header">
+                            <h2>Payment Summary</h2>
+                        </div>
+
+                        <div class="customer-order-card-body">
+                            <div class="customer-payment-row">
+                                <span>Subtotal</span>
+                                <strong>
+                                    <h:outputText value="#{customerRentalOrderDetailController.rentalOrder.subtotal}">
+                                        <f:convertNumber pattern="#,##0 VND" />
+                                    </h:outputText>
+                                </strong>
+                            </div>
+
+                            <div class="customer-payment-row">
+                                <span>Deposit</span>
+                                <strong>
+                                    <h:outputText
+                                        value="#{customerRentalOrderDetailController.rentalOrder.depositTotal}">
+                                        <f:convertNumber pattern="#,##0 VND" />
+                                    </h:outputText>
+                                </strong>
+                            </div>
+
+                            <div class="customer-payment-divider"></div>
+
+                            <div class="customer-payment-total">
+                                <span>Total Payable</span>
+                                <strong>
+                                    <h:outputText
+                                        value="#{customerRentalOrderDetailController.rentalOrder.totalPayable}">
+                                        <f:convertNumber pattern="#,##0 VND" />
+                                    </h:outputText>
+                                </strong>
+                            </div>
+
+                            <div class="customer-payment-note">
+                                <span class="customer-order-label">Order Note</span>
+                                <span>
+                                    #{empty customerRentalOrderDetailController.rentalOrder.note
+                                    ? '-'
+                                    : customerRentalOrderDetailController.rentalOrder.note}
+                                </span>
+                            </div>
+                        </div>
+                    </aside>
+
+                </div>
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{not customerRentalOrderDetailController.orderFound}" layout="block"
+                styleClass="customer-order-not-found">
+
+                <span class="customer-order-not-found-icon">—</span>
+                <h2>Order Not Found</h2>
+                <p>The order does not exist or you do not have access to it.</p>
+
+                <h:link outcome="/client/pages/orders" styleClass="customer-order-back-button">
+                    Back to Orders
+                </h:link>
+            </h:panelGroup>
+
+        </div>
+    </ui:define>
+
+    <ui:define name="scripts">
+    </ui:define>
+
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{customerRentalOrderDetailController.init}" />
+    </f:metadata>
+
+</ui:composition>

@@ -1,0 +1,406 @@
+.customer-order-detail-page {
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    box-sizing: border-box;
+}
+
+.customer-order-detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.customer-order-detail-pretitle {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: #9099A0;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.customer-order-detail-title {
+    margin: 0;
+    color: #111111;
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.customer-order-back-link {
+    color: #667085;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.customer-order-back-link:hover {
+    color: #514FFF;
+}
+
+.customer-order-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    align-items: start;
+    gap: 1rem;
+}
+
+.customer-order-card {
+    min-width: 0;
+    overflow: hidden;
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    box-shadow: none;
+}
+
+.customer-order-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 64px;
+    padding: 0 1.5rem;
+    border-bottom: 1px solid #EEF0F2;
+    box-sizing: border-box;
+}
+
+.customer-order-card-header h2 {
+    margin: 0;
+    color: #111111;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.customer-order-created {
+    display: block;
+    margin-top: 0.25rem;
+    color: #9099A0;
+    font-size: 0.72rem;
+}
+
+.customer-order-header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.customer-order-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    padding: 0 0.65rem;
+    color: #333333;
+    background: #F3F4F6;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.order-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 24px;
+    padding: 0 0.65rem;
+    border: 1px solid transparent;
+    border-radius: 9999px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.order-status-pending {
+    color: #A16207;
+    background: #FFF7E6;
+    border-color: #FDE7B2;
+}
+
+.order-status-approved {
+    color: #4338CA;
+    background: #EEF0FF;
+    border-color: #D9DBFF;
+}
+
+.order-status-active {
+    color: #047857;
+    background: #ECFDF5;
+    border-color: #D1FAE5;
+}
+
+.order-status-completed {
+    color: #475569;
+    background: #F1F5F9;
+    border-color: #E2E8F0;
+}
+
+.order-status-rejected {
+    color: #DC2626;
+    background: #FEF2F2;
+    border-color: #FEE2E2;
+}
+
+.customer-order-card-body {
+    min-width: 0;
+    padding: 1.5rem;
+}
+
+.customer-order-section {
+    min-width: 0;
+}
+
+.customer-order-section h3 {
+    margin: 0 0 1rem;
+    color: #222222;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.customer-order-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+.customer-order-info-item {
+    min-width: 0;
+}
+
+.customer-order-label {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: #9099A0;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+    text-transform: uppercase;
+}
+
+.customer-order-value {
+    display: block;
+    min-width: 0;
+    color: #222222;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.customer-order-value-strong {
+    font-weight: 600;
+}
+
+.customer-order-divider {
+    width: 100%;
+    height: 1px;
+    margin: 1.5rem 0;
+    background: #EEF0F2;
+}
+
+.customer-rental-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.customer-rental-item {
+    display: grid;
+    grid-template-columns: minmax(180px, 1.5fr) minmax(170px, 1fr) minmax(90px, 0.6fr) minmax(120px, 0.8fr);
+    align-items: start;
+    gap: 1rem;
+    padding: 1rem;
+    background: #FAFAFB;
+    border: 1px solid #EEF0F2;
+    border-radius: 6px;
+}
+
+.customer-rental-item-main,
+.customer-rental-item-info {
+    min-width: 0;
+}
+
+.customer-rental-device-name {
+    display: block;
+    color: #222222;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.customer-rental-date-separator {
+    margin: 0 0.35rem;
+    color: #9099A0;
+}
+
+.customer-order-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+.customer-payment-card {
+    position: sticky;
+    top: 1.25rem;
+}
+
+.customer-payment-card .customer-order-card-body {
+    padding: 1.25rem 1.5rem;
+}
+
+.customer-payment-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 38px;
+    color: #667085;
+    font-size: 0.8125rem;
+}
+
+.customer-payment-row strong {
+    color: #222222;
+    font-weight: 500;
+    text-align: right;
+}
+
+.customer-payment-divider {
+    height: 1px;
+    margin: 0.75rem 0;
+    background: #EEF0F2;
+}
+
+.customer-payment-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.25rem;
+    color: #222222;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.customer-payment-total strong {
+    color: #514FFF;
+    font-size: 1rem;
+}
+
+.customer-payment-note {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #EEF0F2;
+}
+
+.customer-payment-note > span:last-child {
+    display: block;
+    color: #667085;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.customer-order-not-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+    padding: 2rem;
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.customer-order-not-found-icon {
+    margin-bottom: 0.75rem;
+    color: #B0B5BB;
+    font-size: 1.5rem;
+}
+
+.customer-order-not-found h2 {
+    margin: 0;
+    color: #222222;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.customer-order-not-found p {
+    margin: 0.45rem 0 1.25rem;
+    color: #9099A0;
+    font-size: 0.8125rem;
+}
+
+.customer-order-back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    padding: 0 1rem;
+    color: #FFFFFF;
+    background: #514FFF;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+@media (max-width: 960px) {
+    .customer-order-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .customer-payment-card {
+        position: static;
+    }
+
+    .customer-rental-item {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 680px) {
+    .customer-order-detail-page {
+        padding: 1.5rem 1rem 3rem;
+    }
+
+    .customer-order-detail-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .customer-order-card-header {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 1rem 1.25rem;
+    }
+
+    .customer-order-header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .customer-order-card-body {
+        padding: 1.25rem;
+    }
+
+    .customer-order-info-grid,
+    .customer-order-meta-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .customer-rental-item {
+        grid-template-columns: 1fr;
+        gap: 0.9rem;
+    }
+}

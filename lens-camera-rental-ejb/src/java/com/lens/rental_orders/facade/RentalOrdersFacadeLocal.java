@@ -25,7 +25,7 @@ public interface RentalOrdersFacadeLocal {
     List<RentalOrders> findRange(int[] range);
 
     int count();
-    
+
     List<RentalOrders> search(String keyword, String status);
 
     List<RentalOrders> searchOrders(String tab, String keyword, String status);
@@ -41,5 +41,9 @@ public interface RentalOrdersFacadeLocal {
     int countCreatedBetweenByStatus(String status, Date start, Date end);
 
     List<Object[]> countGroupByStatus();
+
+    List<RentalOrders> findByUserId(Integer userId);
+
+    RentalOrders findByIdAndUserId(Integer orderId, Integer userId);
 
 }

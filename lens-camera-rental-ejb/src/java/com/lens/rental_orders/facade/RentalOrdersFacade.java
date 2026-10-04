@@ -49,7 +49,7 @@ public class RentalOrdersFacade extends AbstractFacade<RentalOrders> implements 
         TypedQuery<RentalOrders> query = em.createQuery(jpql.toString(), RentalOrders.class);
 
         if (hasKeyword) {
-            query.setParameter("keyword","%" + keyword.trim().toLowerCase() + "%");
+            query.setParameter("keyword", "%" + keyword.trim().toLowerCase() + "%");
         }
 
         if (hasStatus) {
@@ -155,6 +155,32 @@ public class RentalOrdersFacade extends AbstractFacade<RentalOrders> implements 
         return em.createQuery(
                 "SELECT ro.status, COUNT(ro) FROM RentalOrders ro GROUP BY ro.status",
                 Object[].class).getResultList();
+    }
+
+    @Override
+    public List<RentalOrders> findByUserId(Integer userId) {
+        if (userId == null) {
+            return List.of();
+        }
+
+        return em.createQuery("SELECT ro FROM RentalOrders ro WHERE ro.userId.id = :userId ORDER BY ro.id DESC", RentalOrders.class)
+                .setParameter("userId", userId)
+                .getResultList();
+    }
+
+    @Override
+    public RentalOrders findByIdAndUserId(Integer orderId, Integer userId) {
+        if (orderId == null || userId == null) {
+            return null;
+        }
+
+        List<RentalOrders> orders = em.createQuery("SELECT ro FROM RentalOrders ro WHERE ro.id = :orderId AND ro.userId.id = :userId", RentalOrders.class)
+                .setParameter("orderId", orderId)
+                .setParameter("userId", userId)
+                .setMaxResults(1)
+                .getResultList();
+
+        return orders.isEmpty() ? null : orders.get(0);
     }
 
 }
