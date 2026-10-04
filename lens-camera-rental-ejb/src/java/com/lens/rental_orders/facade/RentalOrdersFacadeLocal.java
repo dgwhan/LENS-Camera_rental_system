@@ -2,6 +2,7 @@ package com.lens.rental_orders.facade;
 
 import com.lens.rental_orders.entity.RentalOrders;
 import jakarta.ejb.Local;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,5 +35,11 @@ public interface RentalOrdersFacadeLocal {
     int countByStatus(String status);
 
     int countNeedsActionOrders();
+
+    int countCreatedBetween(Date start, Date end);
+
+    int countCreatedBetweenByStatus(String status, Date start, Date end);
+
+    List<Object[]> countGroupByStatus();
 
 }

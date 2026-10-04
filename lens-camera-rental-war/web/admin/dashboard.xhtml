@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="jakarta.faces.html"
-                xmlns:ui="jakarta.faces.facelets"
-                template="/WEB-INF/templates/admin-template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:ui="jakarta.faces.facelets"
+    template="/WEB-INF/templates/admin-template.xhtml">
 
     <ui:param name="activeMenu" value="overview" />
 
     <ui:define name="title">
         Dashboard - Lens System Management
+    </ui:define>
+
+    <ui:define name="head">
+        <h:outputStylesheet library="admin" name="css/pages/overview.css" />
     </ui:define>
 
     <ui:define name="content">
@@ -21,6 +23,58 @@
                     </div>
                 </div>
             </div>
+
+            <div class="overview-page">
+
+                <section class="overview-kpis">
+                    <div class="overview-card overview-card-primary">
+                        <span class="overview-label">Total Orders</span>
+                        <strong class="overview-value">#{adminDashboardController.totalOrders}</strong>
+                    </div>
+
+                    <div class="overview-card">
+                        <span class="overview-label">Pending Orders</span>
+                        <strong class="overview-value">#{adminDashboardController.pendingOrders}</strong>
+                    </div>
+
+                    <div class="overview-card">
+                        <span class="overview-label">Active Rentals</span>
+                        <strong class="overview-value">#{adminDashboardController.activeRentals}</strong>
+                    </div>
+
+                    <div class="overview-card">
+                        <span class="overview-label">Available Devices</span>
+                        <strong class="overview-value">#{adminDashboardController.availableDevices}</strong>
+                    </div>
+                </section>
+
+                <section class="overview-charts">
+                    <div class="overview-panel">
+                        <div class="overview-panel-header">
+                            <h2>Order Status</h2>
+                        </div>
+                        <div id="orderStatusChart" class="overview-chart"></div>
+                    </div>
+
+                    <div class="overview-panel">
+                        <div class="overview-panel-header">
+                            <h2>Order Activity</h2>
+                        </div>
+                        <div id="orderActivityChart" class="overview-chart"></div>
+                    </div>
+                </section>
+
+            </div>
         </div>
     </ui:define>
+
+    <ui:define name="scripts">
+        <input type="hidden" id="overviewStatusJson" value="#{adminDashboardController.statusChartJson}" />
+
+        <input type="hidden" id="overviewActivityJson" value="#{adminDashboardController.activityChartJson}" />
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+        <h:outputScript library="js" name="admin/overview-charts.js" />
+    </ui:define>
+
 </ui:composition>

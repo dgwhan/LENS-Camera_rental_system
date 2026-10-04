@@ -6,6 +6,7 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -118,6 +119,42 @@ public class RentalOrdersFacade extends AbstractFacade<RentalOrders> implements 
         Long count = em.createQuery("SELECT COUNT(ro) FROM RentalOrders ro WHERE ro.status IN ('PENDING', 'APPROVED')", Long.class)
                 .getSingleResult();
         return count != null ? count.intValue() : 0;
+    }
+
+    @Override
+    public int countCreatedBetween(Date start, Date end) {
+        return countCreatedBetweenByStatus(null, start, end);
+    }
+
+    @Override
+    public int countCreatedBetweenByStatus(String status, Date start, Date end) {
+        if (start == null || end == null) {
+            return 0;
+        }
+
+        StringBuilder jpql = new StringBuilder(
+                "SELECT COUNT(ro) FROM RentalOrders ro WHERE ro.createdAt >= :start AND ro.createdAt < :end");
+        boolean hasStatus = status != null && !status.trim().isEmpty();
+        if (hasStatus) {
+            jpql.append(" AND ro.status = :status");
+        }
+
+        TypedQuery<Long> query = em.createQuery(jpql.toString(), Long.class)
+                .setParameter("start", start)
+                .setParameter("end", end);
+        if (hasStatus) {
+            query.setParameter("status", status.trim());
+        }
+
+        Long count = query.getSingleResult();
+        return count != null ? count.intValue() : 0;
+    }
+
+    @Override
+    public List<Object[]> countGroupByStatus() {
+        return em.createQuery(
+                "SELECT ro.status, COUNT(ro) FROM RentalOrders ro GROUP BY ro.status",
+                Object[].class).getResultList();
     }
 
 }
