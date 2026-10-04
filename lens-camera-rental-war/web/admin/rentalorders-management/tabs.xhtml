@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <!-- Order Management 3 Tabs -->
+    <h:panelGroup id="ordersTabs" layout="block" styleClass="order-tabs-bar">
+        <!-- Tab 1: Needs Action -->
+        <h:commandLink action="#{adminRentalOrderController.changeTab('needs_action')}"
+            styleClass="order-tab-item #{adminRentalOrderController.currentTab eq 'needs_action' ? 'is-active' : ''}">
+            <span>Needs Action</span>
+            <span class="tab-badge">#{adminRentalOrderController.totalNeedsActionOrders}</span>
+            <f:ajax render="ordersTabs searchBar orderTableWrapper statsCardsWrapper" />
+        </h:commandLink>
+
+        <!-- Tab 2: Active -->
+        <h:commandLink action="#{adminRentalOrderController.changeTab('active')}"
+            styleClass="order-tab-item #{adminRentalOrderController.currentTab eq 'active' ? 'is-active' : ''}">
+            <span>Active</span>
+            <span class="tab-badge">#{adminRentalOrderController.totalActiveOrders}</span>
+            <f:ajax render="ordersTabs searchBar orderTableWrapper statsCardsWrapper" />
+        </h:commandLink>
+
+        <!-- Tab 3: All Orders -->
+        <h:commandLink action="#{adminRentalOrderController.changeTab('all')}"
+            styleClass="order-tab-item #{adminRentalOrderController.currentTab eq 'all' ? 'is-active' : ''}">
+            <span>All Orders</span>
+            <span class="tab-badge">#{adminRentalOrderController.totalRentalOrders}</span>
+            <f:ajax render="ordersTabs searchBar orderTableWrapper statsCardsWrapper" />
+        </h:commandLink>
+    </h:panelGroup>
+
+</ui:composition>

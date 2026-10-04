@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Handles customer presentation interactions for the checkout page
+ * Handles customer presentation interactions for the checkout page.
  *
  * @author Duong Ngoc Han
  */
@@ -37,10 +37,11 @@ public class CheckoutController implements Serializable {
     @Inject
     private UserSessionService userSessionService;
 
-    //Customer form inputs
+    // customer form inputs
     private String customerName;
     private String customerPhone;
     private String customerAddress;
+    private String handoverMethod = "STORE_PICKUP";
 
     public CheckoutController() {
     }
@@ -50,8 +51,12 @@ public class CheckoutController implements Serializable {
             return "/auth/login?faces-redirect=true";
         }
 
-        if (customerName == null && customerPhone == null && customerAddress == null) {
+        if (customerName == null
+                && customerPhone == null
+                && customerAddress == null) {
+
             Users user = userSessionService.getCurrentUser();
+
             if (user != null) {
                 this.customerName = user.getFullName();
                 this.customerPhone = user.getPhone();
@@ -63,13 +68,13 @@ public class CheckoutController implements Serializable {
     }
 
     public boolean isAuthenticated() {
-        return userSessionService != null && userSessionService.isAuthenticated();
+        return userSessionService != null
+                && userSessionService.isAuthenticated();
     }
 
-
-    //checks whether the current checkout session has items to display and process.
     public boolean hasCheckoutItems() {
-        return cartService != null && !cartService.getSelectedCartItems().isEmpty();
+        return cartService != null
+                && !cartService.getSelectedCartItems().isEmpty();
     }
 
     public String processCheckout() {
@@ -87,8 +92,22 @@ public class CheckoutController implements Serializable {
             return null;
         }
 
-        if (customerAddress == null || customerAddress.trim().isEmpty()) {
-            FacesUtil.addErrorMessage("Customer address is required.");
+        if (handoverMethod == null || handoverMethod.trim().isEmpty()) {
+            FacesUtil.addErrorMessage("Handover method is required.");
+            return null;
+        }
+
+        if (!"STORE_PICKUP".equals(handoverMethod)
+                && !"DELIVERY".equals(handoverMethod)) {
+            FacesUtil.addErrorMessage("Invalid handover method.");
+            return null;
+        }
+
+        if ("DELIVERY".equals(handoverMethod)
+                && (customerAddress == null
+                || customerAddress.trim().isEmpty())) {
+
+            FacesUtil.addErrorMessage("Delivery address is required.");
             return null;
         }
 
@@ -101,26 +120,46 @@ public class CheckoutController implements Serializable {
         }
 
         List<Integer> selectedIds = new ArrayList<>();
-        for (CartItem ci : selectedItems) {
-            if (ci.getCartItemId() != null) {
+
+        for (CartItem cartItem : selectedItems) {
+            if (cartItem.getCartItemId() != null) {
                 try {
-                    selectedIds.add(Integer.valueOf(ci.getCartItemId()));
+                    selectedIds.add(
+                            Integer.valueOf(cartItem.getCartItemId()));
                 } catch (NumberFormatException ignored) {
                 }
             }
         }
 
         try {
-            List<RentalOrders> rentalOrders = checkoutService.processCheckout(userId, customerName.trim(), customerPhone.trim(),  customerAddress.trim(), selectedIds);
+            String address = "DELIVERY".equals(handoverMethod)
+                    ? customerAddress.trim()
+                    : null;
+
+            List<RentalOrders> rentalOrders
+                    = checkoutService.processCheckout(
+                            userId,
+                            customerName.trim(),
+                            customerPhone.trim(),
+                            handoverMethod,
+                            address,
+                            selectedIds);
 
             if (rentalOrders == null || rentalOrders.isEmpty()) {
-                FacesUtil.addErrorMessage("Unable to complete checkout.");
+                FacesUtil.addErrorMessage(
+                        "Unable to complete checkout.");
                 return null;
             }
 
             cartService.removeSelectedItems();
 
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("actionAlert", "Rental order placed successfully.");
+            FacesContext.getCurrentInstance()
+                    .getExternalContext()
+                    .getFlash()
+                    .put(
+                            "actionAlert",
+                            "Rental order placed successfully.");
+
             return "/client/pages/index?faces-redirect=true";
 
         } catch (IllegalArgumentException | IllegalStateException ex) {
@@ -130,23 +169,33 @@ public class CheckoutController implements Serializable {
     }
 
     public List<CartItem> getCartItems() {
-        return cartService != null ? cartService.getSelectedCartItems() : Collections.emptyList();
+        return cartService != null
+                ? cartService.getSelectedCartItems()
+                : Collections.emptyList();
     }
 
     public int getItemCount() {
-        return cartService != null ? cartService.getSelectedItemsCount() : 0;
+        return cartService != null
+                ? cartService.getSelectedItemsCount()
+                : 0;
     }
 
     public long getRentalSubtotal() {
-        return cartService != null ? cartService.calculateSelectedRentalSubtotal() : 0L;
+        return cartService != null
+                ? cartService.calculateSelectedRentalSubtotal()
+                : 0L;
     }
 
     public long getDepositTotal() {
-        return cartService != null ? cartService.calculateSelectedDepositTotal() : 0L;
+        return cartService != null
+                ? cartService.calculateSelectedDepositTotal()
+                : 0L;
     }
 
     public long getTotalPayable() {
-        return cartService != null ? cartService.calculateSelectedTotal() : 0L;
+        return cartService != null
+                ? cartService.calculateSelectedTotal()
+                : 0L;
     }
 
     public String getCustomerName() {
@@ -171,5 +220,13 @@ public class CheckoutController implements Serializable {
 
     public void setCustomerAddress(String customerAddress) {
         this.customerAddress = customerAddress;
+    }
+
+    public String getHandoverMethod() {
+        return handoverMethod;
+    }
+
+    public void setHandoverMethod(String handoverMethod) {
+        this.handoverMethod = handoverMethod;
     }
 }

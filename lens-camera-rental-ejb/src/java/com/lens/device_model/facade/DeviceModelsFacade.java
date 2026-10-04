@@ -68,15 +68,33 @@ public class DeviceModelsFacade extends AbstractFacade<DeviceModels> implements 
 
     @Override
     public List<DeviceModels> search(String keyword) {
-        StringBuilder jpql = new StringBuilder("SELECT dm FROM DeviceModels dm WHERE 1=1 ");
+        return search(keyword, null, null);
+    }
+
+    @Override
+    public List<DeviceModels> search(String keyword, String brand) {
+        return search(keyword, brand, null);
+    }
+
+    @Override
+    public List<DeviceModels> search(String keyword, String brand, String type) {
+        StringBuilder jpql = new StringBuilder("SELECT dm FROM DeviceModels dm WHERE 1=1");
 
         boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+        boolean hasBrand   = brand   != null && !brand.trim().isEmpty();
+        boolean hasType    = type    != null && !type.trim().isEmpty();
 
         if (hasKeyword) {
-            jpql.append(" AND (LOWER(dm.name) LIKE :keyword ")
-                    .append(" OR LOWER(dm.brand) LIKE :keyword ")
-                    .append(" OR LOWER(dm.model) LIKE :keyword ")
+            jpql.append(" AND (LOWER(dm.name) LIKE :keyword")
+                    .append(" OR LOWER(dm.brand) LIKE :keyword")
+                    .append(" OR LOWER(dm.model) LIKE :keyword")
                     .append(" OR LOWER(dm.type) LIKE :keyword)");
+        }
+        if (hasBrand) {
+            jpql.append(" AND LOWER(dm.brand) = LOWER(:brand)");
+        }
+        if (hasType) {
+            jpql.append(" AND LOWER(dm.type) = LOWER(:type)");
         }
 
         jpql.append(" ORDER BY dm.id DESC");
@@ -85,6 +103,12 @@ public class DeviceModelsFacade extends AbstractFacade<DeviceModels> implements 
 
         if (hasKeyword) {
             query.setParameter("keyword", "%" + keyword.trim().toLowerCase() + "%");
+        }
+        if (hasBrand) {
+            query.setParameter("brand", brand.trim());
+        }
+        if (hasType) {
+            query.setParameter("type", type.trim());
         }
 
         return query.getResultList();

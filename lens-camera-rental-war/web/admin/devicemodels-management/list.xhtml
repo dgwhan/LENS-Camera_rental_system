@@ -9,15 +9,11 @@
         Device Models Management - Lens Camera Rental
     </ui:define>
 
-    <ui:define name="content">
-        <script type="text/javascript">
-            function onDeleteEvent(data) {
-                if (data.status === 'success') {
-                    alert('Device model deleted successfully.');
-                }
-            }
-        </script>
+    <ui:define name="head">
+        <h:outputStylesheet library="admin" name="css/pages/model.css" />
+    </ui:define>
 
+    <ui:define name="content">
         <div class="main-wrapper">
             <h:form id="deviceModelsForm">
                 <div class="page-header">
@@ -61,6 +57,22 @@
                         styleClass="form-control search-input">
                         <f:ajax event="keyup" delay="300" render="deviceModelsTableWrapper" />
                     </h:inputText>
+
+                    <h:selectOneMenu id="brandFilter" value="#{adminDeviceModelController.brand}"
+                        styleClass="form-select filter-select-sm">
+                        <f:selectItem itemLabel="All Brands" itemValue="" />
+                        <f:selectItems value="#{adminDeviceModelController.distinctBrands}"
+                            var="b" itemLabel="#{b}" itemValue="#{b}" />
+                        <f:ajax event="change" render="deviceModelsTableWrapper" />
+                    </h:selectOneMenu>
+
+                    <h:selectOneMenu id="typeFilter" value="#{adminDeviceModelController.type}"
+                        styleClass="form-select filter-select-sm">
+                        <f:selectItem itemLabel="All Types" itemValue="" />
+                        <f:selectItems value="#{adminDeviceModelController.distinctTypes}"
+                            var="t" itemLabel="#{t}" itemValue="#{t}" />
+                        <f:ajax event="change" render="deviceModelsTableWrapper" />
+                    </h:selectOneMenu>
 
                     <h:commandButton value="Search" action="list" styleClass="btn btn-primary">
                         <f:ajax execute="@form" render="deviceModelsTableWrapper" />
@@ -106,16 +118,16 @@
                             <!-- Type -->
                             <h:column>
                                 <f:facet name="header">Type</f:facet>
-                                <span class="model-type-badge model-type-#{dm.type.toLowerCase()}">
+                                <span class="model-type-badge model-type-#{dm.type != null ? dm.type.toLowerCase() : ''}">
                                     <h:outputText
-                                        value="#{dm.type == 'CAMERA' ? 'Camera' : (dm.type == 'LENS' ? 'Lens' : 'Accessory')}" />
+                                        value="#{dm.type != null and dm.type.equalsIgnoreCase('CAMERA') ? 'Camera' : (dm.type != null and dm.type.equalsIgnoreCase('LENS') ? 'Lens' : (dm.type != null and dm.type.equalsIgnoreCase('ACCESSORY') ? 'Accessory' : dm.type))}" />
                                 </span>
                             </h:column>
 
                             <!-- Rental Price -->
                             <h:column>
                                 <f:facet name="header">Rental Price</f:facet>
-                                <h:outputText value="#{dm.rentalPrice}">
+                                <h:outputText value="#{dm.rentalPrice}" styleClass="fw-semibold">
                                     <f:convertNumber pattern="#,##0 VND" />
                                 </h:outputText>
                             </h:column>
@@ -123,7 +135,7 @@
                             <!-- Deposit -->
                             <h:column>
                                 <f:facet name="header">Deposit</f:facet>
-                                <h:outputText value="#{dm.depositAmount}">
+                                <h:outputText value="#{dm.depositAmount}" styleClass="fw-semibold">
                                     <f:convertNumber pattern="#,##0 VND" />
                                 </h:outputText>
                             </h:column>
@@ -139,8 +151,7 @@
                                     <h:commandButton value="Delete" action="#{adminDeviceModelController.deleteDeviceModel(dm.id)}"
                                         styleClass="btn btn-sm btn-outline-danger"
                                         onclick="if (!confirm('Are you sure you want to delete this device model?')) return false;">
-                                        <f:ajax render="deviceModelsTableWrapper statsCardsWrapper"
-                                            onevent="onDeleteEvent" />
+                                        <f:ajax render="deviceModelsTableWrapper statsCardsWrapper" />
                                     </h:commandButton>
                                 </div>
                             </h:column>

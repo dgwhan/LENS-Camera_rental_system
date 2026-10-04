@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="jakarta.faces.html"
+    xmlns:f="jakarta.faces.core"
+    xmlns:ui="jakarta.faces.facelets">
+
+    <div class="detail-grid-2">
+
+        <div class="detail-item">
+            <span class="detail-label">
+                Device Model
+            </span>
+
+            <span class="detail-value detail-value-strong">
+                #{adminRentalOrderController.selectedRentalItem.deviceModelId.name}
+            </span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">
+                Rental Period
+            </span>
+
+            <span class="detail-value">
+
+                <h:outputText
+                    value="#{adminRentalOrderController.selectedRentalItem.startDate}">
+
+                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Asia/Ho_Chi_Minh" />
+
+                </h:outputText>
+
+                —
+
+                <h:outputText
+                    value="#{adminRentalOrderController.selectedRentalItem.endDate}">
+
+                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Asia/Ho_Chi_Minh" />
+
+                </h:outputText>
+
+            </span>
+        </div>
+
+    </div>
+
+    <h:panelGroup
+        id="assignmentSection"
+        rendered="#{adminRentalOrderController.selectedOrder.status eq 'APPROVED'}"
+        layout="block">
+
+        <h:panelGroup
+            rendered="#{not adminRentalOrderController.preparationOpen}"
+            layout="block"
+            styleClass="preparation-section-description">
+            Preparation opens 1 day before rental.
+        </h:panelGroup>
+
+        <!-- device to assign -->
+
+        <h:panelGroup
+            rendered="#{adminRentalOrderController.selectedRentalItem.assignedDeviceId == null
+                and adminRentalOrderController.preparationOpen}"
+            layout="block"
+            styleClass="preparation-device-section">
+
+            <div class="preparation-section-header">
+
+                <div>
+                    <span class="detail-label">
+                        Device to Assign
+                    </span>
+
+                    <span class="preparation-section-description">
+                        Select an available physical device for this rental.
+                    </span>
+                </div>
+
+                <span class="preparation-device-count">
+
+                    #{empty adminRentalOrderAssignmentController.availableDevices
+                        ? 0
+                        : adminRentalOrderAssignmentController.availableDevices.size()}
+
+                    available
+
+                </span>
+
+            </div>
+
+            <h:panelGroup
+                rendered="#{not empty adminRentalOrderAssignmentController.availableDevices}"
+                layout="block"
+                styleClass="preparation-select-wrapper">
+
+                <div class="preparation-select-row">
+
+                    <h:selectOneMenu
+                        id="selectedDevice"
+                        value="#{adminRentalOrderAssignmentController.selectedDeviceId}"
+                        styleClass="form-select preparation-select">
+
+                        <f:selectItem
+                            itemLabel="-- Select device --"
+                            itemValue="#{null}"
+                            noSelectionOption="true" />
+
+                        <f:selectItems
+                            value="#{adminRentalOrderAssignmentController.availableDevices}"
+                            var="device"
+                            itemValue="#{device.id}"
+                            itemLabel="#{device.serialNumber} - #{device.deviceModelId.name}" />
+
+                    </h:selectOneMenu>
+
+                    <h:commandButton
+                        value="Assign"
+                        action="#{adminRentalOrderAssignmentController.assignDevice(
+                            adminRentalOrderController.selectedOrder.id,
+                            adminRentalOrderAssignmentController.selectedDeviceId)}"
+                        styleClass="btn btn-sm btn-primary">
+
+                        <f:ajax
+                            execute="@this selectedDevice"
+                            render="assignmentSection handoverSection" />
+
+                    </h:commandButton>
+
+                </div>
+
+            </h:panelGroup>
+
+            <h:panelGroup
+                rendered="#{empty adminRentalOrderAssignmentController.availableDevices}"
+                layout="block"
+                styleClass="preparation-empty">
+
+                <span>
+                    No available devices for this rental period.
+                </span>
+
+            </h:panelGroup>
+
+        </h:panelGroup>
+
+        <!-- currently assigned -->
+
+        <h:panelGroup
+            rendered="#{adminRentalOrderController.selectedRentalItem.assignedDeviceId != null}"
+            layout="block"
+            styleClass="preparation-assigned-section">
+
+            <div class="preparation-section-header">
+
+                <div>
+                    <span class="detail-label">
+                        Currently Assigned
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="preparation-assigned-device">
+
+                <div class="preparation-device-info">
+
+                    <span class="preparation-device-name">
+                        #{adminRentalOrderController.selectedRentalItem.assignedDeviceId.serialNumber}
+                    </span>
+
+                    <span class="preparation-device-meta">
+                        #{adminRentalOrderController.selectedRentalItem.assignedDeviceId.deviceModelId.name}
+                    </span>
+
+                </div>
+
+                <h:commandButton
+                    value="Unassign"
+                    rendered="#{adminRentalOrderController.preparationOpen}"
+                    action="#{adminRentalOrderAssignmentController.unassignDevice(
+                        adminRentalOrderController.selectedOrder.id)}"
+                    styleClass="btn btn-sm btn-outline-secondary">
+
+                    <f:ajax
+                        execute="@this"
+                        render="assignmentSection handoverSection" />
+
+                </h:commandButton>
+
+            </div>
+
+        </h:panelGroup>
+
+    </h:panelGroup>
+
+</ui:composition>

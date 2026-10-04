@@ -33,6 +33,7 @@ public class AdminUserController implements Serializable {
     private boolean editMode;
     private String keyword = "";
     private String role = "";
+    private String status = "";
 
     public AdminUserController() {
     }
@@ -246,12 +247,13 @@ public class AdminUserController implements Serializable {
     }
 
     public List<Users> getUsersList() {
-        return usersFacade.search(keyword, role);
+        return usersFacade.search(keyword, role, status);
     }
 
     public void resetFilter() {
         this.keyword = "";
         this.role = "";
+        this.status = "";
     }
 
     private boolean isDuplicateUsername() {
@@ -352,8 +354,24 @@ public class AdminUserController implements Serializable {
         this.role = role;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public int getTotalUsers() {
         return usersFacade.totalUsers();
+    }
+
+    public int getTotalActiveUsers() {
+        return usersFacade.totalActiveUsers();
+    }
+
+    public int getTotalInactiveUsers() {
+        return usersFacade.totalInactiveUsers();
     }
 
     public int getTotalAdminRole() {

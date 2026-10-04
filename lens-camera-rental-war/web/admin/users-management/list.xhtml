@@ -13,15 +13,11 @@
         Users Management - Lens Camera Rental
     </ui:define>
 
-    <ui:define name="content">
-        <script type="text/javascript">
-            function onDeleteEvent(data) {
-                if (data.status === 'success') {
-                    alert('User deleted successfully.');
-                }
-            }
-        </script>
+    <ui:define name="head">
+        <h:outputStylesheet library="admin" name="css/pages/user.css" />
+    </ui:define>
 
+    <ui:define name="content">
         <div class="main-wrapper">
             <h:form id="usersForm">
                 <!-- Page Header -->
@@ -46,16 +42,16 @@
                         <div class="stat-value">#{adminUserController.totalUsers}</div>
                     </div>
 
-                    <!-- Customers -->
+                    <!-- Active -->
                     <div class="stat-card">
-                        <span class="stat-label">Customers</span>
-                        <div class="stat-value">#{adminUserController.totalCustomerRole}</div>
+                        <span class="stat-label">Active</span>
+                        <div class="stat-value">#{adminUserController.totalActiveUsers}</div>
                     </div>
 
-                    <!-- Admins -->
+                    <!-- Inactive -->
                     <div class="stat-card">
-                        <span class="stat-label">Admins</span>
-                        <div class="stat-value">#{adminUserController.totalAdminRole}</div>
+                        <span class="stat-label">Inactive</span>
+                        <div class="stat-value">#{adminUserController.totalInactiveUsers}</div>
                     </div>
                 </h:panelGroup>
 
@@ -73,6 +69,15 @@
                         <f:selectItem itemLabel="All Roles" itemValue="" />
                         <f:selectItem itemLabel="Admin" itemValue="ADMIN" />
                         <f:selectItem itemLabel="Customer" itemValue="CUSTOMER" />
+                        <f:ajax event="change" render="usersTableWrapper" />
+                    </h:selectOneMenu>
+
+                    <!-- Status Filter -->
+                    <h:selectOneMenu id="statusFilter" value="#{adminUserController.status}"
+                                     styleClass="form-select filter-select-sm">
+                        <f:selectItem itemLabel="All Statuses" itemValue="" />
+                        <f:selectItem itemLabel="Active" itemValue="ACTIVE" />
+                        <f:selectItem itemLabel="Inactive" itemValue="INACTIVE" />
                         <f:ajax event="change" render="usersTableWrapper" />
                     </h:selectOneMenu>
 
@@ -150,7 +155,7 @@
                                                      rendered="#{user.id ne adminUserController.currentUserId}"
                                                      onclick="if (!confirm('Are you sure you want to delete this user?')) return false;"
                                                      styleClass="btn btn-sm btn-outline-danger">
-                                        <f:ajax render="usersTableWrapper statsCardsWrapper" onevent="onDeleteEvent" />
+                                        <f:ajax render="usersTableWrapper statsCardsWrapper" />
                                     </h:commandButton>
                                     <h:panelGroup rendered="#{user.id eq adminUserController.currentUserId}">
                                         <span class="badge-role badge-admin" style="font-size: 0.75rem; padding: 4px 8px;">You</span>

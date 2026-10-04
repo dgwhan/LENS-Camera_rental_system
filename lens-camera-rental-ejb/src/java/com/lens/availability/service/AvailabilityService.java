@@ -47,8 +47,7 @@ public class AvailabilityService implements AvailabilityServiceLocal {
         }
 
         //lấy tất cả thiết bị vật lý thuộc DeviceModel
-        List<Devices> devices
-                = devicesFacade.findByDeviceModelId(deviceModelId);
+        List<Devices> devices = devicesFacade.findByDeviceModelId(deviceModelId);
 
         if (devices == null) {
             devices = Collections.emptyList();

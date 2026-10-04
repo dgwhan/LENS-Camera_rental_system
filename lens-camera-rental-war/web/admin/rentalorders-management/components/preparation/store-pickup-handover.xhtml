@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="jakarta.faces.html"
+    xmlns:f="jakarta.faces.core"
+    xmlns:ui="jakarta.faces.facelets">
+
+    <h:panelGroup
+        rendered="#{
+            adminRentalOrderController.selectedHandover != null
+            and adminRentalOrderController.selectedHandover.method eq 'STORE_PICKUP'
+        }"
+        layout="block"
+        styleClass="preparation-handover-section">
+
+        <div class="preparation-section-header">
+
+            <div>
+
+                <span class="detail-label">
+                    Handover
+                </span>
+
+                <span class="preparation-section-description">
+
+                    <h:panelGroup
+                        rendered="#{adminRentalOrderController.selectedOrder.status eq 'APPROVED'}">
+
+                        Complete the store pickup for this rental order.
+
+                    </h:panelGroup>
+
+                    <h:panelGroup
+                        rendered="#{adminRentalOrderController.selectedOrder.status eq 'CANCELLED'}">
+
+                        Store pickup failed and the rental order was cancelled.
+
+                    </h:panelGroup>
+
+                </span>
+
+            </div>
+
+            <span class="badge-status badge-#{adminRentalOrderController.selectedHandover.status.toLowerCase()}">
+                #{adminRentalOrderController.selectedHandover.status}
+            </span>
+
+        </div>
+
+        <div class="preparation-handover-content">
+
+            <div class="detail-grid-2">
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Handover Method
+                    </span>
+
+                    <span class="detail-value detail-value-strong">
+                        Store Pickup
+                    </span>
+
+                </div>
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Handover Status
+                    </span>
+
+                    <span class="detail-value">
+                        #{adminRentalOrderController.selectedHandover.status}
+                    </span>
+
+                </div>
+
+            </div>
+
+            <h:panelGroup
+                rendered="#{adminRentalOrderController.selectedHandover.status eq 'FAILED'}"
+                layout="block"
+                styleClass="preparation-failure-note">
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Failure Note
+                    </span>
+
+                    <span class="detail-value">
+                        #{adminRentalOrderController.selectedHandover.failureReason}
+                    </span>
+
+                </div>
+
+            </h:panelGroup>
+
+            <h:panelGroup
+                rendered="#{
+                    adminRentalOrderController.selectedOrder.status eq 'APPROVED'
+                    and adminRentalOrderController.selectedHandover.status eq 'PENDING'
+                    and adminRentalOrderController.handoverOpen
+                }"
+                layout="block"
+                styleClass="preparation-handover-actions">
+
+                <h:commandButton
+                    value="Successful Pickup"
+                    action="#{adminRentalHandoverController.completeStorePickup(
+                        adminRentalOrderController.selectedOrder.id)}"
+                    styleClass="btn btn-primary">
+
+                    <f:ajax
+                        execute="@this"
+                        render="handoverSection" />
+
+                </h:commandButton>
+
+                <h:commandButton
+                    value="Failed Pickup"
+                    type="button"
+                    styleClass="btn btn-outline-secondary"
+                    onclick="openStorePickupFailureModal(); return false;" />
+
+            </h:panelGroup>
+
+        </div>
+
+    </h:panelGroup>
+
+</ui:composition>
+

@@ -1,0 +1,76 @@
+.order-lifecycle {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 20px 24px;
+}
+.lifecycle-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 150px;
+}
+
+.lifecycle-marker {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid #d9dce1;
+    border-radius: 50%;
+    background: #fff;
+    color: #9099a0;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.lifecycle-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.lifecycle-title {
+    color: #30343b;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.lifecycle-status {
+    color: #9099a0;
+    font-size: 12px;
+}
+
+.lifecycle-line {
+    flex: 1;
+    height: 1px;
+    margin: 0 16px;
+    background: #d9dce1;
+}
+
+.lifecycle-step.is-active .lifecycle-marker {
+    border-color: #514fff;
+    background: #514fff;
+    color: #fff;
+}
+
+.lifecycle-step.is-active .lifecycle-title,
+.lifecycle-step.is-active .lifecycle-status {
+    color: #514fff;
+}
+
+.lifecycle-step.is-completed .lifecycle-marker {
+    background: #ecfdf5;
+    border-color: #d1fae5;
+    color: #047857;
+}
+
+.lifecycle-step.is-completed .lifecycle-title {
+    color: #047857;
+}
+
+.lifecycle-step.is-completed .lifecycle-status {
+    color: #64748b;
+}

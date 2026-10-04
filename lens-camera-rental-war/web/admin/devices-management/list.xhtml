@@ -9,6 +9,10 @@
         Devices Management - Lens Camera Rental
     </ui:define>
 
+    <ui:define name="head">
+        <h:outputStylesheet library="admin" name="css/pages/device.css" />
+    </ui:define>
+
     <ui:define name="content">
         <div class="main-wrapper">
             <h:form id="devicesForm">
@@ -60,6 +64,14 @@
                         <f:ajax event="change" render="devicesTableWrapper" />
                     </h:selectOneMenu>
 
+                    <h:selectOneMenu id="brandFilter" value="#{adminDeviceController.brand}"
+                        styleClass="form-select filter-select-sm">
+                        <f:selectItem itemLabel="All Brands" itemValue="" />
+                        <f:selectItems value="#{adminDeviceController.distinctBrands}"
+                            var="b" itemLabel="#{b}" itemValue="#{b}" />
+                        <f:ajax event="change" render="devicesTableWrapper" />
+                    </h:selectOneMenu>
+
                     <h:commandButton value="Search" action="list" styleClass="btn btn-primary">
                         <f:ajax execute="@form" render="devicesTableWrapper" />
                     </h:commandButton>
@@ -104,7 +116,7 @@
                                 </span>
                             </h:column>
 
-                            <!-- Thao tÃƒÂ¡c (Action) -->
+                            <!-- Action -->
                             <h:column>
                                 <f:facet name="header">Action</f:facet>
                                 <div class="table-row-actions">

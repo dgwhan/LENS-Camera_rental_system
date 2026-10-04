@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <h:outputStylesheet library="admin" name="css/components/order-lifecycle.css" />
+
+    <div class="order-lifecycle">
+
+        <!-- Step 1: Request -->
+        <div class="lifecycle-step #{
+            adminRentalOrderController.selectedOrder.status eq 'PENDING'
+                ? 'is-active'
+            : adminRentalOrderController.selectedOrder.status eq 'REJECTED'
+                ? 'is-active'
+            : 'is-completed'}">
+            <div class="lifecycle-marker">1</div>
+            <div class="lifecycle-content">
+                <div class="lifecycle-title">Request</div>
+                <div class="lifecycle-status">
+                    #{adminRentalOrderController.selectedOrder.status eq 'PENDING' ? 'Pending'
+                    : adminRentalOrderController.selectedOrder.status eq 'REJECTED' ? 'Rejected'
+                    : 'Completed'}
+                </div>
+            </div>
+        </div>
+
+        <div class="lifecycle-line"></div>
+
+        <!-- Step 2: Preparation -->
+        <div class="lifecycle-step #{
+            adminRentalOrderController.selectedOrder.status eq 'APPROVED'
+                ? 'is-active'
+            : adminRentalOrderController.selectedOrder.status eq 'CANCELLED'
+                ? 'is-active'
+            : adminRentalOrderController.selectedOrder.status eq 'ACTIVE'
+                ? 'is-completed'
+            : adminRentalOrderController.selectedOrder.status eq 'COMPLETED'
+                ? 'is-completed'
+            : ''}">
+            <div class="lifecycle-marker">2</div>
+            <div class="lifecycle-content">
+                <div class="lifecycle-title">Preparation</div>
+                <div class="lifecycle-status">
+                    #{adminRentalOrderController.selectedOrder.status eq 'APPROVED' ? 'Approved'
+                    : adminRentalOrderController.selectedOrder.status eq 'CANCELLED' ? 'Cancelled'
+                    : adminRentalOrderController.selectedOrder.status eq 'ACTIVE' ? 'Completed'
+                    : adminRentalOrderController.selectedOrder.status eq 'COMPLETED' ? 'Completed'
+                    : 'Waiting'}
+                </div>
+            </div>
+        </div>
+
+        <div class="lifecycle-line"></div>
+
+        <!-- Step 3: Rental -->
+        <div class="lifecycle-step #{
+            adminRentalOrderController.selectedOrder.status eq 'ACTIVE'
+                ? 'is-active'
+            : adminRentalOrderController.selectedOrder.status eq 'COMPLETED'
+                ? 'is-completed'
+            : ''}">
+            <div class="lifecycle-marker">3</div>
+            <div class="lifecycle-content">
+                <div class="lifecycle-title">Rental</div>
+                <div class="lifecycle-status">
+                    #{adminRentalOrderController.selectedOrder.status eq 'ACTIVE' ? 'Active'
+                    : adminRentalOrderController.selectedOrder.status eq 'COMPLETED' ? 'Completed'
+                    : 'Waiting'}
+                </div>
+            </div>
+        </div>
+
+        <div class="lifecycle-line"></div>
+
+        <!-- Step 4: Return -->
+        <div class="lifecycle-step #{
+            adminRentalOrderController.selectedOrder.status eq 'COMPLETED'
+                ? 'is-active'
+            : ''}">
+            <div class="lifecycle-marker">4</div>
+            <div class="lifecycle-content">
+                <div class="lifecycle-title">Return</div>
+                <div class="lifecycle-status">
+                    #{adminRentalOrderController.selectedOrder.status eq 'COMPLETED' ? 'Completed'
+                    : 'Waiting'}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</ui:composition>

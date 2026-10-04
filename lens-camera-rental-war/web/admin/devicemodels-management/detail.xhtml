@@ -95,7 +95,7 @@
                                             <div class="detail-label">Type</div>
                                             <div class="detail-value">
                                                 <h:outputText
-                                                    value="#{adminDeviceModelController.deviceModels.type == 'CAMERA' ? 'Camera' : (adminDeviceModelController.deviceModels.type == 'LENS' ? 'Lens' : 'Accessory')}" />
+                                                    value="#{adminDeviceModelController.deviceModels.type != null and adminDeviceModelController.deviceModels.type.equalsIgnoreCase('CAMERA') ? 'Camera' : (adminDeviceModelController.deviceModels.type != null and adminDeviceModelController.deviceModels.type.equalsIgnoreCase('LENS') ? 'Lens' : (adminDeviceModelController.deviceModels.type != null and adminDeviceModelController.deviceModels.type.equalsIgnoreCase('ACCESSORY') ? 'Accessory' : adminDeviceModelController.deviceModels.type))}" />
                                             </div>
                                         </div>
                                         <div class="detail-item detail-item-full">
@@ -227,7 +227,7 @@
                                     </span>
                                 </h:column>
 
-                                <!-- Thao tÃƒÂ¡c (Action) -->
+                                <!-- Action -->
                                 <h:column>
                                     <f:facet name="header">Action</f:facet>
                                     <div class="table-row-actions">

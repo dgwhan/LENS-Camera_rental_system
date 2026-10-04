@@ -36,6 +36,8 @@ public class AdminDeviceModelController implements Serializable {
     private Integer id;
     private boolean editMode;
     private String keyword = "";
+    private String brand = "";
+    private String type = "";
     private Part imagePart;
     private boolean removeCurrentImage;
 
@@ -236,15 +238,17 @@ public class AdminDeviceModelController implements Serializable {
     }
 
     public List<DeviceModels> showAllDeviceModel() {
-        return deviceModelsFacade.search(keyword);
+        return deviceModelsFacade.search(keyword, brand, type);
     }
 
     public List<DeviceModels> getDeviceModelsList() {
-        return deviceModelsFacade.search(keyword);
+        return deviceModelsFacade.search(keyword, brand, type);
     }
 
     public void resetFilter() {
         this.keyword = "";
+        this.brand = "";
+        this.type = "";
     }
 
     private boolean isDuplicateBrandModel(Integer excludeId) {
@@ -302,6 +306,30 @@ public class AdminDeviceModelController implements Serializable {
 
     public void setKeyword(String keyword) {
         this.keyword = keyword;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public List<String> getDistinctBrands() {
+        return deviceModelsFacade.findDistinctBrands();
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public List<String> getDistinctTypes() {
+        return deviceModelsFacade.findDistinctTypes();
     }
 
     public Part getImagePart() {

@@ -27,6 +27,8 @@ public interface UsersFacadeLocal {
     
     List<Users> search(String keyword, String role);
 
+    List<Users> search(String keyword, String role, String status);
+
     Users findByUsername(String username);
 
     boolean isUsernameExists(String username);
@@ -36,9 +38,13 @@ public interface UsersFacadeLocal {
     boolean isPhoneExists(String phone, Integer id);
     
     int totalUsers();
-    
+
     int totalAdminRole();
-    
+
     int totalCustomerRole();
+
+    int totalActiveUsers();
+
+    int totalInactiveUsers();
 
 }

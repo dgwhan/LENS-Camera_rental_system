@@ -8,8 +8,16 @@
         <param-name>DEFAULT_PAGE_SIZE</param-name>
         <param-value>12</param-value>
     </context-param>
+    <context-param>
+        <param-name>jakarta.faces.STATE_SAVING_METHOD</param-name>
+        <param-value>client</param-value>
+    </context-param>
     <session-config>
-        <session-timeout>120</session-timeout>
+        <session-timeout>480</session-timeout>
+        <cookie-config>
+            <http-only>true</http-only>
+        </cookie-config>
+        <tracking-mode>COOKIE</tracking-mode>
     </session-config>
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
@@ -19,6 +27,7 @@
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>/faces/*</url-pattern>
+        <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>faces/client/pages/index.xhtml</welcome-file>
@@ -28,6 +37,7 @@
         <web-resource-collection>
             <web-resource-name>Admin Area</web-resource-name>
             <url-pattern>/faces/admin/*</url-pattern>
+            <url-pattern>/admin/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <role-name>ADMIN</role-name>
@@ -70,5 +80,11 @@
         <ejb-ref-type>Session</ejb-ref-type>
         <local>com.lens.cart.facade.CartItemsFacadeLocal</local>
         <ejb-link>lens-camera-rental-ejb.jar#CartItemsFacade</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>RentalOrderApprovalService</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>com.lens.rental_orders.service.RentalOrderApprovalServiceLocal</local>
+        <ejb-link>lens-camera-rental-ejb.jar#RentalOrderApprovalService</ejb-link>
     </ejb-local-ref>
 </web-app>

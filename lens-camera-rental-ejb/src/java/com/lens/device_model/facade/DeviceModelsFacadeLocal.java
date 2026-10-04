@@ -31,6 +31,10 @@ public interface DeviceModelsFacadeLocal {
 
     List<DeviceModels> search(String keyword);
 
+    List<DeviceModels> search(String keyword, String brand);
+
+    List<DeviceModels> search(String keyword, String brand, String type);
+
     int totalDeviceModels();
 
     int totalModelBrand();

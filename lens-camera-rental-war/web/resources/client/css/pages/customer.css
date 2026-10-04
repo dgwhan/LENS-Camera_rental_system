@@ -5,7 +5,7 @@
 
 @import url('../../../shared/css/color.css');
 @import url('../../../shared/css/font.css');
-@import url('../../../shared/css/app.css');
+@import url('../app.css');
 @import url('../components/header.css');
 @import url('../components/breadcrumb.css');
 @import url('../components/datepicker.css');

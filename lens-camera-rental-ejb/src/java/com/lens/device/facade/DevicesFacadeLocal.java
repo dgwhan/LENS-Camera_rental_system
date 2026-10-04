@@ -2,6 +2,7 @@ package com.lens.device.facade;
 
 import com.lens.device.entity.Devices;
 import jakarta.ejb.Local;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,6 +30,10 @@ public interface DevicesFacadeLocal {
 
     List<Devices> search(String keyword, String status);
 
+    List<Devices> search(String keyword, String status, String brand);
+
+    List<String> findDistinctBrands();
+
     int totalDevices();
 
     int totalDevicesAvailable();
@@ -36,4 +41,6 @@ public interface DevicesFacadeLocal {
     int totalDevicesRenting();
 
     List<Devices> findByDeviceModelId(Integer modelId);
+
+    List<Devices> findAvailableForPeriod(Integer modelId, Date startDate, Date endDate, Integer excludeRentalItemId);
 }

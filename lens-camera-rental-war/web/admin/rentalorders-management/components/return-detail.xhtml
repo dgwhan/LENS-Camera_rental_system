@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <h:outputStylesheet library="admin" name="css/pages/detail.css" />
+    <h:outputStylesheet library="admin" name="css/components/request-detail.css" />
+
+    <div class="detail-layout request-detail">
+
+        <div class="detail-main">
+
+            <!-- Rental Item Info -->
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h2 class="detail-card-title">Completed Rental</h2>
+                </div>
+
+                <div class="detail-card-body">
+                    <div class="detail-grid-3">
+
+                        <div class="detail-item">
+                            <span class="detail-label">Device Model</span>
+                            <span class="detail-value detail-value-strong">
+                                #{adminRentalOrderController.selectedRentalItem.deviceModelId.name}
+                            </span>
+                        </div>
+
+                        <div class="detail-item">
+                            <span class="detail-label">Assigned Device</span>
+                            <span class="detail-value">
+                                #{adminRentalOrderController.selectedRentalItem.assignedDeviceId.serialNumber}
+                            </span>
+                        </div>
+
+                        <div class="detail-item">
+                            <span class="detail-label">Duration</span>
+                            <span class="detail-value">
+                                #{adminRentalOrderController.selectedRentalItem.duration}
+                                #{adminRentalOrderController.selectedRentalItem.duration == 1 ? 'day' : 'days'}
+                            </span>
+                        </div>
+
+                        <div class="detail-item">
+                            <span class="detail-label">Start Date</span>
+                            <span class="detail-value">
+                                <h:outputText value="#{adminRentalOrderController.selectedRentalItem.startDate}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Asia/Ho_Chi_Minh" />
+                                </h:outputText>
+                            </span>
+                        </div>
+
+                        <div class="detail-item">
+                            <span class="detail-label">End Date</span>
+                            <span class="detail-value">
+                                <h:outputText value="#{adminRentalOrderController.selectedRentalItem.endDate}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Asia/Ho_Chi_Minh" />
+                                </h:outputText>
+                            </span>
+                        </div>
+
+                        <div class="detail-item">
+                            <span class="detail-label">Customer</span>
+                            <span class="detail-value">
+                                #{adminRentalOrderController.selectedOrder.customerName}
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Handover Info -->
+            <h:panelGroup rendered="#{adminRentalOrderController.selectedHandover != null}" layout="block">
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <h2 class="detail-card-title">Handover</h2>
+                    </div>
+
+                    <div class="detail-card-body">
+                        <div class="detail-grid-3">
+
+                            <div class="detail-item">
+                                <span class="detail-label">Method</span>
+                                <span class="detail-value">
+                                    #{adminRentalOrderController.selectedHandover.method}
+                                </span>
+                            </div>
+
+                            <div class="detail-item">
+                                <span class="detail-label">Status</span>
+                                <span class="detail-value">
+                                    #{adminRentalOrderController.selectedHandover.status}
+                                </span>
+                            </div>
+
+                            <div class="detail-item">
+                                <span class="detail-label">Confirmed At</span>
+                                <span class="detail-value">
+                                    <h:outputText value="#{adminRentalOrderController.selectedHandover.confirmedAt}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                    </h:outputText>
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </h:panelGroup>
+
+        </div>
+
+        <div class="detail-sidebar">
+
+            <!-- Order Summary -->
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h2 class="detail-card-title">Order Summary</h2>
+                </div>
+
+                <div class="detail-card-body">
+                    <div class="detail-meta-list">
+
+                        <div class="detail-meta-row">
+                            <span class="detail-meta-label">Subtotal</span>
+                            <span class="detail-meta-value">
+                                <h:outputText value="#{adminRentalOrderController.selectedOrder.subtotal}">
+                                    <f:convertNumber pattern="#,##0 VND" />
+                                </h:outputText>
+                            </span>
+                        </div>
+
+                        <div class="detail-meta-row">
+                            <span class="detail-meta-label">Deposit</span>
+                            <span class="detail-meta-value">
+                                <h:outputText value="#{adminRentalOrderController.selectedOrder.depositTotal}">
+                                    <f:convertNumber pattern="#,##0 VND" />
+                                </h:outputText>
+                            </span>
+                        </div>
+
+                        <div class="detail-meta-row request-total-row">
+                            <span class="detail-meta-label">Total</span>
+                            <span class="detail-meta-value">
+                                <h:outputText value="#{adminRentalOrderController.selectedOrder.totalPayable}">
+                                    <f:convertNumber pattern="#,##0 VND" />
+                                </h:outputText>
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment -->
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h2 class="detail-card-title">Payment</h2>
+                </div>
+
+                <div class="detail-card-body">
+                    <div class="detail-meta-list">
+
+                        <div class="detail-meta-row">
+                            <span class="detail-meta-label">Method</span>
+                            <span class="detail-meta-value">Cash</span>
+                        </div>
+
+                        <div class="detail-meta-row">
+                            <span class="detail-meta-label">Status</span>
+                            <span class="detail-meta-value">
+                                #{adminRentalOrderController.getPaymentStatus(adminRentalOrderController.selectedOrder.id)}
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deposit -->
+            <h:panelGroup rendered="#{adminRentalOrderController.selectedDeposit != null}" layout="block">
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <h2 class="detail-card-title">Deposit</h2>
+                    </div>
+
+                    <div class="detail-card-body">
+                        <div class="detail-meta-list">
+
+                            <div class="detail-meta-row">
+                                <span class="detail-meta-label">Amount</span>
+                                <span class="detail-meta-value">
+                                    <h:outputText value="#{adminRentalOrderController.selectedDeposit.amount}">
+                                        <f:convertNumber pattern="#,##0 VND" />
+                                    </h:outputText>
+                                </span>
+                            </div>
+
+                            <div class="detail-meta-row">
+                                <span class="detail-meta-label">Status</span>
+                                <span class="detail-meta-value">
+                                    #{adminRentalOrderController.selectedDeposit.status}
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </h:panelGroup>
+
+        </div>
+
+    </div>
+
+</ui:composition>

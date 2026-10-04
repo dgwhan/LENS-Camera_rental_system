@@ -38,7 +38,8 @@ import java.util.Date;
     @NamedQuery(name = "RentalOrders.findByTotalPayable", query = "SELECT r FROM RentalOrders r WHERE r.totalPayable = :totalPayable"),
     @NamedQuery(name = "RentalOrders.findByNote", query = "SELECT r FROM RentalOrders r WHERE r.note = :note"),
     @NamedQuery(name = "RentalOrders.findByCreatedAt", query = "SELECT r FROM RentalOrders r WHERE r.createdAt = :createdAt"),
-    @NamedQuery(name = "RentalOrders.findByUpdatedAt", query = "SELECT r FROM RentalOrders r WHERE r.updatedAt = :updatedAt")})
+    @NamedQuery(name = "RentalOrders.findByUpdatedAt", query = "SELECT r FROM RentalOrders r WHERE r.updatedAt = :updatedAt"),
+    @NamedQuery(name = "RentalOrders.findByCustomerAddress", query = "SELECT r FROM RentalOrders r WHERE r.customerAddress = :customerAddress")})
 public class RentalOrders implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -87,6 +88,9 @@ public class RentalOrders implements Serializable {
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
+    @Size(max = 500)
+    @Column(name = "customer_address")
+    private String customerAddress;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Users userId;
@@ -188,6 +192,14 @@ public class RentalOrders implements Serializable {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getCustomerAddress() {
+        return customerAddress;
+    }
+
+    public void setCustomerAddress(String customerAddress) {
+        this.customerAddress = customerAddress;
     }
 
     public Users getUserId() {

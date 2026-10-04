@@ -1,5 +1,6 @@
 package com.lens.rental_order;
 
+import com.lens.common.util.ImageUtil;
 import com.lens.rental_deposits.entity.RentalDeposits;
 import com.lens.rental_deposits.facade.RentalDepositsFacadeLocal;
 import com.lens.rental_handovers.entity.RentalHandovers;
@@ -11,9 +12,11 @@ import com.lens.rental_orders.facade.RentalOrdersFacadeLocal;
 import com.lens.rental_payments.entity.RentalPayments;
 import com.lens.rental_payments.facade.RentalPaymentsFacadeLocal;
 import jakarta.ejb.EJB;
-import jakarta.inject.Named;
 import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -22,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Controller for Admin Rental Order management
+ * Controller for Admin Rental Order management.
  *
  * @author Duong Ngoc Han
  */
@@ -58,6 +61,7 @@ public class AdminRentalOrderController implements Serializable {
     private String keyword = "";
     private String status = "";
     private String currentTab = "needs_action";
+
     private final Map<Integer, RentalItems> rentalItemsMap = new HashMap<>();
     private final Map<Integer, RentalPayments> rentalPaymentsMap = new HashMap<>();
 
@@ -85,24 +89,40 @@ public class AdminRentalOrderController implements Serializable {
     }
 
     public List<RentalOrders> showRentalOrderList() {
+        // get orders based on current tab and filters
         List<RentalOrders> orders = rentalOrdersFacade.searchOrders(currentTab, keyword, status);
+
         if (orders != null && !orders.isEmpty()) {
             List<Integer> orderIds = new ArrayList<>();
+
+            // collect order ids
             for (RentalOrders order : orders) {
                 if (order.getId() != null) {
                     orderIds.add(order.getId());
                 }
             }
+
+            // load rental items for the orders
             List<RentalItems> items = rentalItemsFacade.findByRentalOrderIds(orderIds);
+
             rentalItemsMap.clear();
+
+            // map rental items by order id
             for (RentalItems item : items) {
-                if (item.getRentalOrderId() != null && !rentalItemsMap.containsKey(item.getRentalOrderId().getId())) {
-                    rentalItemsMap.put(item.getRentalOrderId().getId(), item);
+                if (item.getRentalOrderId() != null
+                        && !rentalItemsMap.containsKey(
+                                item.getRentalOrderId().getId())) {
+
+                    rentalItemsMap.put(
+                            item.getRentalOrderId().getId(),
+                            item);
                 }
             }
         } else {
+            // clear cache when there are no orders
             rentalItemsMap.clear();
         }
+
         return orders;
     }
 
@@ -110,15 +130,20 @@ public class AdminRentalOrderController implements Serializable {
         if (rentalOrderId == null) {
             return null;
         }
+
         if (rentalItemsMap.containsKey(rentalOrderId)) {
             return rentalItemsMap.get(rentalOrderId);
         }
+
         List<RentalItems> rentalItems = rentalItemsFacade.findByRentalOrderId(rentalOrderId);
+
         if (rentalItems.isEmpty()) {
             return null;
         }
+
         RentalItems item = rentalItems.get(0);
         rentalItemsMap.put(rentalOrderId, item);
+
         return item;
     }
 
@@ -127,16 +152,40 @@ public class AdminRentalOrderController implements Serializable {
         return item != null && item.getAssignedDeviceId() != null;
     }
 
+    public boolean isPreparationOpen() {
+        if (selectedRentalItem == null || selectedRentalItem.getStartDate() == null) {
+            return false;
+        }
+
+        LocalDate startDate = selectedRentalItem.getStartDate()
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+        LocalDate preparationDate = startDate.minusDays(1);
+        LocalDate today = LocalDate.now();
+
+        return !today.isBefore(preparationDate);
+    }
+
+    public boolean isHandoverOpen() {
+        return isPreparationOpen()
+                && selectedRentalItem != null
+                && selectedRentalItem.getAssignedDeviceId() != null;
+    }
+
     public boolean isOverdue(Integer orderId) {
         RentalItems item = getRentalItem(orderId);
+
         if (item == null || item.getEndDate() == null) {
             return false;
         }
+
         Calendar todayCal = Calendar.getInstance();
         todayCal.set(Calendar.HOUR_OF_DAY, 0);
         todayCal.set(Calendar.MINUTE, 0);
         todayCal.set(Calendar.SECOND, 0);
         todayCal.set(Calendar.MILLISECOND, 0);
+
         Date today = todayCal.getTime();
 
         Calendar endCal = Calendar.getInstance();
@@ -145,6 +194,7 @@ public class AdminRentalOrderController implements Serializable {
         endCal.set(Calendar.MINUTE, 0);
         endCal.set(Calendar.SECOND, 0);
         endCal.set(Calendar.MILLISECOND, 0);
+
         Date normalizedEnd = endCal.getTime();
 
         return normalizedEnd.before(today);
@@ -160,62 +210,33 @@ public class AdminRentalOrderController implements Serializable {
         this.status = "";
     }
 
-    public void approveOrder(Integer orderId) {
-        RentalOrders order = rentalOrdersFacade.find(orderId);
-        if (order != null && "PENDING".equals(order.getStatus())) {
-            order.setStatus("APPROVED");
-            order.setUpdatedAt(new Date());
-            rentalOrdersFacade.edit(order);
-        }
-    }
-
-    public void rejectOrder(Integer orderId) {
-        RentalOrders order = rentalOrdersFacade.find(orderId);
-        if (order != null && "PENDING".equals(order.getStatus())) {
-            order.setStatus("REJECTED");
-            order.setUpdatedAt(new Date());
-            rentalOrdersFacade.edit(order);
-        }
-    }
-
-    public void assignDevice(Integer orderId) {
-        viewDetail(orderId);
-    }
-
     public RentalPayments getRentalPayment(Integer rentalOrderId) {
         if (rentalOrderId == null) {
             return null;
         }
+
         if (rentalPaymentsMap.containsKey(rentalOrderId)) {
             return rentalPaymentsMap.get(rentalOrderId);
         }
+
         RentalPayments payment = rentalPaymentsFacade.findByRentalOrderId(rentalOrderId);
+
         if (payment != null) {
             rentalPaymentsMap.put(rentalOrderId, payment);
         }
+
         return payment;
     }
 
     public String getPaymentStatus(Integer rentalOrderId) {
         RentalPayments payment = getRentalPayment(rentalOrderId);
-        return payment != null ? payment.getPaymentStatus() : "UNPAID";
+        return payment != null
+                ? payment.getPaymentStatus()
+                : "UNPAID";
     }
 
-    public void handoverOrder(Integer orderId) {
-        RentalOrders order = rentalOrdersFacade.find(orderId);
-        if (order != null && "APPROVED".equals(order.getStatus()) && isDeviceAssigned(orderId)) {
-            order.setStatus("ACTIVE");
-            order.setUpdatedAt(new Date());
-            rentalOrdersFacade.edit(order);
-
-            RentalHandovers handover = rentalHandoversFacade.findByRentalOrderId(orderId);
-            if (handover != null) {
-                handover.setStatus("COMPLETED");
-                handover.setConfirmedAt(new Date());
-                handover.setUpdatedAt(new Date());
-                rentalHandoversFacade.edit(handover);
-            }
-        }
+    public String getDeviceImageUrl(String imageUrl) {
+        return ImageUtil.getDeviceImageUrl(imageUrl);
     }
 
     public int getTotalRentalOrders() {
@@ -270,17 +291,27 @@ public class AdminRentalOrderController implements Serializable {
         this.status = status;
     }
 
-    public String viewDetail(Integer orderId) {
-        this.selectedOrder = rentalOrdersFacade.find(orderId);
-        if (this.selectedOrder != null) {
-            this.selectedRentalItem = getRentalItem(orderId);
-            this.selectedHandover = rentalHandoversFacade.findByRentalOrderId(orderId);
-            this.selectedPayment = rentalPaymentsFacade.findByRentalOrderId(orderId);
-            this.selectedDeposit = rentalDepositsFacade.findByRentalOrderId(orderId);
-        } else {
+    public String openDetail(Integer orderId) {
+        return "/admin/rentalorders-management/detail.xhtml" + "?id=" + orderId + "&faces-redirect=true";
+    }
+
+    public void loadDetail() {
+        if (id == null) {
             closeDetail();
+            return;
         }
-        return null;
+
+        this.selectedOrder = rentalOrdersFacade.find(id);
+
+        if (this.selectedOrder == null) {
+            closeDetail();
+            return;
+        }
+
+        this.selectedRentalItem = getRentalItem(id);
+        this.selectedHandover = rentalHandoversFacade.findByRentalOrderId(id);
+        this.selectedPayment = rentalPaymentsFacade.findByRentalOrderId(id);
+        this.selectedDeposit = rentalDepositsFacade.findByRentalOrderId(id);
     }
 
     public void closeDetail() {
@@ -330,5 +361,4 @@ public class AdminRentalOrderController implements Serializable {
     public void setSelectedDeposit(RentalDeposits selectedDeposit) {
         this.selectedDeposit = selectedDeposit;
     }
-
 }

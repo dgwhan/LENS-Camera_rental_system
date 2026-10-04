@@ -31,7 +31,7 @@
         <div class="main-wrapper">
             <div class="form-container">
                 <h:form id="deviceForm">
-                    <!-- TiÃƒÂªu Ã„â€˜Ã¡Â»Â trang -->
+                    <!-- Page Header -->
                     <div class="page-header">
                         <div class="page-header-row">
                             <div>
@@ -45,7 +45,7 @@
                         </div>
                     </div>
 
-                    <!-- ThÃ¡ÂºÂ» Form thÃƒÂ´ng tin thiÃ¡ÂºÂ¿t bÃ¡Â»â€¹ -->
+                    <!-- Device Form Card -->
                     <div class="card">
                         <div class="card-header">
                             <div>
@@ -55,7 +55,7 @@
 
                         <div class="card-body">
                             <div class="form-grid">
-                                <!-- Model thiÃ¡ÂºÂ¿t bÃ¡Â»â€¹ -->
+                                <!-- Device Model -->
                                 <div class="form-group" style="grid-column: 1 / -1;">
                                     <h:outputLabel for="deviceModel" styleClass="form-label">
                                         Device Model <span class="form-required">*</span>
@@ -75,13 +75,13 @@
                                                 itemDescription="#{dm.brand}" />
                                         </h:selectOneMenu>
 
-                                        <!-- DÃ¡Â»Â¯ liÃ¡Â»â€¡u brand Ã¡ÂºÂ©n Ã„â€˜Ã¡Â»Æ’ JavaScript tÃƒÂ¬m kiÃ¡ÂºÂ¿m nhanh -->
+                                        <!-- Hidden brand metadata for quick JS filtering -->
                                         <ui:repeat value="#{adminDeviceController.allDeviceModels}" var="dm">
                                             <span class="model-meta-data" data-id="#{dm.id}" data-brand="#{dm.brand}"
                                                 style="display:none;"></span>
                                         </ui:repeat>
 
-                                        <!-- NhÃ¡ÂºÂ­p tÃƒÂ¬m kiÃ¡ÂºÂ¿m trÃ¡Â»Â±c tiÃ¡ÂºÂ¿p + NÃƒÂºt mÃ…Â©i tÃƒÂªn mÃ¡Â»Å¸ danh sÃƒÂ¡ch -->
+                                        <!-- Search combobox input and toggle button -->
                                         <div class="model-combobox">
                                             <input type="text" class="model-combobox-input"
                                                 placeholder="Select or search device model" autocomplete="off" />
@@ -89,7 +89,7 @@
                                                 aria-label="Toggle dropdown"></button>
                                         </div>
 
-                                        <!-- Menu dropdown: HiÃ¡Â»Æ’n thÃ¡Â»â€¹ toÃƒÂ n bÃ¡Â»â„¢ danh sÃƒÂ¡ch, lÃ¡Â»Âc tÃ¡Â»Â©c thÃƒÂ¬ khi gÃƒÂµ -->
+                                        <!-- Dropdown menu -->
                                         <div class="model-selector-dropdown">
                                             <div class="model-selector-results" role="listbox">
                                             </div>
@@ -99,7 +99,7 @@
                                     <h:message for="deviceModel" styleClass="field-error" />
                                 </div>
 
-                                <!-- MÃƒÂ£ sÃ¡Â»â€˜ Serial thiÃ¡ÂºÂ¿t bÃ¡Â»â€¹ -->
+                                <!-- Serial Number -->
                                 <div class="form-group" style="grid-column: 1 / -1;">
                                     <h:outputLabel for="serialNumber" styleClass="form-label">
                                         Serial Number <span class="form-required">*</span>
@@ -112,7 +112,7 @@
                             </div>
                         </div>
 
-                        <!-- NÃƒÂºt thao tÃƒÂ¡c dÃ†Â°Ã¡Â»â€ºi chÃƒÂ¢n thÃ¡ÂºÂ» -->
+                        <!-- Card Footer Actions -->
                         <div class="card-footer">
                             <h:commandButton value="Cancel" action="list?faces-redirect=true" immediate="true"
                                 styleClass="btn btn-outline-secondary" />

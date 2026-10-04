@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="jakarta.faces.html"
+    xmlns:f="jakarta.faces.core"
+    xmlns:ui="jakarta.faces.facelets"
+    xmlns:pt="jakarta.faces.passthrough">
+
+    <style>
+        .form-error {
+            display: block;
+            margin-top: 6px;
+            color: #d92d20;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+    </style>
+
+    <h:panelGroup
+        id="storePickupFailureModal"
+        layout="block"
+        styleClass="preparation-modal-overlay">
+
+        <div class="preparation-modal-dialog">
+
+            <div class="preparation-modal-header">
+
+                <div>
+
+                    <div class="preparation-modal-title">
+                        Failed Store Pickup
+                    </div>
+
+                    <div class="preparation-modal-subtitle">
+                        Please provide a reason why the store pickup failed.
+                    </div>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="preparation-modal-close"
+                    onclick="closeStorePickupFailureModal();">
+                    ×
+                </button>
+
+            </div>
+
+            <div class="preparation-modal-body">
+
+                <h:outputLabel
+                    for="storePickupFailureReason"
+                    value="Failure Reason"
+                    styleClass="preparation-modal-label" />
+
+                <h:inputTextarea
+                    id="storePickupFailureReason"
+                    value="#{adminRentalHandoverController.failureReason}"
+                    rows="4"
+                    required="true"
+                    requiredMessage="Failure reason is required."
+                    styleClass="form-control preparation-modal-textarea"
+                    pt:maxlength="1000"
+                    pt:placeholder="Enter the reason for the failed pickup..." />
+
+                <h:message
+                    id="storePickupFailureMessage"
+                    for="storePickupFailureReason"
+                    styleClass="form-error" />
+
+            </div>
+
+            <div class="preparation-modal-footer">
+
+                <h:commandButton
+                    value="Keep Pickup"
+                    type="button"
+                    styleClass="btn btn-outline-secondary"
+                    onclick="closeStorePickupFailureModal();" />
+
+                <h:commandButton
+                    value="Confirm Failure"
+                    action="#{adminRentalHandoverController.failStorePickup(
+                        adminRentalOrderController.selectedOrder.id,
+                        adminRentalHandoverController.failureReason)}"
+                    styleClass="btn btn-danger">
+
+                    <f:ajax
+                        execute="@this storePickupFailureReason"
+                        render="storePickupFailureMessage" />
+
+                </h:commandButton>
+
+            </div>
+
+        </div>
+
+    </h:panelGroup>
+
+</ui:composition>

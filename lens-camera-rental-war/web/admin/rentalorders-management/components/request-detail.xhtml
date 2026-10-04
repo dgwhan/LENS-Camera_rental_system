@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="jakarta.faces.html"
+    xmlns:f="jakarta.faces.core"
+    xmlns:ui="jakarta.faces.facelets">
+
+    <h:outputStylesheet
+    library="admin"
+    name="css/pages/detail.css" />
+
+<h:outputStylesheet
+    library="admin"
+    name="css/components/request-detail.css" />
+
+    <!-- order content -->
+
+    <div class="request-detail-layout">
+
+        <div class="request-detail-main">
+
+            <div class="detail-card">
+
+                <div class="detail-card-header">
+                    <h2 class="detail-card-title">
+                        Rental Information
+                    </h2>
+                </div>
+
+                <div class="detail-card-body">
+
+                    <div class="rental-table">
+
+                        <!-- device -->
+
+                        <div class="rental-column rental-product-column">
+
+                            <span class="rental-column-label">
+                                Device
+                            </span>
+
+                            <div class="rental-product">
+
+                                <div class="rental-product-image">
+                                    <h:graphicImage
+                                        value="#{adminRentalOrderController.getDeviceImageUrl(adminRentalOrderController.selectedRentalItem.deviceModelId.imageUrl)}"
+                                        alt="#{adminRentalOrderController.selectedRentalItem.deviceModelId.name}" />
+                                </div>
+
+                                <span class="rental-product-name">
+                                    #{adminRentalOrderController.selectedRentalItem.deviceModelId.name}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <!-- rental period -->
+
+                        <div class="rental-column">
+
+                            <span class="rental-column-label">
+                                Rental Period
+                            </span>
+
+                            <div class="rental-column-value">
+
+                                <h:outputText
+                                    value="#{adminRentalOrderController.selectedRentalItem.startDate}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Asia/Ho_Chi_Minh" />
+                                </h:outputText>
+
+                                <span class="rental-arrow">
+                                    -
+                                </span>
+
+                                <h:outputText
+                                    value="#{adminRentalOrderController.selectedRentalItem.endDate}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Asia/Ho_Chi_Minh" />
+                                </h:outputText>
+
+                            </div>
+
+                            <span class="rental-column-meta">
+                                #{adminRentalOrderController.selectedRentalItem.duration}
+                                #{adminRentalOrderController.selectedRentalItem.duration == 1
+                                    ? 'day'
+                                    : 'days'}
+                            </span>
+
+                        </div>
+
+                        <!-- rental price -->
+
+                        <div class="rental-column">
+
+                            <span class="rental-column-label">
+                                Rental Price
+                            </span>
+
+                            <span class="rental-column-value">
+
+                                <h:outputText
+                                    value="#{adminRentalOrderController.selectedRentalItem.rentalPrice}">
+                                    <f:convertNumber pattern="#,##0 VND" />
+                                </h:outputText>
+
+                            </span>
+
+                            <span class="rental-column-meta">
+                                per day
+                            </span>
+
+                        </div>
+
+                        <!-- deposit -->
+
+                        <div class="rental-column">
+
+                            <span class="rental-column-label">
+                                Deposit
+                            </span>
+
+                            <span class="rental-column-value">
+
+                                <h:outputText
+                                    value="#{adminRentalOrderController.selectedOrder.depositTotal}">
+                                    <f:convertNumber pattern="#,##0 VND" />
+                                </h:outputText>
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <!-- financial summary -->
+
+                    <div class="rental-financial">
+
+                        <div class="financial-row">
+
+                            <span>
+                                Subtotal
+                            </span>
+
+                            <span>
+                                <h:outputText
+                                    value="#{adminRentalOrderController.selectedOrder.subtotal}">
+                                    <f:convertNumber pattern="#,##0 VND" />
+                                </h:outputText>
+                            </span>
+
+                        </div>
+
+                        <div class="financial-row">
+
+                            <span>
+                                Deposit
+                            </span>
+
+                            <span>
+                                <h:outputText
+                                    value="#{adminRentalOrderController.selectedOrder.depositTotal}">
+                                    <f:convertNumber pattern="#,##0 VND" />
+                                </h:outputText>
+                            </span>
+
+                        </div>
+
+                        <div class="financial-divider"></div>
+
+                        <div class="financial-total">
+
+                            <span>
+                                Total Payable
+                            </span>
+
+                            <span>
+                                <h:outputText
+                                    value="#{adminRentalOrderController.selectedOrder.totalPayable}">
+                                    <f:convertNumber pattern="#,##0 VND" />
+                                </h:outputText>
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- payment status -->
+
+        <div class="request-detail-sidebar">
+
+            <div class="detail-card payment-card">
+
+                <div class="detail-card-header">
+                    <h2 class="detail-card-title">
+                        Payment Status
+                    </h2>
+                </div>
+
+                <div class="detail-card-body">
+
+                    <div class="payment-row">
+
+                        <span class="payment-label">
+                            Method
+                        </span>
+
+                        <span class="payment-value">
+                            Cash
+                        </span>
+
+                    </div>
+
+                    <div class="payment-row">
+
+                        <span class="payment-label">
+                            Status
+                        </span>
+
+                        <span class="payment-status">
+                            #{adminRentalOrderController.getPaymentStatus(
+                                adminRentalOrderController.selectedOrder.id)}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</ui:composition>

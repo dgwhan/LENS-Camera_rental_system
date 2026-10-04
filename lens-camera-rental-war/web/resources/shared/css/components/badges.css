@@ -27,29 +27,20 @@
     transition: all 0.15s ease;
 }
 
-/* User Roles */
-.badge-admin {
-    background-color: #eef2ff;
-    color: #4f46e5;
-    border-color: #e0e7ff;
-}
-
-.badge-customer {
-    background-color: #f1f5f9;
-    color: #475569;
-    border-color: #e2e8f0;
-}
-
-/* Statuses: Active / Available */
+/* Shared Statuses */
 .badge-active,
-.badge-available,
 .status-badge-available {
     background-color: #ecfdf5;
     color: #047857;
     border-color: #d1fae5;
 }
 
-/* Statuses: Expired */
+.badge-inactive {
+    background-color: #f8fafc;
+    color: #64748b;
+    border-color: #e2e8f0;
+}
+
 .badge-expired,
 .status-badge-expired {
     background-color: #fef2f2;
@@ -57,60 +48,3 @@
     border-color: #fee2e2;
 }
 
-/* Statuses: Inactive */
-.badge-inactive {
-    background-color: #f8fafc;
-    color: #64748b;
-    border-color: #e2e8f0;
-}
-
-/* Statuses: Renting */
-.badge-renting {
-    background-color: #eff6ff;
-    color: #2563eb;
-    border-color: #dbeafe;
-}
-
-/* Statuses: Order Lifecycle */
-.badge-pending {
-    background-color: #fffbeb;
-    color: #b45309;
-    border-color: #fef3c7;
-}
-
-.badge-approved {
-    background-color: #eef2ff;
-    color: #4338ca;
-    border-color: #e0e7ff;
-}
-
-.badge-completed {
-    background-color: #ecfdf5;
-    color: #047857;
-    border-color: #d1fae5;
-}
-
-.badge-rejected {
-    background-color: #fef2f2;
-    color: #b91c1c;
-    border-color: #fee2e2;
-}
-
-/* Device Model Types */
-.model-type-camera {
-    background-color: #f5f3ff;
-    color: #6d28d9;
-    border-color: #ede9fe;
-}
-
-.model-type-lens {
-    background-color: #ecfdf5;
-    color: #047857;
-    border-color: #d1fae5;
-}
-
-.model-type-accessory {
-    background-color: #fffbeb;
-    color: #b45309;
-    border-color: #fef3c7;
-}

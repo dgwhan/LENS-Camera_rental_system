@@ -1,0 +1,40 @@
+/* ==========================================================================
+   Devices Management Page Styles
+   ========================================================================== */
+
+/* Device Serial Number Code Tag */
+.font-code,
+.device-serial-code {
+    font-family: var(--font-family-mono, monospace);
+    font-size: 0.8125rem;
+    background-color: #f1f5f9;
+    padding: 0.2rem 0.45rem;
+    border-radius: 4px;
+    color: #334155;
+    border: 1px solid #e2e8f0;
+}
+
+/* Device Specific Status Badges */
+.badge-available {
+    background-color: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+}
+
+.badge-renting {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+}
+
+.badge-maintenance {
+    background-color: #fffbeb;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+.badge-lost {
+    background-color: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}

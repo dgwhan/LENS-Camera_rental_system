@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core"
+    xmlns:ui="jakarta.faces.facelets" template="/WEB-INF/templates/admin-template.xhtml">
+
+    <f:metadata>
+        <f:viewParam name="id" value="#{adminRentalOrderController.id}" />
+
+        <f:viewAction action="#{adminRentalOrderController.loadDetail}" />
+        <f:viewAction action="#{adminRentalOrderAssignmentController.loadAvailableDevices(adminRentalOrderController.id)}" />
+    </f:metadata>
+
+    <ui:param name="activeMenu" value="orders" />
+
+    <ui:define name="title">
+        Order Detail - Lens Camera Rental
+    </ui:define>
+
+    <ui:define name="head">
+        <h:outputStylesheet library="admin" name="css/pages/order.css" />
+    </ui:define>
+
+    <ui:define name="content">
+
+        <div class="main-wrapper">
+
+            <h:form id="orderDetailForm">
+
+                <div class="page-header">
+
+                    <div class="page-header-row order-detail-header">
+
+                        <div class="order-header-info">
+                            <div class="page-pretitle">
+                                Rental Order
+                            </div>
+
+                            <div class="order-header-title-row">
+                                <h1 class="page-title">
+                                    Order ##{adminRentalOrderController.selectedOrder.id}
+                                </h1>
+
+                                <span class="badge-status #{adminRentalOrderController.selectedOrder.status == 'PENDING'
+                    ? 'badge-pending'
+                    : adminRentalOrderController.selectedOrder.status == 'APPROVED'
+                    ? 'badge-approved'
+                    : adminRentalOrderController.selectedOrder.status == 'ACTIVE'
+                    ? 'badge-active'
+                    : adminRentalOrderController.selectedOrder.status == 'COMPLETED'
+                    ? 'badge-completed'
+                    : adminRentalOrderController.selectedOrder.status == 'REJECTED'
+                    ? 'badge-rejected'
+                    : 'badge-inactive'}">
+                                #{adminRentalOrderController.selectedOrder.status}
+                            </span>
+                        </div>
+                        </div>
+
+                    <div class="page-header-actions order-detail-actions">
+
+                        <h:panelGroup rendered="#{adminRentalOrderController.selectedOrder.status eq 'PENDING'}"
+                            layout="block" styleClass="order-header-actions">
+
+                            <h:commandButton value="Approve" action="#{adminRentalOrderApprovalController.approveOrder(
+                        adminRentalOrderController.selectedOrder.id)}" styleClass="btn btn-primary" />
+
+                            <h:commandButton value="Reject" action="#{adminRentalOrderApprovalController.rejectOrder(
+                        adminRentalOrderController.selectedOrder.id)}" styleClass="btn btn-outline-danger" />
+
+                        </h:panelGroup>
+
+                        <h:commandButton value="Back"
+                            action="/admin/rentalorders-management/list.xhtml?faces-redirect=true"
+                            styleClass="btn btn-outline-secondary" />
+
+                    </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ====================================================
+                     order lifecycle
+                     hidden only for rejected orders
+                     ==================================================== -->
+
+                <h:panelGroup rendered="#{adminRentalOrderController.selectedOrder.status ne 'REJECTED'}"
+                    layout="block">
+
+                    <ui:include src="/admin/rentalorders-management/components/order-lifecycle.xhtml" />
+
+                </h:panelGroup>
+
+                <ui:include src="/admin/rentalorders-management/components/contact-information.xhtml" />
+
+
+                <!-- ====================================================
+                     request detail
+                     pending + rejected
+                     ==================================================== -->
+
+                <h:panelGroup rendered="#{adminRentalOrderController.selectedOrder.status eq 'PENDING'
+                             or adminRentalOrderController.selectedOrder.status eq 'REJECTED'}" layout="block">
+
+                    <ui:include src="/admin/rentalorders-management/components/request-detail.xhtml" />
+
+                </h:panelGroup>
+
+
+                <!-- ====================================================
+                     preparation detail
+                     approved + cancelled
+                     ==================================================== -->
+
+                <h:panelGroup rendered="#{adminRentalOrderController.selectedOrder.status eq 'APPROVED'
+                             or adminRentalOrderController.selectedOrder.status eq 'CANCELLED'}" layout="block">
+
+                    <ui:include src="/admin/rentalorders-management/components/preparation-detail.xhtml" />
+
+                </h:panelGroup>
+
+
+                <!-- ====================================================
+                     active rental
+                     ==================================================== -->
+
+                <h:panelGroup rendered="#{adminRentalOrderController.selectedOrder.status eq 'ACTIVE'}" layout="block">
+
+                    <ui:include src="/admin/rentalorders-management/components/rental-detail.xhtml" />
+
+                </h:panelGroup>
+
+
+                <!-- ====================================================
+                     completed return
+                     ==================================================== -->
+
+                <h:panelGroup rendered="#{adminRentalOrderController.selectedOrder.status eq 'COMPLETED'}"
+                    layout="block">
+
+                    <ui:include src="/admin/rentalorders-management/components/return-detail.xhtml" />
+
+                </h:panelGroup>
+
+            </h:form>
+
+        </div>
+
+    </ui:define>
+
+</ui:composition>

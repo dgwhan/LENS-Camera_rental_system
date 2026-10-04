@@ -1,0 +1,162 @@
+/* ==========================================================================
+   Rental Orders Management Page Styles
+   ========================================================================== */
+
+/* Order Lifecycle Navigation Tabs */
+.order-tabs-bar {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid var(--color-border, #e2e8f0);
+    padding-bottom: 0;
+}
+
+.order-tab-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 500;
+    color: var(--color-text-secondary, #64748b);
+    text-decoration: none !important;
+    border-bottom: 2px solid transparent;
+    transition: all var(--transition-fast, 0.15s ease);
+    margin-bottom: -1px;
+    cursor: pointer;
+}
+
+.order-tab-item:hover {
+    color: var(--color-text, #0f172a);
+}
+
+.order-tab-item.is-active {
+    color: var(--color-text, #0f172a);
+    font-weight: 600;
+    border-bottom-color: var(--color-text, #0f172a);
+}
+
+.tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.125rem 0.5rem;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+    border-radius: 9999px;
+    background-color: var(--color-bg-secondary, #f1f5f9);
+    color: var(--color-text-muted, #475569);
+}
+
+.order-tab-item.is-active .tab-badge {
+    background-color: var(--color-text, #0f172a);
+    color: #ffffff;
+}
+
+/* Order Customer Subtitle */
+.order-customer-phone {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary, #64748b);
+    margin-top: 2px;
+}
+
+/* Order Duration Subtitle */
+.order-duration-label {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary, #64748b);
+    margin-top: 2px;
+}
+
+/* Order Lifecycle Badges */
+.badge-pending {
+    background-color: #fffbeb;
+    color: #b45309;
+    border-color: #fef3c7;
+}
+
+.badge-approved {
+    background-color: #eef2ff;
+    color: #4338ca;
+    border-color: #e0e7ff;
+}
+
+.badge-completed {
+    background-color: #ecfdf5;
+    color: #047857;
+    border-color: #d1fae5;
+}
+
+.badge-rejected {
+    background-color: #fef2f2;
+    color: #b91c1c;
+    border-color: #fee2e2;
+}
+
+.badge-active {
+    background-color: #ecfdf5;
+    color: #047857;
+    border-color: #d1fae5;
+}
+
+.badge-cancelled {
+    background-color: #f8fafc;
+    color: #64748b;
+    border-color: #e2e8f0;
+}
+
+.order-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.page-header-row.order-detail-header {
+    align-items: flex-start;
+    gap: 24px;
+}
+
+.order-header-info {
+    min-width: 0;
+}
+
+.order-header-title-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.order-detail-actions,
+.order-header-actions {
+    flex-wrap: wrap;
+}
+
+.order-detail-actions {
+    justify-content: flex-end;
+}
+
+.order-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+@media (max-width: 640px) {
+    .page-header-row.order-detail-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .order-header-title-row {
+        gap: 8px;
+    }
+
+    .order-header-title-row .page-title {
+        font-size: 1.25rem;
+    }
+
+    .order-detail-actions {
+        justify-content: flex-start;
+    }
+}

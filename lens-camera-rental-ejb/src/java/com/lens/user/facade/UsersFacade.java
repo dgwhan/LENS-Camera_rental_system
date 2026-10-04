@@ -46,36 +46,42 @@ public class UsersFacade extends AbstractFacade<Users> implements UsersFacadeLoc
 
     @Override
     public List<Users> search(String keyword, String role) {
-        StringBuilder jpql = new StringBuilder("SELECT u FROM Users u WHERE u.status = 'ACTIVE' ");
+        return search(keyword, role, null);
+    }
+
+    @Override
+    public List<Users> search(String keyword, String role, String status) {
+        StringBuilder jpql = new StringBuilder("SELECT u FROM Users u WHERE 1=1");
 
         boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
-        boolean hasRole = role != null && !role.trim().isEmpty();
+        boolean hasRole    = role    != null && !role.trim().isEmpty();
+        boolean hasStatus  = status  != null && !status.trim().isEmpty();
 
         if (hasKeyword) {
-            jpql.append(" AND (LOWER(u.username) LIKE :keyword ")
-                    .append(" OR LOWER(u.fullName) LIKE :keyword ")
-                    .append(" OR LOWER(u.email) LIKE :keyword ")
+            jpql.append(" AND (LOWER(u.username) LIKE :keyword")
+                    .append(" OR LOWER(u.fullName) LIKE :keyword")
+                    .append(" OR LOWER(u.email) LIKE :keyword")
                     .append(" OR LOWER(u.phone) LIKE :keyword)");
         }
-
         if (hasRole) {
             jpql.append(" AND u.role = :role");
+        }
+        if (hasStatus) {
+            jpql.append(" AND u.status = :status");
         }
 
         jpql.append(" ORDER BY u.id DESC");
 
-        TypedQuery<Users> query
-                = em.createQuery(jpql.toString(), Users.class);
+        TypedQuery<Users> query = em.createQuery(jpql.toString(), Users.class);
 
         if (hasKeyword) {
-            query.setParameter(
-                    "keyword",
-                    "%" + keyword.trim().toLowerCase() + "%"
-            );
+            query.setParameter("keyword", "%" + keyword.trim().toLowerCase() + "%");
         }
-
         if (hasRole) {
             query.setParameter("role", role.trim());
+        }
+        if (hasStatus) {
+            query.setParameter("status", status.trim());
         }
 
         return query.getResultList();
@@ -145,7 +151,19 @@ public class UsersFacade extends AbstractFacade<Users> implements UsersFacadeLoc
 
     @Override
     public int totalUsers() {
+        Long count = em.createQuery("SELECT COUNT(u) FROM Users u", Long.class).getSingleResult();
+        return count != null ? count.intValue() : 0;
+    }
+
+    @Override
+    public int totalActiveUsers() {
         Long count = em.createQuery("SELECT COUNT(u) FROM Users u WHERE u.status = 'ACTIVE'", Long.class).getSingleResult();
+        return count != null ? count.intValue() : 0;
+    }
+
+    @Override
+    public int totalInactiveUsers() {
+        Long count = em.createQuery("SELECT COUNT(u) FROM Users u WHERE u.status = 'INACTIVE'", Long.class).getSingleResult();
         return count != null ? count.intValue() : 0;
     }
 
@@ -160,5 +178,4 @@ public class UsersFacade extends AbstractFacade<Users> implements UsersFacadeLoc
         Long count = em.createQuery("SELECT COUNT(u) FROM Users u WHERE u.status = 'ACTIVE' AND UPPER(u.role) = 'CUSTOMER'", Long.class).getSingleResult();
         return count != null ? count.intValue() : 0;
     }
-
 }

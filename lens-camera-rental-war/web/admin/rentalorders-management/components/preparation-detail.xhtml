@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="jakarta.faces.html"
+    xmlns:ui="jakarta.faces.facelets">
+
+    <h:outputStylesheet
+        library="admin"
+        name="css/pages/detail.css" />
+
+    <h:outputStylesheet
+        library="admin"
+        name="css/components/preparation.css" />
+
+    <h:outputScript
+        library="js"
+        name="admin/preparation.js"
+        target="body" />
+
+    <div class="detail-card preparation-card">
+
+        <div class="detail-card-header">
+            <div>
+                <h2 class="detail-card-title">
+                    Preparation
+                </h2>
+
+                <p class="detail-card-subtitle">
+
+                    <h:panelGroup
+                        rendered="#{adminRentalOrderController.selectedOrder.status eq 'APPROVED'}">
+
+                        Assign a physical device and prepare the rental handover.
+
+                    </h:panelGroup>
+
+                    <h:panelGroup
+                        rendered="#{adminRentalOrderController.selectedOrder.status eq 'CANCELLED'}">
+
+                        Rental preparation was cancelled because the handover failed.
+
+                    </h:panelGroup>
+
+                </p>
+            </div>
+        </div>
+
+        <div class="detail-card-body">
+
+            <ui:include
+                src="/admin/rentalorders-management/components/preparation/device-assignment.xhtml" />
+
+            <h:panelGroup id="handoverSection">
+
+                <h:panelGroup
+                    rendered="#{adminRentalOrderController.selectedOrder.status eq 'APPROVED'
+                        and adminRentalOrderController.preparationOpen
+                        and not adminRentalOrderController.handoverOpen}"
+                    layout="block"
+                    styleClass="preparation-handover-blocked">
+
+                    <div class="preparation-section-header">
+                        <div>
+                            <span class="detail-label">Handover</span>
+                            <span class="preparation-section-description">
+                                Assign a physical device before proceeding with handover.
+                            </span>
+                        </div>
+                    </div>
+
+                </h:panelGroup>
+
+                <ui:include
+                    src="/admin/rentalorders-management/components/preparation/store-pickup-handover.xhtml" />
+
+                <ui:include
+                    src="/admin/rentalorders-management/components/preparation/delivery-handover.xhtml" />
+
+            </h:panelGroup>
+
+            <ui:include
+                src="/admin/rentalorders-management/components/preparation/store-pickup-failure-modal.xhtml" />
+
+            <ui:include
+                src="/admin/rentalorders-management/components/preparation/delivery-failure-modal.xhtml" />
+
+        </div>
+    </div>
+
+</ui:composition>

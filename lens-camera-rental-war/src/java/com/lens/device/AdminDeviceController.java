@@ -35,6 +35,7 @@ public class AdminDeviceController implements Serializable {
     private boolean editMode;
     private String keyword = "";
     private String status = "";
+    private String brand = "";
     private Integer id;
 
     public AdminDeviceController() {
@@ -187,12 +188,13 @@ public class AdminDeviceController implements Serializable {
     }
 
     public List<Devices> getDevicesList() {
-        return devicesFacade.search(keyword, status);
+        return devicesFacade.search(keyword, status, brand);
     }
 
     public void resetFilter() {
         this.keyword = "";
         this.status = "";
+        this.brand = "";
     }
 
     public List<DeviceModels> getAllDeviceModels() {
@@ -266,6 +268,18 @@ public class AdminDeviceController implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public List<String> getDistinctBrands() {
+        return deviceModelsFacade.findDistinctBrands();
     }
 
     public int getTotalDevices() {

@@ -17,22 +17,7 @@
         <h:outputStylesheet library="shared" name="css/components/buttons.css" />
         <h:outputStylesheet library="client" name="css/pages/customer.css" />
         <h:outputStylesheet library="client" name="css/pages/cart.css" />
-        <style>
-            .auth-required {
-                color: var(--color-danger, #ef4444);
-                font-weight: 700;
-                margin-left: 0.2rem;
-            }
-            .field-error {
-                display: block;
-                color: var(--color-danger, #ef4444) !important;
-                font-size: 0.75rem;
-                font-weight: 500;
-                margin-top: 0.35rem;
-                text-align: left;
-                line-height: 1.35;
-            }
-        </style>
+        <h:outputStylesheet library="client" name="css/pages/checkout.css" />
     </ui:define>
 
     <ui:define name="content">
@@ -87,62 +72,127 @@
                         <!-- Left Column: Customer Information & Rental Items & Warning -->
                         <div class="cart-items-column">
 
-                            <!-- 1. Customer Information Section -->
-                            <div class="cart-item-card" style="display: block; margin-bottom: 1.5rem;">
-                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--color-border, #e2e8f0);">
-                                    <h3 style="font-size: 1rem; font-weight: 700; color: var(--color-text, #0f172a); margin: 0; text-transform: uppercase; letter-spacing: 0.03em;">
+                            <!-- Customer Information -->
+                            <div class="cart-item-card checkout-customer-card">
+
+                                <div class="checkout-section-header">
+                                    <h3 class="checkout-section-title">
                                         Customer Information
                                     </h3>
-                                    <span style="font-size: 0.75rem; color: var(--color-text-secondary, #64748b);">
-                                        <span class="auth-required">*</span> Required fields
+
+                                    <span class="checkout-required-note">
+                                        <span class="auth-required">*</span>
+                                        Required fields
                                     </span>
                                 </div>
 
-                                <!-- Information Verification & Edit Notice -->
-                                <p style="font-size: 0.875rem; font-weight: 600; color: var(--color-text, #0f172a); margin: 0 0 1.25rem 0; line-height: 1.5;">
-                                    Please check your information carefully. You can edit your contact details and address below if needed.
+                                <p class="checkout-section-description">
+                                    Please check your information carefully. You can edit your contact details below if needed.
                                 </p>
 
-                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                                <!-- Name + Phone -->
+                                <div class="checkout-form-grid">
+
                                     <div class="form-group">
-                                        <h:outputLabel for="customerName" value="Full Name" styleClass="form-label">
+                                        <h:outputLabel for="customerName"
+                                                       value="Full Name"
+                                                       styleClass="form-label">
                                             <span class="auth-required">*</span>
                                         </h:outputLabel>
+
                                         <h:inputText id="customerName"
                                                      value="#{checkoutController.customerName}"
                                                      required="true"
                                                      requiredMessage="Customer name is required."
                                                      styleClass="form-control"
                                                      pt:placeholder="Enter your full name" />
-                                        <h:message for="customerName" styleClass="field-error" />
+
+                                        <h:message for="customerName"
+                                                   styleClass="field-error" />
                                     </div>
 
                                     <div class="form-group">
-                                        <h:outputLabel for="customerPhone" value="Phone Number" styleClass="form-label">
+                                        <h:outputLabel for="customerPhone"
+                                                       value="Phone Number"
+                                                       styleClass="form-label">
                                             <span class="auth-required">*</span>
                                         </h:outputLabel>
+
                                         <h:inputText id="customerPhone"
                                                      value="#{checkoutController.customerPhone}"
                                                      required="true"
                                                      requiredMessage="Customer phone is required."
                                                      styleClass="form-control"
                                                      pt:placeholder="Enter your phone number" />
-                                        <h:message for="customerPhone" styleClass="field-error" />
+
+                                        <h:message for="customerPhone"
+                                                   styleClass="field-error" />
                                     </div>
+
                                 </div>
 
-                                <div class="form-group" style="margin-bottom: 0;">
-                                    <h:outputLabel for="customerAddress" value="Address" styleClass="form-label">
+                                <!-- Handover Method -->
+                                <div class="form-group checkout-handover-group">
+
+                                    <h:outputLabel for="handoverMethod"
+                                                   value="Handover Method"
+                                                   styleClass="form-label">
                                         <span class="auth-required">*</span>
                                     </h:outputLabel>
-                                    <h:inputText id="customerAddress"
-                                                 value="#{checkoutController.customerAddress}"
-                                                 required="true"
-                                                 requiredMessage="Customer address is required."
-                                                 styleClass="form-control"
-                                                 pt:placeholder="Enter your address (street, ward, district, city)" />
-                                    <h:message for="customerAddress" styleClass="field-error" />
+
+                                    <h:selectOneRadio id="handoverMethod"
+                                                      value="#{checkoutController.handoverMethod}"
+                                                      layout="pageDirection"
+                                                      required="true"
+                                                      requiredMessage="Handover method is required."
+                                                      styleClass="checkout-handover-options">
+
+                                        <f:selectItem itemValue="STORE_PICKUP"
+                                                      itemLabel="Store Pickup - Pick up your rental at our store." />
+
+                                        <f:selectItem itemValue="DELIVERY"
+                                                      itemLabel="Delivery - Have your rental delivered to your address." />
+
+                                        <f:ajax execute="@this"
+                                                render="deliveryAddressPanel" />
+
+                                    </h:selectOneRadio>
+
+                                    <h:message for="handoverMethod"
+                                               styleClass="field-error" />
+
                                 </div>
+
+                                <!-- Delivery Address -->
+                                <h:panelGroup id="deliveryAddressPanel"
+                                              layout="block">
+
+                                    <h:panelGroup rendered="#{checkoutController.handoverMethod eq 'DELIVERY'}">
+
+                                        <div class="form-group checkout-address-group">
+
+                                            <h:outputLabel for="customerAddress"
+                                                           value="Delivery Address"
+                                                           styleClass="form-label">
+                                                <span class="auth-required">*</span>
+                                            </h:outputLabel>
+
+                                            <h:inputText id="customerAddress"
+                                                         value="#{checkoutController.customerAddress}"
+                                                         required="#{checkoutController.handoverMethod eq 'DELIVERY'}"
+                                                         requiredMessage="Delivery address is required."
+                                                         styleClass="form-control"
+                                                         pt:placeholder="Enter your address (street, ward, district, city)" />
+
+                                            <h:message for="customerAddress"
+                                                       styleClass="field-error" />
+
+                                        </div>
+
+                                    </h:panelGroup>
+
+                                </h:panelGroup>
+
                             </div>
 
                             <!-- 2. Rental Equipment Section Header -->

@@ -98,6 +98,7 @@ CREATE TABLE RentalOrders (
 
     customer_name NVARCHAR(100) NOT NULL,
     customer_phone VARCHAR(20) NOT NULL,
+    customer_address NVARCHAR(500) NULL,
 
     status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
 
@@ -115,7 +116,7 @@ CREATE TABLE RentalOrders (
         REFERENCES Users(id),
 
     CONSTRAINT CK_RentalOrders_Status
-        CHECK (status IN ( 'PENDING','APPROVED','REJECTED','ACTIVE','COMPLETED' )),
+        CHECK (status IN ( 'PENDING','APPROVED','REJECTED','ACTIVE','COMPLETED','CANCELLED' )),
         
 
     CONSTRAINT CK_RentalOrders_Subtotal
@@ -292,15 +293,9 @@ CREATE TABLE RentalDeposits (
     rental_order_id INT NOT NULL,
 
     amount DECIMAL(12,0) NOT NULL,
-    deducted_amount DECIMAL(12,0) NOT NULL DEFAULT 0,
-    refunded_amount DECIMAL(12,0) NOT NULL DEFAULT 0,
 
     status VARCHAR(20) NOT NULL DEFAULT 'NOT_REFUNDED',
-
-    deduction_reason NVARCHAR(500) NULL,
     note NVARCHAR(1000) NULL,
-
-    refunded_at DATETIME2 NULL,
 
     created_at DATETIME2 NOT NULL DEFAULT GETDATE(),
     updated_at DATETIME2 NOT NULL DEFAULT GETDATE(),
@@ -313,18 +308,13 @@ CREATE TABLE RentalDeposits (
         REFERENCES RentalOrders(id),
 
     CONSTRAINT CK_RentalDeposits_Status
-        CHECK (status IN ('NOT_REFUNDED','REFUNDED')),
+        CHECK (status IN ('NOT_REFUNDED', 'REFUNDED')),
 
     CONSTRAINT CK_RentalDeposits_Amount
-        CHECK (amount >= 0),
-
-    CONSTRAINT CK_RentalDeposits_DeductedAmount
-        CHECK (deducted_amount >= 0),
-
-    CONSTRAINT CK_RentalDeposits_RefundedAmount
-        CHECK (refunded_amount >= 0),
+        CHECK (amount >= 0)
 );
 GO
+ 
 
 INSERT INTO Users (username,password,full_name,email,phone,role) 
 VALUES ('admin','admin',N'Administrator','admin@lens.com','0900000000','ADMIN'
