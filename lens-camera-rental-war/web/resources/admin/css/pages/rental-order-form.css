@@ -1,0 +1,25 @@
+.availability-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.availability-status {
+    display: flex;
+    align-items: center;
+}
+
+.availability-success,
+.availability-neutral {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.availability-success {
+    color: #2E7D32;
+}
+
+.availability-neutral {
+    color: #9099A0;
+}

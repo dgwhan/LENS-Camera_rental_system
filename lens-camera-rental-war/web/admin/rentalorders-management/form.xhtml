@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:pt="jakarta.faces.passthrough"
+                template="/WEB-INF/templates/admin-template.xhtml">
+
+    <ui:param name="activeMenu" value="rental-orders"/>
+    <ui:define name="title">Create Rental Order - Lens Camera Rental</ui:define>
+
+    <ui:define name="content">
+        <h:outputStylesheet library="admin" name="css/pages/rental-order-form.css"/>
+        <h:outputStylesheet library="admin" name="css/components/rental-period.css"/>
+        <h:outputScript library="js" name="admin/admin-rental-period.js" target="body"/>
+        <h:outputScript library="js" name="admin/selector.js" target="body"/>
+
+        <div class="main-wrapper">
+            <div class="form-container">
+                <div class="page-header">
+                    <div class="page-header-row">
+                        <div>
+                            <div class="page-pretitle">Rental Orders Management</div>
+                            <h1 class="page-title">Create New Rental Order</h1>
+                        </div>
+                        <h:link value="Back to Orders"
+                                outcome="/admin/rentalorders-management/list.xhtml"
+                                styleClass="btn btn-outline-secondary"/>
+                    </div>
+                </div>
+
+                <h:form id="rentalOrderForm">
+                    <h:messages id="messages" globalOnly="true" layout="list" styleClass="form-messages"/>
+
+                    <div class="card">
+                        <div class="card-header"><h2 class="card-title">Rental Order Information</h2></div>
+                        <div class="card-body">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <h:outputLabel for="customer" styleClass="form-label">Customer <span class="form-required">*</span></h:outputLabel>
+                                    <div class="model-selector" data-selector="device-model">
+                                        <h:selectOneMenu id="customer" value="#{adminCreateOrderController.customerId}"
+                                                         styleClass="model-selector-native">
+                                            <f:selectItem itemLabel="Select customer" itemValue="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{adminCreateOrderController.customers}" var="customer"
+                                                           itemValue="#{customer.id}" itemLabel="#{customer.fullName} - #{customer.phone}"/>
+                                        </h:selectOneMenu>
+                                        <div class="model-combobox">
+                                            <input type="text" class="model-combobox-input" placeholder="Search or select customer" autocomplete="off"/>
+                                            <button type="button" class="model-combobox-chevron" tabindex="-1" aria-label="Toggle customer list"/>
+                                        </div>
+                                        <div class="model-selector-dropdown">
+                                            <div class="model-selector-results" role="listbox"></div>
+                                        </div>
+                                    </div>
+                                    <h:message for="customer" styleClass="field-error"/>
+                                </div>
+
+                                <div class="form-group">
+                                    <h:outputLabel for="deviceModel" styleClass="form-label">Device Model <span class="form-required">*</span></h:outputLabel>
+                                    <div class="model-selector" data-selector="device-model">
+                                        <h:selectOneMenu id="deviceModel" value="#{adminCreateOrderController.deviceModelId}"
+                                                         styleClass="model-selector-native">
+                                            <f:selectItem itemLabel="Select device model" itemValue="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{adminCreateOrderController.deviceModels}" var="device"
+                                                           itemValue="#{device.id}" itemLabel="#{device.name} - #{device.model}"/>
+                                        </h:selectOneMenu>
+                                        <div class="model-combobox">
+                                            <input type="text" class="model-combobox-input" placeholder="Search or select device model" autocomplete="off"/>
+                                            <button type="button" class="model-combobox-chevron" tabindex="-1" aria-label="Toggle device model list"/>
+                                        </div>
+                                        <div class="model-selector-dropdown">
+                                            <div class="model-selector-results" role="listbox"></div>
+                                        </div>
+                                    </div>
+                                    <h:panelGroup id="deviceModelMessageContainer" layout="block">
+                                        <h:message id="deviceModelMessage" for="deviceModel" styleClass="field-error"/>
+                                    </h:panelGroup>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-top: 1.25rem;">
+                                <div class="form-label">Rental Period <span class="form-required">*</span></div>
+                                <div class="admin-rental-period" data-rental-period="admin">
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <h:outputLabel for="startDate" styleClass="form-label">Start Date <span class="form-required">*</span></h:outputLabel>
+                                            <h:inputText id="startDate" value="#{adminCreateOrderController.startDate}"
+                                                         styleClass="form-control" pt:type="date" pt:data-role="start-date">
+                                                <f:convertDateTime pattern="yyyy-MM-dd"/>
+                                            </h:inputText>
+                                        </div>
+                                        <div class="form-group">
+                                            <h:outputLabel for="endDate" styleClass="form-label">End Date <span class="form-required">*</span></h:outputLabel>
+                                            <h:inputText id="endDate" value="#{adminCreateOrderController.endDate}"
+                                                         styleClass="form-control" pt:type="date" pt:data-role="end-date">
+                                                <f:convertDateTime pattern="yyyy-MM-dd"/>
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+                                    <div class="admin-rental-period-summary" data-role="duration-display">Duration: --</div>
+                                    <div class="text-muted">Start date can be today or later. End date must be after start date.</div>
+                                </div>
+                                <h:panelGroup id="rentalPeriodMessageContainer" layout="block" pt:aria-live="polite"/>
+                            </div>
+
+                            <div class="availability-row" style="margin-top: 1rem;">
+                                <h:commandButton id="checkAvailability" value="Check Availability" action="#{adminCreateOrderController.checkAvailability}"
+                                                 styleClass="btn btn-secondary">
+                                    <f:ajax execute="@form" render="availabilityStatus messages deviceModelMessageContainer"/>
+                                </h:commandButton>
+                                <h:panelGroup id="availabilityStatus" layout="inline" styleClass="availability-status">
+                                    <h:panelGroup rendered="#{adminCreateOrderController.available}" styleClass="availability-success">
+                                        Available
+                                    </h:panelGroup>
+                                </h:panelGroup>
+                            </div>
+                        </div>
+
+                        <div class="card-header"><h2 class="card-title">Handover Information</h2></div>
+                        <div class="card-body">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <h:outputLabel for="handoverMethod" styleClass="form-label">Handover Method <span class="form-required">*</span></h:outputLabel>
+                                    <h:selectOneMenu id="handoverMethod" value="#{adminCreateOrderController.handoverMethod}"
+                                                     styleClass="form-control">
+                                        <f:selectItem itemLabel="Store Pickup" itemValue="STORE_PICKUP"/>
+                                        <f:selectItem itemLabel="Delivery" itemValue="DELIVERY"/>
+                                        <f:ajax execute="@this" render="deliveryAddressPanel"/>
+                                    </h:selectOneMenu>
+                                    <h:message for="handoverMethod" styleClass="field-error"/>
+                                </div>
+                                <h:panelGroup id="deliveryAddressPanel" layout="block" styleClass="form-group"
+                                              pt:data-delivery-address="true"
+                                              pt:hidden="#{adminCreateOrderController.handoverMethod ne 'DELIVERY'}">
+                                    <h:panelGroup rendered="#{adminCreateOrderController.handoverMethod eq 'DELIVERY'}">
+                                        <h:outputLabel for="customerAddress" styleClass="form-label">Delivery Address <span class="form-required">*</span></h:outputLabel>
+                                        <h:inputText id="customerAddress" value="#{adminCreateOrderController.customerAddress}"
+                                                     maxlength="255" styleClass="form-control"
+                                                     pt:placeholder="Enter delivery address"/>
+                                        <span class="text-muted">Required when Delivery is selected.</span>
+                                        <h:message for="customerAddress" styleClass="field-error"/>
+                                    </h:panelGroup>
+                                </h:panelGroup>
+                            </div>
+                        </div>
+
+                        <div class="card-header"><h2 class="card-title">Additional Information</h2></div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <h:outputLabel for="note" styleClass="form-label">Note</h:outputLabel>
+                                <h:inputTextarea id="note" value="#{adminCreateOrderController.note}" rows="4"
+                                                 styleClass="form-control" pt:placeholder="Enter order note...">
+                                    <f:passThroughAttribute name="maxlength" value="1000"/>
+                                </h:inputTextarea>
+                                <h:message for="note" styleClass="field-error"/>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <h:link value="Cancel" outcome="/admin/rentalorders-management/list.xhtml"
+                                    styleClass="btn btn-outline-secondary"/>
+                            <h:commandButton value="Create Order" action="#{adminCreateOrderController.createOrder}"
+                                             styleClass="btn btn-primary"/>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

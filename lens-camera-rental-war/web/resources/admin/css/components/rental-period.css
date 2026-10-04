@@ -1,0 +1,6 @@
+.admin-rental-period-summary {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-secondary, #64748b);
+}
