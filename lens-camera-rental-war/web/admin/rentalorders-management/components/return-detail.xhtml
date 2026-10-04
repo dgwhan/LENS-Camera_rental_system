@@ -1,217 +1,156 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="jakarta.faces.html"
                 xmlns:f="jakarta.faces.core"
                 xmlns:ui="jakarta.faces.facelets">
 
     <h:outputStylesheet library="admin" name="css/pages/detail.css" />
-    <h:outputStylesheet library="admin" name="css/components/request-detail.css" />
+    <h:outputStylesheet library="admin" name="css/components/return-detail.css" />
 
-    <div class="detail-layout request-detail">
-
-        <div class="detail-main">
-
-            <!-- Rental Item Info -->
-            <div class="detail-card">
-                <div class="detail-card-header">
-                    <h2 class="detail-card-title">Completed Rental</h2>
-                </div>
-
-                <div class="detail-card-body">
-                    <div class="detail-grid-3">
-
-                        <div class="detail-item">
-                            <span class="detail-label">Device Model</span>
-                            <span class="detail-value detail-value-strong">
-                                #{adminRentalOrderController.selectedRentalItem.deviceModelId.name}
-                            </span>
-                        </div>
-
-                        <div class="detail-item">
-                            <span class="detail-label">Assigned Device</span>
-                            <span class="detail-value">
-                                #{adminRentalOrderController.selectedRentalItem.assignedDeviceId.serialNumber}
-                            </span>
-                        </div>
-
-                        <div class="detail-item">
-                            <span class="detail-label">Duration</span>
-                            <span class="detail-value">
-                                #{adminRentalOrderController.selectedRentalItem.duration}
-                                #{adminRentalOrderController.selectedRentalItem.duration == 1 ? 'day' : 'days'}
-                            </span>
-                        </div>
-
-                        <div class="detail-item">
-                            <span class="detail-label">Start Date</span>
-                            <span class="detail-value">
-                                <h:outputText value="#{adminRentalOrderController.selectedRentalItem.startDate}">
-                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Asia/Ho_Chi_Minh" />
-                                </h:outputText>
-                            </span>
-                        </div>
-
-                        <div class="detail-item">
-                            <span class="detail-label">End Date</span>
-                            <span class="detail-value">
-                                <h:outputText value="#{adminRentalOrderController.selectedRentalItem.endDate}">
-                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Asia/Ho_Chi_Minh" />
-                                </h:outputText>
-                            </span>
-                        </div>
-
-                        <div class="detail-item">
-                            <span class="detail-label">Customer</span>
-                            <span class="detail-value">
-                                #{adminRentalOrderController.selectedOrder.customerName}
-                            </span>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <!-- Handover Info -->
-            <h:panelGroup rendered="#{adminRentalOrderController.selectedHandover != null}" layout="block">
-                <div class="detail-card">
-                    <div class="detail-card-header">
-                        <h2 class="detail-card-title">Handover</h2>
-                    </div>
-
-                    <div class="detail-card-body">
-                        <div class="detail-grid-3">
-
-                            <div class="detail-item">
-                                <span class="detail-label">Method</span>
-                                <span class="detail-value">
-                                    #{adminRentalOrderController.selectedHandover.method}
-                                </span>
-                            </div>
-
-                            <div class="detail-item">
-                                <span class="detail-label">Status</span>
-                                <span class="detail-value">
-                                    #{adminRentalOrderController.selectedHandover.status}
-                                </span>
-                            </div>
-
-                            <div class="detail-item">
-                                <span class="detail-label">Confirmed At</span>
-                                <span class="detail-value">
-                                    <h:outputText value="#{adminRentalOrderController.selectedHandover.confirmedAt}">
-                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
-                                    </h:outputText>
-                                </span>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </h:panelGroup>
-
+    <h:panelGroup rendered="#{adminRentalOrderController.selectedOrder.status eq 'ACTIVE'}" layout="block">
+    <div class="detail-card return-inspection">
+        <div class="detail-card-header">
+            <h2 class="detail-card-title">
+                Return &amp; Inspection
+            </h2>
+            <p class="return-inspection-subtitle">
+                Complete the rental return by confirming the device condition.
+            </p>
         </div>
 
-        <div class="detail-sidebar">
-
-            <!-- Order Summary -->
-            <div class="detail-card">
-                <div class="detail-card-header">
-                    <h2 class="detail-card-title">Order Summary</h2>
-                </div>
-
-                <div class="detail-card-body">
-                    <div class="detail-meta-list">
-
-                        <div class="detail-meta-row">
-                            <span class="detail-meta-label">Subtotal</span>
-                            <span class="detail-meta-value">
-                                <h:outputText value="#{adminRentalOrderController.selectedOrder.subtotal}">
-                                    <f:convertNumber pattern="#,##0 VND" />
-                                </h:outputText>
-                            </span>
-                        </div>
-
-                        <div class="detail-meta-row">
-                            <span class="detail-meta-label">Deposit</span>
-                            <span class="detail-meta-value">
-                                <h:outputText value="#{adminRentalOrderController.selectedOrder.depositTotal}">
-                                    <f:convertNumber pattern="#,##0 VND" />
-                                </h:outputText>
-                            </span>
-                        </div>
-
-                        <div class="detail-meta-row request-total-row">
-                            <span class="detail-meta-label">Total</span>
-                            <span class="detail-meta-value">
-                                <h:outputText value="#{adminRentalOrderController.selectedOrder.totalPayable}">
-                                    <f:convertNumber pattern="#,##0 VND" />
-                                </h:outputText>
-                            </span>
-                        </div>
-
+        <div class="return-inspection-section">
+            <h3 class="return-inspection-section-title">Rental Summary</h3>
+            <div class="return-summary-grid">
+                <div class="return-summary-item">
+                    <span class="detail-label">Device</span>
+                    <div class="return-summary-device">
+                        <h:graphicImage
+                            value="#{adminRentalOrderController.getDeviceImageUrl(adminRentalOrderController.selectedRentalItem.deviceModelId.imageUrl)}"
+                            alt="#{adminRentalOrderController.selectedRentalItem.deviceModelId.name}"
+                            styleClass="return-summary-image" />
+                        <span class="return-summary-value">
+                            #{adminRentalOrderController.selectedRentalItem.deviceModelId.name}
+                        </span>
                     </div>
                 </div>
+
+                <div class="return-summary-item">
+                    <span class="detail-label">Physical Device</span>
+                    <span class="return-summary-value">
+                        #{adminRentalOrderController.selectedRentalItem.assignedDeviceId.serialNumber}
+                    </span>
+                </div>
+
+                <div class="return-summary-item">
+                    <span class="detail-label">Rental Period</span>
+                    <span class="return-summary-value">
+                        <h:outputText value="#{adminRentalOrderController.selectedRentalItem.startDate}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Asia/Ho_Chi_Minh" />
+                        </h:outputText>
+                        <span> — </span>
+                        <h:outputText value="#{adminRentalOrderController.selectedRentalItem.endDate}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Asia/Ho_Chi_Minh" />
+                        </h:outputText>
+                    </span>
+                </div>
+
             </div>
-
-            <!-- Payment -->
-            <div class="detail-card">
-                <div class="detail-card-header">
-                    <h2 class="detail-card-title">Payment</h2>
-                </div>
-
-                <div class="detail-card-body">
-                    <div class="detail-meta-list">
-
-                        <div class="detail-meta-row">
-                            <span class="detail-meta-label">Method</span>
-                            <span class="detail-meta-value">Cash</span>
-                        </div>
-
-                        <div class="detail-meta-row">
-                            <span class="detail-meta-label">Status</span>
-                            <span class="detail-meta-value">
-                                #{adminRentalOrderController.getPaymentStatus(adminRentalOrderController.selectedOrder.id)}
-                            </span>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <!-- Deposit -->
-            <h:panelGroup rendered="#{adminRentalOrderController.selectedDeposit != null}" layout="block">
-                <div class="detail-card">
-                    <div class="detail-card-header">
-                        <h2 class="detail-card-title">Deposit</h2>
-                    </div>
-
-                    <div class="detail-card-body">
-                        <div class="detail-meta-list">
-
-                            <div class="detail-meta-row">
-                                <span class="detail-meta-label">Amount</span>
-                                <span class="detail-meta-value">
-                                    <h:outputText value="#{adminRentalOrderController.selectedDeposit.amount}">
-                                        <f:convertNumber pattern="#,##0 VND" />
-                                    </h:outputText>
-                                </span>
-                            </div>
-
-                            <div class="detail-meta-row">
-                                <span class="detail-meta-label">Status</span>
-                                <span class="detail-meta-value">
-                                    #{adminRentalOrderController.selectedDeposit.status}
-                                </span>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </h:panelGroup>
-
         </div>
 
-    </div>
+            <div class="return-inspection-section">
+                <h3 class="return-inspection-section-title">Return Status</h3>
+                <p class="return-status-question">Has the customer returned the device?</p>
+                <h:selectOneRadio id="returnStatus"
+                                  value="#{adminRentalReturnController.returnStatus}"
+                                  layout="lineDirection"
+                                  styleClass="return-status-options">
+                    <f:selectItem itemLabel="Returned" itemValue="RETURNED" />
+                    <f:selectItem itemLabel="Not Returned" itemValue="NOT_RETURNED" />
+                    <f:ajax execute="@this" render="returnConditionSection" />
+                </h:selectOneRadio>
+            </div>
+
+            <h:panelGroup id="returnConditionSection" layout="block" styleClass="return-inspection-section">
+                <h:panelGroup rendered="#{adminRentalReturnController.returnStatus eq 'RETURNED'}" layout="block">
+                    <h3 class="return-inspection-section-title">Device Condition</h3>
+                    <h:selectOneRadio id="deviceCondition"
+                                      value="#{adminRentalReturnController.deviceCondition}"
+                                      layout="pageDirection"
+                                      styleClass="return-condition-options">
+                        <f:selectItem itemLabel="Normal" itemValue="NORMAL" />
+                        <f:selectItem itemLabel="Damaged" itemValue="DAMAGED" />
+                        <f:ajax execute="@this" render="returnConditionDescription" />
+                    </h:selectOneRadio>
+                    <h:panelGroup id="returnConditionDescription" layout="block">
+                        <h:panelGroup rendered="#{adminRentalReturnController.deviceCondition eq 'NORMAL'}"
+                                      layout="block" styleClass="return-condition-message">
+                            The device was returned in normal condition.
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{adminRentalReturnController.deviceCondition eq 'DAMAGED'}"
+                                      layout="block" styleClass="return-condition-message">
+                            The device was returned but requires maintenance.
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{adminRentalReturnController.returnStatus eq 'NOT_RETURNED'}" layout="block">
+                    <h3 class="return-inspection-section-title">Device Condition</h3>
+                    <p class="return-condition-lost">
+                        Lost
+                        <span>The physical device was not returned.</span>
+                    </p>
+                </h:panelGroup>
+            </h:panelGroup>
+
+            <div class="return-inspection-section">
+                <h:outputLabel for="inspectionNote" value="Inspection Note"
+                               styleClass="return-inspection-note-label" />
+                <h:inputTextarea id="inspectionNote"
+                                 value="#{adminRentalReturnController.inspectionNote}"
+                                 rows="4"
+                                 styleClass="form-control return-inspection-note" />
+                <p class="return-inspection-help">
+                    Record the device condition or any relevant inspection details.
+                </p>
+            </div>
+
+            <h:panelGroup rendered="#{adminRentalReturnController.returnStatus eq 'RETURNED'}"
+                          layout="block" styleClass="return-deposit-confirmation">
+                <div class="return-deposit-confirmation-row">
+                    <h:selectBooleanCheckbox id="depositRefundConfirmed"
+                                             value="#{adminRentalReturnController.depositRefundConfirmed}"
+                                             validator="#{adminRentalReturnController.validateDepositRefundConfirmation}"
+                                             styleClass="return-deposit-checkbox" />
+                    <h:outputLabel for="depositRefundConfirmed"
+                                   value="I confirm that the deposit has been returned to the customer."
+                                   styleClass="return-deposit-confirmation-label" />
+                </div>
+                <p class="return-deposit-confirmation-help">
+                    Completing the return will record the deposit as REFUNDED.
+                </p>
+                <h:message for="depositRefundConfirmed"
+                           styleClass="field-error return-deposit-confirmation-error" />
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{adminRentalReturnController.returnStatus eq 'NOT_RETURNED'}"
+                          layout="block" styleClass="return-deposit-retained">
+                <span class="badge-status badge-pending">Not Refunded</span>
+                <span>The deposit will be retained because the device was not returned.</span>
+            </h:panelGroup>
+
+            <div class="return-inspection-actions">
+                <h:link outcome="/admin/rentalorders-management/list.xhtml?faces-redirect=true"
+                        styleClass="btn btn-lg btn-outline-secondary">Cancel</h:link>
+                <h:commandButton value="Complete Return"
+                                 action="#{adminRentalReturnController.processReturn(adminRentalOrderController.selectedOrder.id)}"
+                                 styleClass="btn btn-lg btn-primary" />
+            </div>
+        </div>
+    </h:panelGroup>
+
+        <h:panelGroup rendered="#{adminRentalOrderController.selectedOrder.status eq 'COMPLETED'}"
+                      layout="block">
+            <ui:include src="/admin/rentalorders-management/components/summary-order-complete.xhtml" />
+        </h:panelGroup>
 
 </ui:composition>

@@ -47,4 +47,33 @@
     color: #dc2626;
     border-color: #fee2e2;
 }
+.badge-pending {
+    background-color: #fffbeb;
+    color: #b45309;
+    border-color: #fef3c7;
+}
 
+.badge-approved {
+    background-color: #eff6ff;
+    color: #2563eb;
+    border-color: #dbeafe;
+}
+
+.badge-active {
+    background-color: #ecfdf5;
+    color: #047857;
+    border-color: #d1fae5;
+}
+
+.badge-completed {
+    background-color: #f8fafc;
+    color: #475569;
+    border-color: #e2e8f0;
+}
+
+.badge-rejected,
+.badge-cancelled {
+    background-color: #fef2f2;
+    color: #dc2626;
+    border-color: #fee2e2;
+}

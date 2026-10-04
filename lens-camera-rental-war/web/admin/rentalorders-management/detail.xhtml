@@ -92,7 +92,10 @@
 
                 </h:panelGroup>
 
-                <ui:include src="/admin/rentalorders-management/components/contact-information.xhtml" />
+                <h:panelGroup rendered="#{adminRentalOrderController.selectedOrder.status ne 'COMPLETED'}"
+                              layout="block">
+                    <ui:include src="/admin/rentalorders-management/components/contact-information.xhtml" />
+                </h:panelGroup>
 
 
                 <!-- ====================================================
@@ -121,22 +124,9 @@
                 </h:panelGroup>
 
 
-                <!-- ====================================================
-                     active rental
-                     ==================================================== -->
-
-                <h:panelGroup rendered="#{adminRentalOrderController.selectedOrder.status eq 'ACTIVE'}" layout="block">
-
-                    <ui:include src="/admin/rentalorders-management/components/rental-detail.xhtml" />
-
-                </h:panelGroup>
-
-
-                <!-- ====================================================
-                     completed return
-                     ==================================================== -->
-
-                <h:panelGroup rendered="#{adminRentalOrderController.selectedOrder.status eq 'COMPLETED'}"
+                <!-- return workflow for active and completed orders -->
+                <h:panelGroup rendered="#{adminRentalOrderController.selectedOrder.status eq 'ACTIVE'
+                    or adminRentalOrderController.selectedOrder.status eq 'COMPLETED'}"
                     layout="block">
 
                     <ui:include src="/admin/rentalorders-management/components/return-detail.xhtml" />

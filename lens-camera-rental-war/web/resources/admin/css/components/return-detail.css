@@ -1,0 +1,262 @@
+.return-inspection {
+    margin-bottom: var(--spacing-md, 1rem);
+}
+
+.return-inspection .detail-card-header {
+    display: block;
+    padding: var(--spacing-md, 1rem) var(--spacing-lg, 1.5rem);
+    border-bottom: 0;
+}
+
+.return-inspection-subtitle {
+    margin: var(--spacing-xs, 0.25rem) 0 0;
+    color: var(--detail-text-muted, var(--color-text-secondary, #666666));
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.return-inspection-section {
+    padding: var(--spacing-md, 1rem) var(--spacing-lg, 1.5rem);
+}
+
+.return-inspection-section-title {
+    margin: 0 0 12px;
+    color: var(--detail-text-muted, var(--color-text-secondary, #666666));
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.return-summary-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--spacing-lg, 1.5rem);
+}
+
+.return-summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs, 0.25rem);
+    min-width: 0;
+}
+
+.return-summary-device {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm, 0.5rem);
+    min-width: 0;
+}
+
+.return-summary-image {
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+    object-fit: contain;
+    border: 1px solid var(--detail-border, var(--color-border, #e5e5e5));
+    border-radius: var(--radius-md, 6px);
+    background: var(--detail-card-bg, var(--color-white, #ffffff));
+}
+
+.return-summary-value {
+    color: var(--detail-text-main, var(--color-text, #111111));
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.return-status-question {
+    margin: 0 0 12px;
+    color: var(--detail-text-main, var(--color-text, #111111));
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.return-status-options table,
+.return-condition-options table {
+    margin: 0;
+    border-collapse: collapse;
+}
+
+.return-status-options td {
+    padding: 0 var(--spacing-xl, 2rem) 0 0;
+}
+
+.return-inspection input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    margin: 0 8px 0 0;
+    accent-color: var(--color-primary, #514FFF);
+    vertical-align: middle;
+}
+
+.return-inspection input[type="radio"]:focus-visible {
+    outline: none;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px var(--color-primary-subtle, rgba(81, 79, 255, 0.08));
+}
+
+.return-status-options label,
+.return-condition-options label {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 4px 2px;
+    color: var(--detail-text-main, var(--color-text, #111111));
+    font-size: 15px;
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+.return-condition-heading {
+    margin: 18px 0 6px;
+    color: #667085;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.return-condition-options table {
+    width: 100%;
+}
+
+.return-condition-options td {
+    padding: 2px 0;
+}
+
+.return-condition-message {
+    margin: var(--spacing-xs, 0.25rem) 0 0 26px;
+    color: var(--detail-text-muted, var(--color-text-secondary, #666666));
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.return-condition-lost {
+    margin: var(--spacing-xs, 0.25rem) 0 0;
+    color: var(--detail-text-main, var(--color-text, #111111));
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.return-condition-lost span {
+    display: block;
+    margin-top: var(--spacing-xs, 0.25rem);
+    color: var(--detail-text-muted, var(--color-text-secondary, #666666));
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.return-inspection-note-label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--detail-text-main, var(--color-text, #111111));
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.return-inspection-note {
+    width: 100%;
+    min-height: 96px;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.return-inspection-help {
+    margin: var(--spacing-xs, 0.25rem) 0 0;
+    color: var(--detail-text-muted, var(--color-text-secondary, #666666));
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.return-deposit-confirmation {
+    padding: var(--spacing-sm, 0.5rem) var(--spacing-lg, 1.5rem) 0;
+}
+
+.return-deposit-confirmation-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm, 0.5rem);
+}
+
+.return-deposit-checkbox {
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--color-primary, #514FFF);
+}
+
+.return-deposit-checkbox:focus-visible {
+    outline: 2px solid var(--color-primary, #514FFF);
+    outline-offset: 2px;
+}
+
+.return-deposit-confirmation-label {
+    color: var(--detail-text-main, var(--color-text, #111111));
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+.return-deposit-confirmation-help {
+    margin: var(--spacing-xs, 0.25rem) 0 0 26px;
+    color: var(--detail-text-muted, var(--color-text-secondary, #666666));
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.return-deposit-confirmation-error {
+    margin-left: 26px;
+}
+
+.return-deposit-retained {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm, 0.5rem);
+    padding: var(--spacing-sm, 0.5rem) var(--spacing-lg, 1.5rem) 0;
+    color: var(--detail-text-muted, var(--color-text-secondary, #666666));
+    font-size: 14px;
+}
+
+.return-inspection-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-sm, 0.5rem);
+    padding: var(--spacing-sm, 0.5rem) var(--spacing-lg, 1.5rem) var(--spacing-md, 1rem);
+}
+
+@media (max-width: 768px) {
+    .return-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--spacing-md, 1rem);
+    }
+
+}
+
+@media (max-width: 576px) {
+    .return-inspection .detail-card-header,
+    .return-inspection-section,
+    .return-deposit-confirmation,
+    .return-deposit-retained {
+        padding-right: var(--spacing-md, 1rem);
+        padding-left: var(--spacing-md, 1rem);
+    }
+
+    .return-summary-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .return-inspection-actions {
+        flex-direction: column-reverse;
+        padding-right: var(--spacing-md, 1rem);
+        padding-left: var(--spacing-md, 1rem);
+    }
+
+    .return-inspection-actions .btn {
+        width: 100%;
+    }
+
+}

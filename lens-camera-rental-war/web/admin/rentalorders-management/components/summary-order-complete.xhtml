@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core"
+    xmlns:ui="jakarta.faces.facelets">
+    <h:outputStylesheet library="admin" name="css/components/summary-order-complete.css" />
+
+    <div class="return-complete-page">
+        <div class="return-complete-order-payment">
+
+            <section class="detail-card">
+                <div class="bill-header">
+                    <h2 class="detail-card-title">Order Bill</h2>
+                    <span class="order-number">#{adminRentalOrderController.selectedOrder.id}</span>
+                </div>
+
+                <div class="detail-card-body">
+                    <div class="info-grid">
+                        <div class="info"><span class="label">Customer</span><span
+                                class="value strong">#{adminRentalOrderController.selectedOrder.userId.fullName}</span>
+                        </div>
+                        <div class="info"><span class="label">Phone</span><span
+                                class="value">#{adminRentalOrderController.selectedOrder.customerPhone}</span></div>
+                        <div class="info"><span class="label">Email</span><span
+                                class="value">#{adminRentalOrderController.selectedOrder.userId.email}</span></div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="rental-grid">
+                        <div class="info device">
+                            <span class="label">Device</span>
+                            <div class="device-info">
+                                <span
+                                    class="value strong">#{adminRentalOrderController.selectedRentalItem.deviceModelId.name}</span>
+                                <ui:fragment
+                                    rendered="#{adminRentalOrderController.selectedRentalItem.assignedDeviceId.status eq 'LOST'}">
+                                    <span class="badge-status badge-rejected">Lost device</span></ui:fragment>
+                            </div>
+                        </div>
+
+                        <div class="info"><span class="label">Physical Device</span><span
+                                class="value strong">#{adminRentalOrderController.selectedRentalItem.assignedDeviceId.serialNumber}</span>
+                        </div>
+
+                        <div class="info period">
+                            <span class="label">Rental Period</span>
+                            <span class="value strong">
+                                <h:outputText value="#{adminRentalOrderController.selectedRentalItem.startDate}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Asia/Ho_Chi_Minh" />
+                                </h:outputText>
+                                <span>-</span>
+                                <h:outputText value="#{adminRentalOrderController.selectedRentalItem.endDate}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Asia/Ho_Chi_Minh" />
+                                </h:outputText>
+                            </span>
+                        </div>
+
+                        <div class="info"><span class="label">Duration</span><span
+                                class="value strong">#{adminRentalOrderController.selectedRentalItem.duration}
+                                #{adminRentalOrderController.selectedRentalItem.duration == 1 ? 'day' : 'days'}</span>
+                        </div>
+
+                        <div class="info"><span class="label">Rate Per Day</span><span class="value strong">
+                                <h:outputText value="#{adminRentalOrderController.selectedRentalItem.rentalPrice}">
+                                    <f:convertNumber pattern="#,##0 VND" />
+                                </h:outputText>
+                            </span></div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="info-grid">
+                        <div class="info"><span class="label">Placed</span><span class="value">
+                                <h:outputText value="#{adminRentalOrderController.selectedOrder.createdAt}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="Asia/Ho_Chi_Minh" />
+                                </h:outputText>
+                            </span></div>
+                        <div class="info"><span class="label">Handover</span><span
+                                class="value">#{adminRentalOrderController.selectedHandover.method}</span></div>
+                        <div class="info"><span class="label">Customer Address</span><span class="value">#{empty
+                                adminRentalOrderController.selectedOrder.customerAddress ? '-' :
+                                adminRentalOrderController.selectedOrder.customerAddress}</span></div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="financial">
+                        <div class="money"><span class="label">Rental Fee</span><span class="value strong">
+                                <h:outputText value="#{adminRentalOrderController.selectedOrder.subtotal}">
+                                    <f:convertNumber pattern="#,##0 VND" />
+                                </h:outputText>
+                            </span></div>
+                        <div class="money"><span class="label">Deposit</span><span class="value strong">
+                                <h:outputText value="#{adminRentalOrderController.selectedDeposit.amount}">
+                                    <f:convertNumber pattern="#,##0 VND" />
+                                </h:outputText>
+                            </span></div>
+                        <div class="total"><span>Total Payable</span><span>
+                                <h:outputText value="#{adminRentalOrderController.selectedOrder.totalPayable}">
+                                    <f:convertNumber pattern="#,##0 VND" />
+                                </h:outputText>
+                            </span></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="detail-card payment-card">
+                <div class="detail-card-header">
+                    <h2 class="detail-card-title">Payment Summary</h2>
+                </div>
+
+                <div class="detail-card-body">
+                    <div class="payment-info">
+                        <div class="info"><span class="label">Method</span><span
+                                class="value strong">#{adminRentalOrderController.selectedPayment.paymentMethod}</span>
+                        </div>
+                        <div class="info"><span class="label">Status</span><span class="value"><span
+                                    class="badge-status badge-completed">#{adminRentalOrderController.selectedPayment.paymentStatus
+                                    eq 'PAID' ? 'Paid' : 'Unpaid'}</span></span></div>
+                        <div class="info"><span class="label">Paid At</span><span class="value">
+                                <h:panelGroup rendered="#{adminRentalOrderController.selectedPayment.paidAt ne null}">
+                                    <h:outputText value="#{adminRentalOrderController.selectedPayment.paidAt}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="Asia/Ho_Chi_Minh" />
+                                    </h:outputText>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{adminRentalOrderController.selectedPayment.paidAt eq null}">-
+                                </h:panelGroup>
+                            </span></div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="financial">
+                        <div class="money"><span class="label">Rental Fee</span><span class="value strong">
+                                <h:outputText value="#{adminRentalOrderController.selectedOrder.subtotal}">
+                                    <f:convertNumber pattern="#,##0 VND" />
+                                </h:outputText>
+                            </span></div>
+                        <div class="money"><span class="label">Deposit</span>
+                            <div class="deposit"><span class="value strong">
+                                    <h:outputText value="#{adminRentalOrderController.selectedDeposit.amount}">
+                                        <f:convertNumber pattern="#,##0 VND" />
+                                    </h:outputText>
+                                </span><span
+                                    class="badge-status #{adminRentalOrderController.selectedDeposit.status eq 'REFUNDED' ? 'badge-completed' : 'badge-pending'}">#{adminRentalOrderController.selectedDeposit.status
+                                    eq 'REFUNDED' ? 'Refunded' : 'Not Refunded'}</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <section class="detail-card">
+            <div class="detail-card-header">
+                <h2 class="detail-card-title">Return / Inspection</h2>
+            </div>
+            <div class="detail-card-body">
+                <div class="return-info">
+                    <div class="info"><span class="label">Device Status</span><span class="value"><span
+                                class="badge-status #{adminRentalOrderController.selectedRentalItem.assignedDeviceId.status eq 'AVAILABLE' ? 'badge-active' : adminRentalOrderController.selectedRentalItem.assignedDeviceId.status eq 'RENTING' ? 'badge-approved' : adminRentalOrderController.selectedRentalItem.assignedDeviceId.status eq 'MAINTENANCE' ? 'badge-pending' : 'badge-rejected'}">#{adminRentalOrderController.selectedRentalItem.assignedDeviceId.status
+                                eq 'AVAILABLE' ? 'Available' :
+                                adminRentalOrderController.selectedRentalItem.assignedDeviceId.status eq 'RENTING' ?
+                                'Renting' : adminRentalOrderController.selectedRentalItem.assignedDeviceId.status eq
+                                'MAINTENANCE' ? 'Maintenance' : 'Lost'}</span></span></div>
+                    <div class="info"><span class="label">Inspection Note</span><span class="value">#{empty
+                            adminRentalOrderController.selectedDeposit.note ? '-' :
+                            adminRentalOrderController.selectedDeposit.note}</span></div>
+                </div>
+            </div>
+        </section>
+    </div>
+</ui:composition>

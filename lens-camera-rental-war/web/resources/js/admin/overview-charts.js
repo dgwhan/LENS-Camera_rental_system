@@ -3,12 +3,11 @@
 
     var statusChart;
     var activityChart;
-
     var STATUS_COLORS = {
-        pending: "#b45309",
+        pending: "#d97706",
         approved: "#2563eb",
-        active: "#047857",
-        completed: "#475569",
+        active: "#059669",
+        completed: "#64748b",
         rejected: "#dc2626",
         cancelled: "#dc2626"
     };
@@ -28,55 +27,114 @@
     }
 
     function getStatusColor(label) {
-        var status = String(label || "").toLowerCase().trim();
-        return STATUS_COLORS[status] || "#64748b";
+        return STATUS_COLORS[String(label || "").toLowerCase().trim()] || "#64748b";
+    }
+
+    function showEmpty(container) {
+        container.innerHTML = '<p class="overview-chart-empty">No data available</p>';
+    }
+
+    function createCanvas(container) {
+        container.innerHTML = "";
+        var canvas = document.createElement("canvas");
+        container.appendChild(canvas);
+        return canvas;
+    }
+
+    function tooltipDefaults() {
+        return {
+            backgroundColor: "#111111",
+            titleColor: "#ffffff",
+            bodyColor: "#eeeff3",
+            titleFont: { size: 12, weight: "600" },
+            bodyFont: { size: 12, weight: "400" },
+            padding: 12,
+            cornerRadius: 8,
+            displayColors: false
+        };
     }
 
     function renderStatusChart() {
         var container = document.getElementById("orderStatusChart");
         var data = readData("overviewStatusJson");
 
-        if (!container || !data.values.length || typeof Chart === "undefined") {
+        if (!container || typeof Chart === "undefined") {
             return;
         }
 
-        container.innerHTML = "";
+        if (!data.values.length) {
+            showEmpty(container);
+            return;
+        }
 
-        var canvas = document.createElement("canvas");
-        container.appendChild(canvas);
+        var colors = data.labels.map(getStatusColor);
+        var legendBottom = container.clientWidth < 420;
 
-        statusChart = new Chart(canvas, {
+        statusChart = new Chart(createCanvas(container), {
             type: "doughnut",
             data: {
                 labels: data.labels,
                 datasets: [{
                     data: data.values,
-                    backgroundColor: data.labels.map(getStatusColor),
-                    borderWidth: 0,
-                    hoverOffset: 4
+                    backgroundColor: colors,
+                    borderColor: "#ffffff",
+                    borderWidth: 2,
+                    hoverOffset: 6
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 cutout: "68%",
+                animation: {
+                    duration: 450
+                },
                 plugins: {
                     legend: {
-                        position: "right",
+                        position: legendBottom ? "bottom" : "right",
                         labels: {
                             usePointStyle: true,
                             pointStyle: "circle",
                             boxWidth: 8,
-                            padding: 14,
-                            color: "#667085",
+                            boxHeight: 8,
+                            padding: 16,
+                            color: "#666666",
                             font: {
-                                size: 13
+                                size: 12,
+                                weight: "500"
+                            },
+                            generateLabels: function (chart) {
+                                var dataset = chart.data.datasets[0] || {};
+                                var values = dataset.data || [];
+                                var fills = dataset.backgroundColor || [];
+
+                                return (chart.data.labels || []).map(function (label, index) {
+                                    return {
+                                        text: label + "  " + values[index],
+                                        fillStyle: fills[index],
+                                        strokeStyle: fills[index],
+                                        hidden: false,
+                                        index: index,
+                                        pointStyle: "circle"
+                                    };
+                                });
                             }
                         }
                     },
-                    tooltip: {
-                        padding: 10
-                    }
+                    tooltip: Object.assign(tooltipDefaults(), {
+                        callbacks: {
+                            title: function () {
+                                return "";
+                            },
+                            label: function (context) {
+                                var total = context.dataset.data.reduce(function (sum, value) {
+                                    return sum + value;
+                                }, 0);
+                                var percent = total ? Math.round((context.parsed * 100) / total) : 0;
+                                return context.label + "  " + context.parsed + " (" + percent + "%)";
+                            }
+                        }
+                    })
                 }
             }
         });
@@ -86,30 +144,32 @@
         var container = document.getElementById("orderActivityChart");
         var data = readData("overviewActivityJson");
 
-        if (!container || !data.values.length || typeof Chart === "undefined") {
+        if (!container || typeof Chart === "undefined") {
             return;
         }
 
-        container.innerHTML = "";
+        if (!data.values.length) {
+            showEmpty(container);
+            return;
+        }
 
-        var canvas = document.createElement("canvas");
-        container.appendChild(canvas);
-
-        activityChart = new Chart(canvas, {
+        activityChart = new Chart(createCanvas(container), {
             type: "line",
             data: {
                 labels: data.labels,
                 datasets: [{
                     data: data.values,
                     borderColor: "#514FFF",
-                    backgroundColor: "rgba(81, 79, 255, 0.06)",
-                    borderWidth: 2,
-                    pointRadius: 3,
+                    backgroundColor: "rgba(81, 79, 255, 0.12)",
+                    borderWidth: 2.5,
+                    pointRadius: 0,
                     pointHoverRadius: 5,
+                    pointHitRadius: 16,
                     pointBackgroundColor: "#514FFF",
                     pointBorderColor: "#FFFFFF",
                     pointBorderWidth: 2,
-                    tension: 0.35,
+                    tension: 0.4,
+                    cubicInterpolationMode: "monotone",
                     fill: true
                 }]
             },
@@ -120,14 +180,21 @@
                     mode: "index",
                     intersect: false
                 },
+                animation: {
+                    duration: 500,
+                    easing: "easeOutQuart"
+                },
                 plugins: {
                     legend: {
                         display: false
                     },
-                    tooltip: {
-                        padding: 10,
-                        displayColors: false
-                    }
+                    tooltip: Object.assign(tooltipDefaults(), {
+                        callbacks: {
+                            label: function (context) {
+                                return "Orders  " + context.parsed.y;
+                            }
+                        }
+                    })
                 },
                 scales: {
                     x: {
@@ -139,10 +206,11 @@
                         },
                         ticks: {
                             color: "#9099A0",
+                            padding: 8,
+                            maxRotation: 0,
                             font: {
                                 size: 11
-                            },
-                            maxRotation: 0
+                            }
                         }
                     },
                     y: {
@@ -151,11 +219,12 @@
                             display: false
                         },
                         grid: {
-                            color: "#EEF0F3"
+                            color: "#EEEFF3"
                         },
                         ticks: {
                             color: "#9099A0",
-                            precision: 0
+                            precision: 0,
+                            padding: 8
                         }
                     }
                 }
@@ -168,12 +237,17 @@
             return;
         }
 
+        Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+        Chart.defaults.font.size = 12;
+
         if (statusChart) {
             statusChart.destroy();
+            statusChart = null;
         }
 
         if (activityChart) {
             activityChart.destroy();
+            activityChart = null;
         }
 
         renderStatusChart();
@@ -185,14 +259,4 @@
     } else {
         render();
     }
-
-    window.addEventListener("resize", function () {
-        if (statusChart) {
-            statusChart.resize();
-        }
-
-        if (activityChart) {
-            activityChart.resize();
-        }
-    });
 })();

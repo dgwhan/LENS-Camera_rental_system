@@ -70,9 +70,7 @@
 
     <ui:define name="scripts">
         <input type="hidden" id="overviewStatusJson" value="#{adminDashboardController.statusChartJson}" />
-
         <input type="hidden" id="overviewActivityJson" value="#{adminDashboardController.activityChartJson}" />
-
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
         <h:outputScript library="js" name="admin/overview-charts.js" />
     </ui:define>

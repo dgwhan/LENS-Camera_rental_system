@@ -62,13 +62,13 @@
 }
 
 .lifecycle-step.is-completed .lifecycle-marker {
-    background: #ecfdf5;
-    border-color: #d1fae5;
-    color: #047857;
+    background: var(--color-primary-subtle, rgba(81, 79, 255, 0.08));
+    border-color: var(--color-primary, #514FFF);
+    color: var(--color-primary, #514FFF);
 }
 
 .lifecycle-step.is-completed .lifecycle-title {
-    color: #047857;
+    color: var(--color-primary, #514FFF);
 }
 
 .lifecycle-step.is-completed .lifecycle-status {
