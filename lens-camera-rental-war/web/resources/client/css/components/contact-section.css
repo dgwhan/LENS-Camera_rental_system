@@ -100,6 +100,38 @@
     padding: 0.5rem 1.25rem;
 }
 
+.contact-location {
+    width: min(100%, 960px);
+    margin-top: 1.5rem;
+}
+
+.contact-location-heading {
+    margin: 0 0 0.35rem;
+    color: var(--ct-text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.contact-address {
+    margin: 0 0 1rem;
+    color: var(--ct-text-secondary);
+    font-size: 0.875rem;
+}
+
+.contact-map {
+    width: 100%;
+    aspect-ratio: 16 / 7;
+    overflow: hidden;
+    border: 1px solid var(--ct-border);
+}
+
+.contact-map iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
 /* Mobile Responsive */
 @media (max-width: 640px) {
     .customer-contact-section {
@@ -135,5 +167,14 @@
 
     .contact-action-wrap .btn {
         width: 100%;
+    }
+
+    .contact-location {
+        margin-top: 1rem;
+        text-align: left;
+    }
+
+    .contact-map {
+        aspect-ratio: 4 / 3;
     }
 }

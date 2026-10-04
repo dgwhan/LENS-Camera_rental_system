@@ -13,6 +13,7 @@
 
     <ui:define name="head">
         <h:outputStylesheet library="auth" name="css/auth.css" />
+        <h:outputScript library="js" name="common/auth-ui.js" target="body" />
     </ui:define>
 
     <!-- Suppress header and footer for standalone auth page -->
@@ -25,6 +26,10 @@
             <!-- Register Card -->
             <div class="auth-card">
                 <div class="auth-card-header">
+                    <nav class="auth-tabs" aria-label="Authentication">
+                        <h:link outcome="/auth/login" value="Sign In" styleClass="auth-tab" />
+                        <h:link outcome="/auth/register" value="Create Account" styleClass="auth-tab is-active" pt:aria-current="page" />
+                    </nav>
                     <h2 class="auth-card-title">Create an Account</h2>
                 </div>
 
@@ -97,13 +102,19 @@
                                 <h:outputLabel for="password" value="Password" styleClass="auth-label">
                                     <span class="auth-required">*</span>
                                 </h:outputLabel>
-                                <h:inputSecret id="password" 
-                                               value="#{registerController.password}" 
-                                               required="true"
-                                               requiredMessage="Password is required"
-                                               styleClass="auth-input" 
-                                               autocomplete="new-password" 
-                                               pt:placeholder="Create a password" />
+                                <div class="auth-password-wrap">
+                                    <h:inputSecret id="password" 
+                                                   value="#{registerController.password}" 
+                                                   required="true"
+                                                   requiredMessage="Password is required"
+                                                   styleClass="auth-input" 
+                                                   autocomplete="new-password" 
+                                                   pt:placeholder="Create a password" />
+                                    <button type="button" class="auth-password-toggle" data-password-toggle="registerForm:password" aria-label="Show password" aria-pressed="false">
+                                        <svg class="auth-eye-icon auth-eye-show" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                        <svg class="auth-eye-icon auth-eye-hide" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a15.7 15.7 0 0 1-3.2 3.9M6.2 6.2C3.5 8.1 2 12 2 12s3.6 7 10 7a10.5 10.5 0 0 0 4-.8"/></svg>
+                                    </button>
+                                </div>
                                 <h:message for="password" styleClass="field-error" />
                             </div>
 
@@ -112,12 +123,18 @@
                                 <h:outputLabel for="confirmPassword" value="Confirm Password" styleClass="auth-label">
                                     <span class="auth-required">*</span>
                                 </h:outputLabel>
-                                <h:inputSecret id="confirmPassword" 
-                                               required="true"
-                                               requiredMessage="Please confirm your password"
-                                               styleClass="auth-input" 
-                                               autocomplete="new-password" 
-                                               pt:placeholder="Confirm your password" />
+                                <div class="auth-password-wrap">
+                                    <h:inputSecret id="confirmPassword" 
+                                                   required="true"
+                                                   requiredMessage="Please confirm your password"
+                                                   styleClass="auth-input" 
+                                                   autocomplete="new-password" 
+                                                   pt:placeholder="Confirm your password" />
+                                    <button type="button" class="auth-password-toggle" data-password-toggle="registerForm:confirmPassword" aria-label="Show password" aria-pressed="false">
+                                        <svg class="auth-eye-icon auth-eye-show" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                        <svg class="auth-eye-icon auth-eye-hide" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a15.7 15.7 0 0 1-3.2 3.9M6.2 6.2C3.5 8.1 2 12 2 12s3.6 7 10 7a10.5 10.5 0 0 0 4-.8"/></svg>
+                                    </button>
+                                </div>
                                 <span id="confirmPassError" class="field-error"></span>
                                 <h:message for="confirmPassword" styleClass="field-error" />
                             </div>
@@ -134,8 +151,9 @@
 
                 <div class="auth-card-footer">
                     <span>Already have an account?</span>
-                    <h:link outcome="/auth/login" value="Sign In" styleClass="auth-link" />
+                    <h:link outcome="/auth/login" value="Sign in" styleClass="auth-link" />
                 </div>
+
             </div>
 
         </div>

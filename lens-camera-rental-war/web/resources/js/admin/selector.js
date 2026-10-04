@@ -17,10 +17,12 @@ function initDeviceModelSelector(selector) {
 
     // Thu thập dữ liệu brand từ các thẻ metadata ẩn
     const brandMap = {};
+    const outOfStockMap = {};
     selector.querySelectorAll(".model-meta-data").forEach(el => {
         const id = el.getAttribute("data-id");
         if (!id) return;
         brandMap[id] = (el.getAttribute("data-brand") || "").trim();
+        outOfStockMap[id] = el.getAttribute("data-out-of-stock") === "true";
     });
 
     // Lấy toàn bộ danh sách model từ thẻ select gốc của JSF
@@ -35,7 +37,8 @@ function initDeviceModelSelector(selector) {
             return {
                 id: option.value,
                 label: option.textContent.trim(),
-                brand: brand.trim()
+                brand: brand.trim(),
+                outOfStock: outOfStockMap[option.value] === true
             };
         });
 
@@ -174,7 +177,11 @@ function initDeviceModelSelector(selector) {
 
             item.innerHTML = `
                 <span class="model-selector-name">${escapeHtml(model.label)}</span>
+                ${model.outOfStock ? '<span class="model-selector-stock">OUT OF STOCK</span>' : ''}
             `;
+            if (model.outOfStock) {
+                item.classList.add("out-of-stock");
+            }
 
             // Đánh dấu mục đang được chọn
             if (nativeSelect.value === model.id) {

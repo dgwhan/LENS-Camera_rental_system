@@ -173,6 +173,21 @@
     line-height: 1.4;
 }
 
+.model-selector-item.out-of-stock .model-selector-name,
+.model-selector-stock {
+    color: #dc2626;
+}
+
+.model-selector-stock {
+    flex: 0 0 auto;
+    margin-left: auto;
+    padding-left: 0.75rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.035em;
+    white-space: nowrap;
+}
+
 /* Trạng thái không tìm thấy kết quả phù hợp */
 .model-selector-empty {
     padding: 1.25rem 0.75rem;

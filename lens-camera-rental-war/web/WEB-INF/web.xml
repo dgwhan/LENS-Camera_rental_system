@@ -19,6 +19,15 @@
         </cookie-config>
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>
+    <filter>
+        <filter-name>Utf8CharacterEncodingFilter</filter-name>
+        <filter-class>com.lens.common.filter.Utf8CharacterEncodingFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>Utf8CharacterEncodingFilter</filter-name>
+        <url-pattern>/faces/*</url-pattern>
+        <url-pattern>*.xhtml</url-pattern>
+    </filter-mapping>
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>

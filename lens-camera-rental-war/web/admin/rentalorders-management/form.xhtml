@@ -31,8 +31,6 @@
                 </div>
 
                 <h:form id="rentalOrderForm">
-                    <h:messages id="messages" globalOnly="true" layout="list" styleClass="form-messages"/>
-
                     <div class="card">
                         <div class="card-header"><h2 class="card-title">Rental Order Information</h2></div>
                         <div class="card-body">
@@ -66,6 +64,11 @@
                                             <f:selectItems value="#{adminCreateOrderController.deviceModels}" var="device"
                                                            itemValue="#{device.id}" itemLabel="#{device.name} - #{device.model}"/>
                                         </h:selectOneMenu>
+                                        <ui:repeat value="#{adminCreateOrderController.deviceModels}" var="device">
+                                            <span class="model-meta-data" data-id="#{device.id}"
+                                                  data-out-of-stock="#{adminCreateOrderController.isDeviceModelOutOfStock(device.id)}"
+                                                  style="display:none;"></span>
+                                        </ui:repeat>
                                         <div class="model-combobox">
                                             <input type="text" class="model-combobox-input" placeholder="Search or select device model" autocomplete="off"/>
                                             <button type="button" class="model-combobox-chevron" tabindex="-1" aria-label="Toggle device model list"/>
@@ -110,6 +113,8 @@
                                                  styleClass="btn btn-secondary">
                                     <f:ajax execute="@form" render="availabilityStatus messages deviceModelMessageContainer"/>
                                 </h:commandButton>
+                                <h:messages id="messages" globalOnly="true" layout="list"
+                                            styleClass="availability-messages"/>
                                 <h:panelGroup id="availabilityStatus" layout="inline" styleClass="availability-status">
                                     <h:panelGroup rendered="#{adminCreateOrderController.available}" styleClass="availability-success">
                                         Available

@@ -29,7 +29,7 @@ public class AdminDashboardController implements Serializable {
     private static final long serialVersionUID = 1L;
     private static final String CHANGE_NEUTRAL = "No comparison";
     private static final String[] STATUS_ORDER = {
-        "PENDING", "APPROVED", "ACTIVE", "COMPLETED", "CANCELLED"
+        "PENDING", "APPROVED", "ACTIVE", "COMPLETED", "REJECTED", "CANCELLED"
     };
     private static final Map<String, String> STATUS_LABELS = new LinkedHashMap<>();
 
@@ -38,6 +38,7 @@ public class AdminDashboardController implements Serializable {
         STATUS_LABELS.put("APPROVED", "Approved");
         STATUS_LABELS.put("ACTIVE", "Active");
         STATUS_LABELS.put("COMPLETED", "Completed");
+        STATUS_LABELS.put("REJECTED", "Rejected");
         STATUS_LABELS.put("CANCELLED", "Cancelled");
     }
 

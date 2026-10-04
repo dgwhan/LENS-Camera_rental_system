@@ -43,7 +43,10 @@
 
         <!-- Common Client Header -->
         <ui:insert name="header">
-            <ui:include src="/client/components/header.xhtml" />
+            <ui:include src="/client/components/header.xhtml">
+                <ui:param name="address"
+                          value="01 Ly Tu Trong, Ninh Kieu, Can Tho" />
+            </ui:include>
         </ui:insert>
 
         <!-- Main Content Area -->

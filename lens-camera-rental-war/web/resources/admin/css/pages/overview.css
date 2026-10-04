@@ -7,7 +7,7 @@
 
 .overview-kpis {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 1rem;
     min-width: 0;
 }
@@ -15,44 +15,35 @@
 .overview-card {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    gap: 0.45rem;
+    justify-content: space-between;
+    gap: 0.5rem;
     min-width: 0;
-    padding: 1.15rem 1.25rem;
+    min-height: 142px;
+    padding: 1.2rem 1.35rem;
     background: #ffffff;
-    border: 1px solid #eeeff3;
-    border-radius: 12px;
-}
-
-.overview-card-primary {
-    padding: 1.2rem 1.5rem;
-    border-left: 3px solid #514fff;
+    border: 1px solid var(--color-border, #e5e5e5);
+    border-radius: var(--radius-lg, 8px);
 }
 
 .overview-label {
-    color: #9099a0;
+    color: var(--color-text-secondary, #666666);
     font-size: 0.6875rem;
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
 }
 
 .overview-value {
-    color: #000000;
-    font-size: 1.5rem;
-    font-weight: 600;
-    line-height: 1.1;
-    letter-spacing: -0.03em;
-}
-
-.overview-card-primary .overview-value {
-    font-size: 2rem;
+    color: var(--color-text, #111111);
+    font-size: 1.9rem;
     font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.035em;
 }
 
 .overview-charts {
     display: grid;
-    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.25fr);
     gap: 1rem;
     align-items: stretch;
     min-width: 0;
@@ -63,28 +54,35 @@
     flex-direction: column;
     min-width: 0;
     background: #ffffff;
-    border: 1px solid #eeeff3;
-    border-radius: 12px;
+    border: 1px solid var(--color-border, #e5e5e5);
+    border-radius: var(--radius-lg, 8px);
 }
 
 .overview-panel-header {
-    padding: 1.15rem 1.35rem 0.25rem;
+    padding: 1.2rem 1.35rem 0.25rem;
 }
 
 .overview-panel-header h2 {
     margin: 0;
-    color: #000000;
+    color: var(--color-text, #111111);
     font-size: 0.9375rem;
-    font-weight: 600;
+    font-weight: 700;
+}
+
+.overview-panel-header p {
+    margin: 0.25rem 0 0;
+    color: var(--color-text-secondary, #666666);
+    font-size: 0.75rem;
+    line-height: 1.45;
 }
 
 .overview-chart {
     position: relative;
     flex: 1 1 auto;
     width: 100%;
-    min-height: 292px;
-    height: 292px;
-    padding: 0.5rem 1.15rem 1.15rem;
+    min-height: 320px;
+    height: 320px;
+    padding: 0.5rem 1.1rem 1.1rem;
     box-sizing: border-box;
 }
 
@@ -100,17 +98,13 @@
     justify-content: center;
     height: 100%;
     margin: 0;
-    color: #9099a0;
+    color: var(--color-text-secondary, #666666);
     font-size: 0.8125rem;
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1120px) {
     .overview-kpis {
         grid-template-columns: 1fr 1fr;
-    }
-
-    .overview-card-primary {
-        grid-column: 1 / -1;
     }
 
     .overview-charts {
@@ -123,16 +117,9 @@
         grid-template-columns: 1fr;
     }
 
-    .overview-card-primary {
-        grid-column: auto;
-    }
-
     .overview-card {
+        min-height: 130px;
         padding: 1.1rem 1.15rem;
-    }
-
-    .overview-card-primary .overview-value {
-        font-size: 1.85rem;
     }
 
     .overview-chart {

@@ -17,7 +17,9 @@ import jakarta.inject.Named;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Named
 @ViewScoped
@@ -42,6 +44,7 @@ public class AdminCreateOrderController implements Serializable {
 
     private List<Users> customers;
     private List<DeviceModels> deviceModels;
+    private Set<Integer> outOfStockDeviceModelIds = new HashSet<>();
 
     private Integer customerId;
     private Integer deviceModelId;
@@ -57,6 +60,14 @@ public class AdminCreateOrderController implements Serializable {
     public void init() {
         customers = usersFacade.search("", "CUSTOMER", "ACTIVE");
         deviceModels = deviceModelsFacade.findAll();
+        outOfStockDeviceModelIds = new HashSet<>();
+        if (deviceModels != null) {
+            for (DeviceModels deviceModel : deviceModels) {
+                if (deviceModel != null && !availabilityService.isProductAvailable(deviceModel.getId())) {
+                    outOfStockDeviceModelIds.add(deviceModel.getId());
+                }
+            }
+        }
     }
 
     public void checkAvailability() {
@@ -247,6 +258,10 @@ public class AdminCreateOrderController implements Serializable {
 
     public List<DeviceModels> getDeviceModels() {
         return deviceModels;
+    }
+
+    public boolean isDeviceModelOutOfStock(Integer deviceModelId) {
+        return deviceModelId != null && outOfStockDeviceModelIds.contains(deviceModelId);
     }
 
     public Integer getCustomerId() {

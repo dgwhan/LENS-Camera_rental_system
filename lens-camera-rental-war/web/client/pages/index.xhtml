@@ -10,10 +10,27 @@
 
     <ui:define name="head">
         <h:outputStylesheet library="client" name="css/pages/customer.css" />
+        <h:outputStylesheet library="client" name="css/pages/home.css" />
         <h:outputStylesheet library="client" name="css/components/device-card.css" />
     </ui:define>
 
     <ui:define name="content">
+        <section class="home-hero" aria-labelledby="homeHeroTitle">
+            <div class="home-hero-content">
+                <p class="home-hero-eyebrow">PROFESSIONAL GEAR. GREATER STORIES.</p>
+                <h1 id="homeHeroTitle" class="home-hero-title">
+                    <span>RENT EQUIPMENT</span>
+                    <span>FOR YOUR NEXT PROJECT</span>
+                </h1>
+                <p class="home-hero-copy">
+                    High-quality cameras, lenses and accessories for creators, photographers and filmmakers.
+                </p>
+                <a class="btn btn-dark" href="#{request.contextPath}/faces/client/pages/devices.xhtml">
+                    BROWSE DEVICES
+                </a>
+            </div>
+        </section>
+
         <!-- Featured Devices Section -->
         <section class="featured-devices-section">
             <div class="featured-devices-container">

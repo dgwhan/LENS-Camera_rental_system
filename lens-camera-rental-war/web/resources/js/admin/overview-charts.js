@@ -30,8 +30,8 @@
         return STATUS_COLORS[String(label || "").toLowerCase().trim()] || "#64748b";
     }
 
-    function showEmpty(container) {
-        container.innerHTML = '<p class="overview-chart-empty">No data available</p>';
+    function showEmpty(container, message) {
+        container.innerHTML = '<p class="overview-chart-empty">' + message + '</p>';
     }
 
     function createCanvas(container) {
@@ -58,12 +58,17 @@
         var container = document.getElementById("orderStatusChart");
         var data = readData("overviewStatusJson");
 
-        if (!container || typeof Chart === "undefined") {
+        if (!container) {
+            return;
+        }
+
+        if (typeof Chart === "undefined") {
+            showEmpty(container, "Chart library is unavailable.");
             return;
         }
 
         if (!data.values.length) {
-            showEmpty(container);
+            showEmpty(container, "No order status data available.");
             return;
         }
 
@@ -136,7 +141,34 @@
                         }
                     })
                 }
-            }
+            },
+            plugins: [{
+                id: "overviewStatusCenter",
+                afterDraw: function (chart) {
+                    var values = chart.data.datasets[0].data || [];
+                    var total = values.reduce(function (sum, value) {
+                        return sum + Number(value || 0);
+                    }, 0);
+                    var area = chart.chartArea;
+                    if (!area) return;
+
+                    var context = chart.ctx;
+                    var centerX = (area.left + area.right) / 2;
+                    var centerY = (area.top + area.bottom) / 2;
+                    var fontFamily = Chart.defaults.font.family || "sans-serif";
+
+                    context.save();
+                    context.textAlign = "center";
+                    context.textBaseline = "middle";
+                    context.fillStyle = "#111111";
+                    context.font = "700 24px " + fontFamily;
+                    context.fillText(String(total), centerX, centerY - 7);
+                    context.fillStyle = "#888888";
+                    context.font = "600 9px " + fontFamily;
+                    context.fillText("TOTAL ORDERS", centerX, centerY + 15);
+                    context.restore();
+                }
+            }]
         });
     }
 
@@ -144,12 +176,17 @@
         var container = document.getElementById("orderActivityChart");
         var data = readData("overviewActivityJson");
 
-        if (!container || typeof Chart === "undefined") {
+        if (!container) {
+            return;
+        }
+
+        if (typeof Chart === "undefined") {
+            showEmpty(container, "Chart library is unavailable.");
             return;
         }
 
         if (!data.values.length) {
-            showEmpty(container);
+            showEmpty(container, "No order activity recorded in this period.");
             return;
         }
 
@@ -162,7 +199,9 @@
                     borderColor: "#514FFF",
                     backgroundColor: "rgba(81, 79, 255, 0.12)",
                     borderWidth: 2.5,
-                    pointRadius: 0,
+                    pointRadius: function (context) {
+                        return context.raw > 0 ? 3 : 0;
+                    },
                     pointHoverRadius: 5,
                     pointHitRadius: 16,
                     pointBackgroundColor: "#514FFF",

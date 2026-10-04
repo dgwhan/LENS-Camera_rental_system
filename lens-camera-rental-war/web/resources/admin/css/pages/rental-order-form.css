@@ -1,7 +1,22 @@
 .availability-row {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 12px;
+}
+
+.availability-messages {
+    flex: 1 1 240px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--color-danger-text, #9f1239);
+    font-size: var(--font-size-sm, 0.8125rem);
+    line-height: 1.45;
+}
+
+.availability-messages li {
+    margin: 0;
 }
 
 .availability-status {

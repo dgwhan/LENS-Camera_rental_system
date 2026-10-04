@@ -26,8 +26,8 @@
 
             <div class="overview-page">
 
-                <section class="overview-kpis">
-                    <div class="overview-card overview-card-primary">
+                <section class="overview-kpis" aria-label="System key metrics">
+                    <div class="overview-card">
                         <span class="overview-label">Total Orders</span>
                         <strong class="overview-value">#{adminDashboardController.totalOrders}</strong>
                     </div>
@@ -48,17 +48,23 @@
                     </div>
                 </section>
 
-                <section class="overview-charts">
-                    <div class="overview-panel">
+                <section class="overview-charts" aria-label="Order analytics">
+                    <div class="overview-panel" aria-labelledby="orderStatusHeading">
                         <div class="overview-panel-header">
-                            <h2>Order Status</h2>
+                            <div>
+                                <h2 id="orderStatusHeading">Order Status</h2>
+                                <p>Current distribution across all rental orders</p>
+                            </div>
                         </div>
                         <div id="orderStatusChart" class="overview-chart"></div>
                     </div>
 
-                    <div class="overview-panel">
+                    <div class="overview-panel" aria-labelledby="orderActivityHeading">
                         <div class="overview-panel-header">
-                            <h2>Order Activity</h2>
+                            <div>
+                                <h2 id="orderActivityHeading">Order Activity</h2>
+                                <p>Orders created each day over the last 7 days</p>
+                            </div>
                         </div>
                         <div id="orderActivityChart" class="overview-chart"></div>
                     </div>
