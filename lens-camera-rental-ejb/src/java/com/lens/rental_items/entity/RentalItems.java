@@ -17,6 +17,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
@@ -51,18 +53,25 @@ public class RentalItems implements Serializable {
     private Date endDate;
     @Basic(optional = false)
     @NotNull
+    @Min(value = 0, message = "Rental duration must not be negative.")
     @Column(name = "duration")
     private int duration;
     @Basic(optional = false)
     @NotNull
+    @Min(value = 0, message = "Rental price must not be negative.")
+    @Max(value = 9999999999L, message = "Rental price must not exceed 10 digits.")
     @Column(name = "rental_price")
     private long rentalPrice;
     @Basic(optional = false)
     @NotNull
+    @Min(value = 0, message = "Deposit amount must not be negative.")
+    @Max(value = 9999999999L, message = "Deposit amount must not exceed 10 digits.")
     @Column(name = "deposit_amount")
     private long depositAmount;
     @Basic(optional = false)
     @NotNull
+    @Min(value = 0, message = "Subtotal must not be negative.")
+    @Max(value = 9999999999L, message = "Subtotal must not exceed 10 digits.")
     @Column(name = "subtotal")
     private long subtotal;
 

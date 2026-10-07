@@ -165,6 +165,16 @@ public class CheckoutController implements Serializable {
         } catch (IllegalArgumentException | IllegalStateException ex) {
             FacesUtil.addErrorMessage(ex.getMessage());
             return null;
+        } catch (Exception ex) {
+            Throwable rootCause = ex;
+            while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {
+                rootCause = rootCause.getCause();
+            }
+            String message = rootCause.getMessage();
+            FacesUtil.addErrorMessage(message == null || message.trim().isEmpty()
+                    ? "Unable to complete checkout because the submitted data is invalid."
+                    : message);
+            return null;
         }
     }
 

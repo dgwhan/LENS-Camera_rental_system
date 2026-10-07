@@ -54,21 +54,38 @@ public class RegisterController implements Serializable {
             return "/auth/login?faces-redirect=true";
 
         } catch (IllegalArgumentException ex) {
-            String message = ex.getMessage();
-            LOGGER.warning("Registration validation failed: " + message);
-
-            if (message != null && message.contains("Username")) {
-                FacesUtil.addFieldError("registerForm:username", message);
-            } else if (message != null && message.contains("Password")) {
-                FacesUtil.addFieldError("registerForm:password", message);
-            } else if (message != null && (message.contains("phone") || message.contains("Phone"))) {
-                FacesUtil.addFieldError("registerForm:phone", message);
-            } else if (message != null && (message.contains("email") || message.contains("Email"))) {
-                FacesUtil.addFieldError("registerForm:email", message);
-            } else {
-                FacesUtil.addErrorMessage(message);
-            }
+            showRegistrationError(ex);
             return null;
+        } catch (Exception ex) {
+            // EJB proxies wrap application exceptions in EJBException. Unwrap
+            // it so validation feedback is shown in the form instead of a 500.
+            showRegistrationError(ex);
+            return null;
+        }
+    }
+
+    private void showRegistrationError(Throwable exception) {
+        Throwable rootCause = exception;
+        while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {
+            rootCause = rootCause.getCause();
+        }
+
+        String message = rootCause.getMessage();
+        if (message == null || message.trim().isEmpty()) {
+            message = "Registration failed due to a system error. Please try again.";
+        }
+        LOGGER.warning("Registration failed: " + message);
+
+        if (message.contains("Username")) {
+            FacesUtil.addFieldError("registerForm:username", message);
+        } else if (message.contains("Password")) {
+            FacesUtil.addFieldError("registerForm:password", message);
+        } else if (message.toLowerCase().contains("phone")) {
+            FacesUtil.addFieldError("registerForm:phone", message);
+        } else if (message.toLowerCase().contains("email")) {
+            FacesUtil.addFieldError("registerForm:email", message);
+        } else {
+            FacesUtil.addErrorMessage(message);
         }
     }
 

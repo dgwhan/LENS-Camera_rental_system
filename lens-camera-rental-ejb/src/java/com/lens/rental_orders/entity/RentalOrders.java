@@ -15,6 +15,9 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -56,6 +59,7 @@ public class RentalOrders implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 20)
+    @Pattern(regexp = "0[0-9]{9}", message = "Phone number must contain 10 digits and start with 0.")
     @Column(name = "customer_phone")
     private String customerPhone;
     @Basic(optional = false)
@@ -65,14 +69,20 @@ public class RentalOrders implements Serializable {
     private String status;
     @Basic(optional = false)
     @NotNull
+    @Min(value = 0, message = "Subtotal must not be negative.")
+    @Max(value = 9999999999L, message = "Subtotal must not exceed 10 digits.")
     @Column(name = "subtotal")
     private long subtotal;
     @Basic(optional = false)
     @NotNull
+    @Min(value = 0, message = "Deposit total must not be negative.")
+    @Max(value = 9999999999L, message = "Deposit total must not exceed 10 digits.")
     @Column(name = "deposit_total")
     private long depositTotal;
     @Basic(optional = false)
     @NotNull
+    @Min(value = 0, message = "Total payable must not be negative.")
+    @Max(value = 9999999999L, message = "Total payable must not exceed 10 digits.")
     @Column(name = "total_payable")
     private long totalPayable;
     @Size(max = 1000)

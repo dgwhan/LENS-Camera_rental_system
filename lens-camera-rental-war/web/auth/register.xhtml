@@ -80,7 +80,10 @@
                                              requiredMessage="Phone number is required"
                                              styleClass="auth-input" 
                                              autocomplete="tel" 
-                                             pt:placeholder="0912345678" />
+                                             validatorMessage="Phone number must contain 10 digits and start with 0."
+                                             pt:placeholder="0912345678">
+                                    <f:validateRegex pattern="0[0-9]{9}" />
+                                </h:inputText>
                                 <h:message for="phone" styleClass="field-error" />
                             </div>
 

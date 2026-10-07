@@ -15,6 +15,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -45,6 +47,8 @@ public class RentalDeposits implements Serializable {
     private Integer id;
     @Basic(optional = false)
     @NotNull
+    @Min(value = 0, message = "Deposit amount must not be negative.")
+    @Max(value = 9999999999L, message = "Deposit amount must not exceed 10 digits.")
     @Column(name = "amount")
     private long amount;
     @Basic(optional = false)

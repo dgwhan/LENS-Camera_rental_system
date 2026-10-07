@@ -1,6 +1,7 @@
 package com.lens.availability.service;
 
 import com.lens.availability.dto.AvailabilityResult;
+import com.lens.cart.entity.CartItems;
 import com.lens.device.entity.Devices;
 import com.lens.device.facade.DevicesFacadeLocal;
 import com.lens.device_model.entity.DeviceModels;
@@ -12,6 +13,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.Map.Entry;
 
 /**
  *
@@ -20,7 +22,7 @@ import java.util.Set;
 @Stateless
 public class AvailabilityService implements AvailabilityServiceLocal {
 
-    //Các trạng thái đơn thuê đang giữ/chiếm thiết bị, không cho người khác thuê
+    // Các trạng thái đơn thuê đang giữ/chiếm thiết bị, không cho người khác thuê
     private static final Set<String> CAPACITY_CONSUMING_STATUSES = Set.of("PENDING", "APPROVED", "ACTIVE");
 
     @jakarta.ejb.EJB
@@ -34,19 +36,19 @@ public class AvailabilityService implements AvailabilityServiceLocal {
 
     @Override
     public AvailabilityResult checkAvailability(Integer deviceModelId, Date requestedStartDate, Date requestedEndDate) {
-        //validate khoảng thời gian thuê
-        if (deviceModelId == null || requestedStartDate == null || requestedEndDate == null || !requestedEndDate.after(requestedStartDate)) {
-            return new AvailabilityResult(false, 0, 0, 0, "Invalid rental period."
-            );
+        // validate khoảng thời gian thuê
+        if (deviceModelId == null || requestedStartDate == null || requestedEndDate == null
+                || !requestedEndDate.after(requestedStartDate)) {
+            return new AvailabilityResult(false, 0, 0, 0, "Invalid rental period.");
         }
 
-        //kiểm tra DeviceModel có tồn tại
+        // kiểm tra DeviceModel có tồn tại
         DeviceModels deviceModel = deviceModelsFacade.find(deviceModelId);
         if (deviceModel == null) {
             return new AvailabilityResult(false, 0, 0, 0, "Device model not found.");
         }
 
-        //lấy tất cả thiết bị vật lý thuộc DeviceModel
+        // lấy tất cả thiết bị vật lý thuộc DeviceModel
         List<Devices> devices = devicesFacade.findByDeviceModelId(deviceModelId);
 
         if (devices == null) {
@@ -58,23 +60,26 @@ public class AvailabilityService implements AvailabilityServiceLocal {
                 .filter(d -> "AVAILABLE".equalsIgnoreCase(d.getStatus()))
                 .count();
 
-        //tìm các RentalItem bị conflict trong khoảng thời gian yêu cầu
-        List<RentalItems> conflictingRentalItems = rentalItemsFacade.findConflictingRentalItems(deviceModelId, requestedStartDate, requestedEndDate, List.copyOf(CAPACITY_CONSUMING_STATUSES));
+        // tìm các RentalItem bị conflict trong khoảng thời gian yêu cầu
+        List<RentalItems> conflictingRentalItems = rentalItemsFacade.findConflictingRentalItems(deviceModelId,
+                requestedStartDate, requestedEndDate, List.copyOf(CAPACITY_CONSUMING_STATUSES));
         if (conflictingRentalItems == null) {
             conflictingRentalItems = Collections.emptyList();
         }
 
-        //tính số lượng thiết bị đang bị chiếm
+        // tính số lượng thiết bị đang bị chiếm
         int occupiedCapacity = conflictingRentalItems.size();
 
-        //tính số lượng thiết bị còn khả dụng dựa trên số lượng thiết bị vật lý có status AVAILABLE
+        // tính số lượng thiết bị còn khả dụng dựa trên số lượng thiết bị vật lý có
+        // status AVAILABLE
         int availableCapacity = totalAvailableDevices - occupiedCapacity;
 
-        //xác định khả năng cho thuê
+        // xác định khả năng cho thuê
         boolean available = availableCapacity > 0;
-        String message = available ? "Device is available for the selected rental period." : "Device is not available for the selected rental period.";
+        String message = available ? "Device is available for the selected rental period."
+                : "Device is not available for the selected rental period.";
 
-        //trả về kết quả kiểm tra
+        // trả về kết quả kiểm tra
         return new AvailabilityResult(available, totalPhysicalDevices, occupiedCapacity, availableCapacity, message);
     }
 
@@ -104,10 +109,10 @@ public class AvailabilityService implements AvailabilityServiceLocal {
         long activeRentalsCount = rentalItemsFacade.countActiveByDeviceModelId(
                 deviceModelId, List.copyOf(CAPACITY_CONSUMING_STATUSES));
 
-        // Một DeviceModel là AVAILABLE khi số thiết bị vật lý AVAILABLE nhiều hơn số đơn thuê đang chiếm giữ
+        // Một DeviceModel là AVAILABLE khi số thiết bị vật lý AVAILABLE nhiều hơn số
+        // đơn thuê đang chiếm giữ
         return availablePhysicalCount > activeRentalsCount;
     }
-
 
     // customer availability
     // out of stock handling
@@ -117,28 +122,29 @@ public class AvailabilityService implements AvailabilityServiceLocal {
     }
 
     /**
-     * Validates combined capacity for multiple cart items and existing rental items.
+     * Validates combined capacity for multiple cart items and existing rental
+     * items.
      *
      * @param cartItems the user's cart items
      */
     @Override
-    public void validateCombinedCapacity(List<com.lens.cart.entity.CartItems> cartItems) {
+    public void validateCombinedCapacity(List<CartItems> cartItems) {
         if (cartItems == null || cartItems.isEmpty()) {
             return;
         }
 
-        java.util.Map<Integer, List<com.lens.cart.entity.CartItems>> itemsByModel = new java.util.HashMap<>();
+        java.util.Map<Integer, List<CartItems>> itemsByModel = new java.util.HashMap<>();
 
-        for (com.lens.cart.entity.CartItems item : cartItems) {
+        for (CartItems item : cartItems) {
             if (item.getDeviceModelId() != null && item.getDeviceModelId().getId() != null) {
                 Integer deviceModelId = item.getDeviceModelId().getId();
                 itemsByModel.computeIfAbsent(deviceModelId, key -> new java.util.ArrayList<>()).add(item);
             }
         }
 
-        for (java.util.Map.Entry<Integer, List<com.lens.cart.entity.CartItems>> entry : itemsByModel.entrySet()) {
+        for (Entry<Integer, List<CartItems>> entry : itemsByModel.entrySet()) {
             Integer deviceModelId = entry.getKey();
-            List<com.lens.cart.entity.CartItems> modelCartItems = entry.getValue();
+            List<CartItems> modelCartItems = entry.getValue();
 
             if (modelCartItems.size() <= 1) {
                 continue;
@@ -147,7 +153,7 @@ public class AvailabilityService implements AvailabilityServiceLocal {
             Date earliestStart = modelCartItems.get(0).getStartDate();
             Date latestEnd = modelCartItems.get(0).getEndDate();
 
-            for (com.lens.cart.entity.CartItems item : modelCartItems) {
+            for (CartItems item : modelCartItems) {
                 if (item.getStartDate().before(earliestStart)) {
                     earliestStart = item.getStartDate();
                 }
@@ -227,4 +233,3 @@ public class AvailabilityService implements AvailabilityServiceLocal {
         }
     }
 }
-
