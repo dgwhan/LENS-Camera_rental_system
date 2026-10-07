@@ -1,0 +1,4 @@
+LENS CAMERA RENTAL - DATABASE CONFIGURATION GUIDE
+
+change your username/pass in config:
+lens-camera-rental-ejb/src/conf/META-INF/glassfish-resources.xml

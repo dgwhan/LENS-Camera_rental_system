@@ -1,0 +1,9 @@
+Lens Camera Rental System - Seed Accounts
+
+ADMIN
+Username: admin
+Password: admin
+
+CUSTOMER
+Username: duohan
+Password: 123456
